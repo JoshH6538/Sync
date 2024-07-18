@@ -1,4 +1,4 @@
-import Alert from "./Components/Alert";
+import Alert from "./Components/LocationPrompt";
 import Button from "./Components/Button";
 import ListGroup from "./Components/ListGroup";
 import './App.css'
@@ -9,11 +9,13 @@ import GasMap from "./Pages/GasMap";
 import About from "./Pages/About";
 
 function App() {
+  let latitude = 0;
+  let longitude = 0;
   // Defines different pages of the site
-  let page = <Home/>
+  let page = <Home lat={(latitude)} long={longitude}/>
   switch(window.location.pathname) {
     case "/":
-      page = <Home/>
+      page = <Home lat={(latitude)} long={longitude}/>
       break
     case "/GasMap":
       page = <GasMap/>
@@ -22,9 +24,11 @@ function App() {
       page = <About/>
       break
     default:
-      page = <Home/>
+      page = <Home lat={(latitude)} long={longitude}/>
       break
   }
+
+  
 
   return(
   <div>
