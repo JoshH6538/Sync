@@ -1,30 +1,35 @@
 import Alert from "./Components/Alert";
 import Button from "./Components/Button";
 import ListGroup from "./Components/ListGroup";
-import Map from "./Components/MapDisplay";
+import './App.css'
+import Map from "./Components/Map";
+import Navbar from "./Components/Navbar";
+import Home from "./Pages/Home"
+import GasMap from "./Pages/GasMap";
+import About from "./Pages/About";
 
 function App() {
-  // let items = [
-  //   'New York',
-  //   'Los Angeles',
-  //   'Tokyo',
-  //   'London'
-  //   ];
-  // const handleSelectItem = (item:string) =>
-  // {
-  //   console.log(item);
-  // }
+  // Defines different pages of the site
+  let page = <Home/>
+  switch(window.location.pathname) {
+    case "/":
+      page = <Home/>
+      break
+    case "/GasMap":
+      page = <GasMap/>
+      break
+    case "/About":
+      page = <About/>
+      break
+    default:
+      page = <Home/>
+      break
+  }
 
   return(
   <div>
-    {/* <ListGroup items={items} heading="Cities" onSelectItem={handleSelectItem}/> */}
-    <Alert>
-      Hello <span>World</span>
-    </Alert>
-    {/* <Button onClick={() => {console.log("Clicked");}}>
-      Click <span>Here</span>
-    </Button> */}
-    <Map></Map>
+    <Navbar></Navbar>
+    {page}
   </div>);
 }
 
