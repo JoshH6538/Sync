@@ -1,5 +1,6 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
+import { map } from 'leaflet';
 
 // Leaflet.Icon.Default.imagePath =
 // '../node_modules/leaflet'
@@ -10,18 +11,32 @@ import 'leaflet/dist/leaflet.css';
 //     iconUrl: require('leaflet/dist/images/marker-icon.png'),
 //     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 // });
+interface Props {
+    mapLat: number;
+    mapLong: number;
+}
 
+function Refresh({mapLat,mapLong}: Props) {
+    const map = useMap()
+      map.setView([mapLat, mapLong], map.getZoom())
+    return null
+  }
 
-let Map = () => {
+let Map = ({mapLat,mapLong}: Props) => {
+
+    
+    
+    
     return(
-    <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} >
+    <MapContainer center={[mapLat,mapLong]} zoom={13} scrollWheelZoom={false} >
+        <Refresh mapLat={mapLat} mapLong={mapLong}></Refresh>
         <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[51.505, -0.09]}>
+        <Marker position={[mapLat,mapLong]}>
             <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
+            You are <br /> HERE
             </Popup>
         </Marker>
     </MapContainer>
