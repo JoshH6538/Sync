@@ -1,13 +1,23 @@
 
 /*---------------- Home Page -------------------------*/
 .home-container {
-  background-color: rgb(66, 66, 66);
+  background-color: rgb(43, 43, 43);
   height: 100vh;
   width: 100vw;
   color: white;
   font-family:Georgia, 'Times New Roman', Times, serif;
   padding: 3%;
   padding-top: 5%;
+  justify-content: center;
+  justify-items: center;
+}
+
+.home-container h1 {
+  margin: 5%;
+}
+
+.home-container h1 span {
+  color:rgba(255, 48, 48, 0.791);
 }
 
 
@@ -15,10 +25,10 @@
 /*---------------- Navbar -------------------------*/
 .nav {
   box-sizing: border-box;
-  background-color: rgb(139, 139, 139);
+  background-color: rgb(30, 30, 30);
   position:fixed;
   top:0px;
-  color: rgb(58, 57, 57);
+  color: rgb(255, 255, 255);
   display: flex;
   width: 100vw;
   justify-content: space-evenly;
@@ -29,6 +39,10 @@
 
 .site-title {
   font-size: 2rem;
+  color: white !important;
+  background-color: rgba(255, 48, 48, 1);
+  stroke: black;
+  border-radius: 40%;
 }
 
 .nav ul {
@@ -48,7 +62,7 @@
 }
 
 .nav a:hover{
-  color: white;
+  color: rgb(159, 241, 255);
   
 }
 
@@ -57,13 +71,14 @@
 }
 
 .nav li:hover {
-  background-color: rgb(100, 100, 100);
+  /* background-color: rgb(100, 100, 100); */
 }
 
 /*---------------- LEAFLET MAP -------------------------*/
 .leaflet-container {
   height: 30vh;
-  width: 50vw; 
+  width: 50vw;
+  border-radius: 5%;
 }
 
 Map{

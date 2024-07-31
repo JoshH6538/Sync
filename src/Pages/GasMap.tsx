@@ -12,12 +12,12 @@ export default function GasMap({lat,long}: Props) {
         return (<>
          <div className="home-container">
             <h1>Please allow location</h1>
+            {/* <LocationPrompt></LocationPrompt> */}
         </div>
         </>);}
     return(
     <div className="home-container">
         <h1>Gas Map</h1>
         <Map mapLat={lat} mapLong={long}></Map>
-        <LocationPrompt lat={lat} long={long}></LocationPrompt>
     </div>);
 }
