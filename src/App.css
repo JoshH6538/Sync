@@ -40,9 +40,11 @@
 .site-title {
   font-size: 2rem;
   color: white !important;
-  background-color: rgba(255, 48, 48, 1);
+  /* background-color: rgba(255, 48, 48, 1); */
   stroke: black;
   border-radius: 40%;
+  margin-top: .35% !important;
+  margin-bottom: .25% !important;
 }
 
 .nav ul {
@@ -59,6 +61,11 @@
   height: 100%;
   display: flex;
   align-items: center;
+}
+
+.nav button {
+  margin-top: 10% !important;
+  margin-bottom: 10% !important;
 }
 
 .nav a:hover{
