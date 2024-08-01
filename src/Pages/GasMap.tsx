@@ -17,7 +17,7 @@ export default function GasMap({lat,long}: Props) {
         </>);}
     return(
     <div className="home-container">
-        <h1>Gas Map</h1>
+        <h1>Music Map</h1>
         <Map mapLat={lat} mapLong={long}></Map>
     </div>);
 }

@@ -8,9 +8,9 @@ import Navbar from "./Components/Navbar";
 import Home from "./Pages/Home"
 import GasMap from "./Pages/GasMap";
 import About from "./Pages/About";
+import LoginStatus from "./LoginStatus";
 
 function App() {
-  
 
    // Asks for User Location
    const[latitude, setLatitude] = React.useState(0);
@@ -40,10 +40,10 @@ function App() {
   }
 
   
-
+  let logInStatus = LoginStatus();
   return(
   <div>
-    <Navbar></Navbar>
+    <Navbar logIn={logInStatus}></Navbar>
     {page}
   </div>);
 }
