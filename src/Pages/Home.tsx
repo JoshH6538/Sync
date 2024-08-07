@@ -1,5 +1,4 @@
 // import LocationPrompt from "../Components/LocationPrompt";
-import React from 'react'
 
 export default function Home() {
    

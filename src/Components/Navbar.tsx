@@ -1,4 +1,4 @@
-import Constants from '../ConstantsFile';
+import Constants from '../Constants';
 // const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
 // import loginStatus from '../loginStatus';
 

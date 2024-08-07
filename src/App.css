@@ -20,10 +20,10 @@
   color:rgba(255, 48, 48, 0.791);
 }
 
-
 .see {
-  margin: 100px !important;
-  background-color: red !important;
+  position:fixed;
+  top:100px;
+  margin: 50px !important;
 }
 
 

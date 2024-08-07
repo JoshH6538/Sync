@@ -4,7 +4,7 @@ import Navbar from "./Components/Navbar";
 import Home from "./Pages/Home"
 import GasMap from "./Pages/GasMap";
 import About from "./Pages/About";
-import Constants from "./ConstantsFile";
+import Constants from "./Constants";
 import axios from 'axios';
 
 function App() {
