@@ -5,8 +5,11 @@ import Home from "./Pages/Home"
 import GasMap from "./Pages/GasMap";
 import About from "./Pages/About";
 import Constants from "./ConstantsFile";
+import axios from 'axios';
 
 function App() {
+
+
 
   const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
 
@@ -23,8 +26,8 @@ function App() {
       
       window.localStorage.setItem("token",token);
       window.location.hash = "";
-      setToken(token);
     }
+    setToken(token!);
 
   })
   //pass into nav bar to call onclick for login/logout button
@@ -37,6 +40,16 @@ function App() {
   const handleLogout = () => {
     setToken("");
     window.localStorage.removeItem("token");
+  }
+
+
+  let userProfile = async () => {
+    const {data} = await axios.get("https://api.spotify.com/v1/me",{
+    headers: {
+      Authorization: `Bearer ${token}`
+    }})
+    console.log(data)
+    return data;
   }
 
 
@@ -72,6 +85,7 @@ function App() {
   return(
   <div>
     <Navbar login={handleLogin} logout={handleLogout}></Navbar>
+    {token ? <button className="btn btn-danger see" onClick={userProfile}>User</button> : <h3>login first</h3>}
     {page}
   </div>);
 }
