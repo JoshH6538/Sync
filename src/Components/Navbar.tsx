@@ -1,34 +1,30 @@
 import Constants from '../ConstantsFile';
-const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
-import LoginStatus from '../LoginStatus';
+// const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
+// import loginStatus from '../loginStatus';
 
 
 interface Props {
-    logIn: boolean
+    login: ()=>void
+    logout: ()=>void
 }
 
-export default function Navbar({logIn}: Props) {
-    // let [loggedIn, setLoggedIn] = useState(false);
+export default function Navbar({ login, logout}: Props) {
 
-    const handleLogin = () => {
-        const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + Constants.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN + '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
-        // window.location.href = '${SPOTIFY_AUTHORIZE_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL_AFTER_LOGIN}&scope=${SCOPES_URL_PARAM}&response_type=token&show_dialog=true';
-        window.location.href = location;
-        // console.log(location);
-    }
+    const token = window.localStorage.getItem("token");
 
     const displayButton = () => {
-        if(logIn)
+        if(!token)
             return(
                 <>
-                    <li><button type="button" className="btn btn-danger" onClick={handleLogin}>Sign Out</button></li>
+                    <li><button type="button" className="btn btn-danger" onClick={login}>Login</button></li>
                 </>
             );
         else
         return(
             <>
-                <li><button type="button" className="btn btn-danger" onClick={handleLogin}>Login</button></li>
+                <li><button type="button" className="btn btn-danger" onClick={logout}>Logout</button></li>
             </>
+           
             
         );
     }
