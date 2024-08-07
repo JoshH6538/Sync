@@ -28,7 +28,10 @@ function App() {
       window.location.hash = "";
     }
     setToken(token!);
-
+    axios.defaults.baseURL = 'https://api.spotify.com/v1';
+    axios.defaults.headers['Authorization'] = `Bearer ${token}`;
+    axios.defaults.headers['Content-Type'] = 'application/json';
+    userProfile();
   })
   //pass into nav bar to call onclick for login/logout button
   const handleLogin = () => {
@@ -42,15 +45,50 @@ function App() {
     window.localStorage.removeItem("token");
   }
 
+  //use states to set variables
+  const [displayName,setDisplayName] = useState("");
+  const [ID,setID] = useState("");
 
+  //get data from api and set variables
   let userProfile = async () => {
+    if(!token) return;
     const {data} = await axios.get("https://api.spotify.com/v1/me",{
-    headers: {
-      Authorization: `Bearer ${token}`
-    }})
-    console.log(data)
+      //this is how you set the header, we set it by default upon authentication
+    // headers: {
+    //   Authorization: `Bearer ${token}`
+    // }
+  })
+    // console.log(data)
+    setDisplayName(data["display_name"]);
+    setID(data["id"]);
+    // console.log(ID);
     return data;
   }
+
+  //group variables
+  let userInfo = {
+    name: displayName,
+    id: ID
+  }
+
+
+
+
+
+
+  const [artists, setArtists] = useState([]);
+
+  let topArtists = async () => {
+     if(!token) return;
+    const {data} = await axios.get("https://api.spotify.com/v1/me/top/artists",{});
+    console.log(data)
+  }
+
+
+
+
+
+
 
 
 
@@ -66,10 +104,10 @@ function App() {
    }, [])
 
   // Defines different pages of the site
-  let page = <Home/>
+  let page = <Home user={userInfo}/>
   switch(window.location.pathname) {
     case "/":
-      page = <Home/>
+      page = <Home user={userInfo}/>
       break
     case "/GasMap":
       page = <GasMap lat={(latitude)} long={longitude}/>
@@ -78,14 +116,14 @@ function App() {
       page = <About/>
       break
     default:
-      page = <Home/>
+      page = <Home user={userInfo}/>
       break
   }
 
   return(
   <div>
     <Navbar login={handleLogin} logout={handleLogout}></Navbar>
-    {token ? <button className="btn btn-danger see" onClick={userProfile}>User</button> : <h3>login first</h3>}
+    {token ? <button className="btn btn-danger see" onClick={topArtists}>User</button> : <h3>login first</h3>}
     {page}
   </div>);
 }
