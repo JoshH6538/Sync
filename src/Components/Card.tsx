@@ -1,16 +1,20 @@
 import { ReactNode } from "react";
+import '../Styles/Card.css'
 
 interface Props {
-    children: ReactNode
+    text: ReactNode,
+    img: string,
+    altnum: number
 }
 
-export default function Card({children}: Props) {
+export default function Card({text, img, altnum}: Props) {
+  const alt = "card"+{altnum};
   return (
     <>
         <div className="card">
-          <img src="https://i.scdn.co/image/9f9b40704e3361c93ea8a8b7a86a5d9ee755466e" className="card-img-top" alt="jim"></img>
+          <img src={img} className="card-img-top" alt={alt}></img>
           <div className="card-body">
-        <p className="card-text">{children}</p>
+        <p className="card-text">{text}</p>
           </div>
         </div>
     </>

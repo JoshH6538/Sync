@@ -1,0 +1,16 @@
+.card{
+    background-color: rgb(52, 52, 52) !important;
+    height: 25vmin;
+    width: 25vmin;
+    font-size: 1.25rem;
+    color: aliceblue;
+    padding: 3%;
+    margin: 0 !important;
+}
+.card img {
+
+}
+
+@media screen {
+    
+}

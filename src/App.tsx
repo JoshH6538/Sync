@@ -32,7 +32,8 @@ function App() {
     axios.defaults.headers['Authorization'] = `Bearer ${token}`;
     axios.defaults.headers['Content-Type'] = 'application/json';
     userProfile();
-  })
+    topArtists();
+  },[]);
   //pass into nav bar to call onclick for login/logout button
   const handleLogin = () => {
     const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + Constants.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN + '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
@@ -79,13 +80,12 @@ function App() {
   const [artists, setArtists] = useState([]);
 
   let topArtists = async () => {
-     if(!token) return;
+    if(!token) return;
     const {data} = await axios.get("https://api.spotify.com/v1/me/top/artists",{});
-    console.log(data)
+    // console.log(data);
+    setArtists(data.items);
+    return data;
   }
-
-
-
 
 
 
@@ -104,10 +104,10 @@ function App() {
    }, [])
 
   // Defines different pages of the site
-  let page = <Home user={userInfo}/>
+  let page = <Home user={userInfo} artists={artists}/>
   switch(window.location.pathname) {
     case "/":
-      page = <Home user={userInfo}/>
+      page = <Home user={userInfo} artists={artists}/>
       break
     case "/GasMap":
       page = <GasMap lat={(latitude)} long={longitude}/>
@@ -116,7 +116,7 @@ function App() {
       page = <About/>
       break
     default:
-      page = <Home user={userInfo}/>
+      page = <Home user={userInfo} artists={artists}/>
       break
   }
 

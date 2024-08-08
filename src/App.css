@@ -97,3 +97,16 @@ Map{
   visibility: hidden;
   height: 600px;
 }
+
+
+
+.grid{
+  padding: 80px 0;
+  overflow-x: auto;
+  color: #ababab;
+  align-content: center;
+  text-align: center;
+  margin-top:20%;
+  font-size: 4vh;
+  width: 100%;
+}
