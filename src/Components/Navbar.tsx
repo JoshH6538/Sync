@@ -1,6 +1,4 @@
-import Constants from '../Constants';
-// const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
-// import loginStatus from '../loginStatus';
+import '../Styles/Navbar.css'
 
 
 interface Props {
@@ -34,7 +32,7 @@ export default function Navbar({ login, logout}: Props) {
             <a href="/" className="site-title">Sync</a>
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="/GasMap">Music Map</a></li>
+                <li><a href="/MusicMap">Music Map</a></li>
                 <li><a href="/About">About</a></li>
                 {displayButton()}
             </ul>

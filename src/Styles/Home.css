@@ -1,0 +1,25 @@
+.home-container {
+    background-color: rgb(43, 43, 43);
+    height: 300vh;
+    width: 100vw;
+    color: white;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    padding: 3%;
+    padding-top: 5%;
+    justify-content: center;
+    justify-items: center;
+  }
+  
+  .home-container h1 {
+    margin: 5%;
+  }
+  
+  .home-container h1 span {
+    color:rgba(255, 48, 48, 0.791);
+  }
+  
+  .see {
+    position:fixed;
+    top:100px;
+    margin: 50px !important;
+  }

@@ -8,7 +8,7 @@ interface Props {
 export default function TopArtists({artists}: Props) {
     let num=0;
   return (
-    <>
+    <div className='container'>
         <h1>Top Artists</h1>
         <div className="grid">
         {artists.map((artist: any) => {
@@ -19,6 +19,6 @@ export default function TopArtists({artists}: Props) {
             )
         })}
         </div>
-    </>
+    </div>
   )
 }

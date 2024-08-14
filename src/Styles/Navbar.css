@@ -1,34 +1,5 @@
-
-/*---------------- Home Page -------------------------*/
-.home-container {
-  background-color: rgb(43, 43, 43);
-  height: 100vh;
-  width: 100vw;
-  color: white;
-  font-family:Georgia, 'Times New Roman', Times, serif;
-  padding: 3%;
-  padding-top: 5%;
-  justify-content: center;
-  justify-items: center;
-}
-
-.home-container h1 {
-  margin: 5%;
-}
-
-.home-container h1 span {
-  color:rgba(255, 48, 48, 0.791);
-}
-
-.see {
-  position:fixed;
-  top:100px;
-  margin: 50px !important;
-}
-
-
-/*---------------- Navbar -------------------------*/
 .nav {
+  z-index: 100;
   box-sizing: border-box;
   background-color: rgb(30, 30, 30);
   position:fixed;
@@ -84,29 +55,4 @@
 
 .nav li:hover {
   /* background-color: rgb(100, 100, 100); */
-}
-
-/*---------------- LEAFLET MAP -------------------------*/
-.leaflet-container {
-  height: 30vh;
-  width: 50vw;
-  border-radius: 5%;
-}
-
-Map{
-  visibility: hidden;
-  height: 600px;
-}
-
-
-
-.grid{
-  padding: 80px 0;
-  overflow-x: auto;
-  color: #ababab;
-  align-content: center;
-  text-align: center;
-  margin-top:20%;
-  font-size: 4vh;
-  width: 100%;
 }
