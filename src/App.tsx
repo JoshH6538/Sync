@@ -61,7 +61,7 @@ function App() {
   
 
   const [artists, setArtists] = useState([]);
-  const [genres, setGenres] = useState(new Set<any>());
+  const [genres, setGenres] = useState<string[]>([]);
   let topArtists = async () => {
     if(!token || token==="" || artists.length > 0) return;
     const {data} = await axios.get("https://api.spotify.com/v1/me/top/artists",{
@@ -73,10 +73,13 @@ function App() {
     // console.log(data);
     setArtists(data.items);
     //add genres to set
-    let genreInfo = new Set<any>();
+    let genreInfo:string[] = [];
+    // console.log('###########################')
     data.items.map((artist:any) => {
+      // console.log('\t artist:',artist.name,'->')
       artist.genres.map((genre: any) => {
-        genreInfo.add(genre)
+        // console.log(genre)
+        genreInfo.push(genre)
       })
     })
     // console.log("Genres:",genreInfo)

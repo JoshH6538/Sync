@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Constants from "../Constants";
 import Genres from "../Genres";
+import Subgenres from "../Subgenres";
 import Geohash from "latlon-geohash";
 
 interface Props {
-    genres: Set<any>
+    genres: string[]
 }
 
 
@@ -26,11 +27,25 @@ export default function MusicMap({genres}: Props) {
     const[genreIds, setGenreIds] = useState<string[]>([])
     let getGenreIds = () => {
         // console.log(genres)
+        let leftovers:string[] = [];
         let ids:string[] = [];
         genres.forEach((genre) => {
             // console.log("Genre:",genre)
+            if(genre in Subgenres)
+            {
+                // console.log(genre)
+                ids.push(Subgenres[genre]);
+            }
+            else
+            {
+                leftovers.push(genre);
+            }
+        })
+        leftovers.forEach((genre) => {
+            // console.log("Genre:",genre)
             if(genre in Genres)
-            {   
+            {
+                // console.log(genre)
                 ids.push(Genres[genre]);
             }
         })
