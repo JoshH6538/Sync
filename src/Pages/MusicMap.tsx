@@ -5,26 +5,26 @@ import Constants from "../Constants";
 import Genres from "../Genres";
 import Subgenres from "../Subgenres";
 import Geohash from "latlon-geohash";
+import LocalEvent from "../LocalEventClass";
+import LocalVenue from "../LocalVenueClass";
 
 interface Props {
     genres: string[]
 }
 
-
-
-
-
 export default function MusicMap({genres}: Props) {
-
-    // if(genres.values.length<1) return (<h1>No genres</h1>);
-
     // Asks for User Location
     const[latitude, setlatitude] = useState(0);
     const[longitude, setLongitude] = useState(0);
     const[precision, setPrecision] = useState(0);
+    //to stop constant get requests
     const[fetched, setFetched] = useState(false);
     const[fetched1, setFetched1] = useState(false);
+    //genre ids from hashmap
     const[genreIds, setGenreIds] = useState<string[]>([])
+    //list of event objects
+    const[events, setEvents] = useState<LocalEvent[]>([])
+
     let getGenreIds = () => {
         // console.log(genres)
         let leftovers:string[] = [];
@@ -50,13 +50,8 @@ export default function MusicMap({genres}: Props) {
             }
         })
         setGenreIds(ids)
-        // console.log(genres)
-        // console.log(ids)
         return ids;
     }
-    
-
-    // const [events,setEvents] = useState([]);
     let localEvents = async () => {
         if((latitude === 0 && longitude === 0) || genreIds.length<1) return;
         if(fetched) return;
@@ -74,11 +69,31 @@ export default function MusicMap({genres}: Props) {
         //this is how you set the header, we set it by default upon authentication
         });
         console.log(data);
+        let eventList:LocalEvent[] = [];
+        data._embedded.events.map((event:any) => {
+            // console.log(event.name,event.images[0],event._embedded.venues[0])
+            let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
+            let currentEvent = new LocalEvent(event.name,event.id,event.images[0], currentVenue);
+            eventList.push(currentEvent);
+        })
+        setEvents(eventList);
+        // console.log("EVENT LIST: ",eventList);
+        // console.log(events)
         //add genres to set
         setFetched(true);
-        return data;
+        return events;
     }
 
+    let eventMap = (events:any) => {
+
+        return(
+            <>
+                <Map mapLat={latitude} mapLong={longitude} events={events}></Map>
+                {events ? <p>YEP!</p> :<p>Nope</p>}
+                
+            </>
+        );
+    }
 
     React.useEffect(() =>{
     navigator.geolocation.getCurrentPosition((position) => {
@@ -88,12 +103,18 @@ export default function MusicMap({genres}: Props) {
         // console.log({genres})
     })
     })
+
     useEffect(() =>{
         getGenreIds();
     },[genres])
+
     useEffect(() => {
         localEvents();
-    },[latitude,longitude,precision,genreIds])
+        console.log("EvEnTs:",events)
+    },[latitude,longitude,precision,genreIds,events])
+
+
+    
 
     {if(latitude===0 && longitude ===0)
         return (<>
@@ -105,7 +126,7 @@ export default function MusicMap({genres}: Props) {
     return(
     <div className="home-container">
         <h1>Music Map</h1>
-        <Map mapLat={latitude} mapLong={longitude}></Map>
-        
+        {eventMap(events)}
+        {/* <Map mapLat={latitude} mapLong={longitude} events={events}></Map> */}
     </div>);
 }

@@ -1,6 +1,9 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import { map } from 'leaflet';
+import { useEffect } from 'react';
+import LocalVenue from '../LocalVenueClass';
+import LocalEvent from '../LocalEventClass';
 
 // Leaflet.Icon.Default.imagePath =
 // '../node_modules/leaflet'
@@ -14,22 +17,25 @@ import { map } from 'leaflet';
 interface Props {
     mapLat: number;
     mapLong: number;
+    events: LocalEvent[]
 }
 
-function Refresh({mapLat,mapLong}: Props) {
-    const map = useMap()
-      map.setView([mapLat, mapLong], map.getZoom())
-    return null
-  }
 
-let Map = ({mapLat,mapLong}: Props) => {
 
-    
-    
-    
+let Map = ({mapLat,mapLong, events}: Props) => {
+
+    function Refresh({mapLat,mapLong}: Props) {
+        const map = useMap()
+          map.setView([mapLat, mapLong], map.getZoom())
+        return null
+      }
+    // useEffect(() => {
+    //     eventMarkers(events);
+    // })
     return(
-    <MapContainer center={[mapLat,mapLong]} zoom={13} scrollWheelZoom={false} >
-        <Refresh mapLat={mapLat} mapLong={mapLong}></Refresh>
+    <>
+    <MapContainer center={[mapLat,mapLong]} zoom={8} scrollWheelZoom={false} >
+        <Refresh mapLat={mapLat} mapLong={mapLong} events={events}></Refresh>
         <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -39,7 +45,16 @@ let Map = ({mapLat,mapLong}: Props) => {
             You are <br /> HERE
             </Popup>
         </Marker>
+        {events.map((event:LocalEvent) => (
+            <Marker key={event.id} position={[event.venue.latitude,event.venue.longitude]}>
+                <Popup>
+                    {event.name}<br />{event.venue.name}
+                </Popup>
+            </Marker>
+        ))}
     </MapContainer>
+    <h1>HELLO</h1>
+    </>
     );
 }
 
