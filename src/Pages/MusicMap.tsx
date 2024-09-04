@@ -19,7 +19,6 @@ export default function MusicMap({genres}: Props) {
     const[precision, setPrecision] = useState(0);
     //to stop constant get requests
     const[fetched, setFetched] = useState(false);
-    const[fetched1, setFetched1] = useState(false);
     //genre ids from hashmap
     const[genreIds, setGenreIds] = useState<string[]>([])
     //list of event objects
