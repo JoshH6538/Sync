@@ -73,7 +73,7 @@ export default function MusicMap({genres}: Props) {
         data._embedded.events.map((event:any) => {
             // console.log(event.name,event.images[0],event._embedded.venues[0])
             let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
-            let currentEvent = new LocalEvent(event.name,event.id,event.images[0], currentVenue);
+            let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance);
             eventList.push(currentEvent);
         })
         setEvents(eventList);

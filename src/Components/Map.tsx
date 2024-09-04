@@ -1,7 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMapEvents, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
-import { map } from 'leaflet';
-import { useEffect } from 'react';
+import { LatLng, LeafletEvent, map } from 'leaflet';
+import {useState,useEffect } from 'react';
 import LocalVenue from '../LocalVenueClass';
 import LocalEvent from '../LocalEventClass';
 import '../Styles/Map.css'
@@ -25,6 +25,25 @@ interface Props {
 
 let Map = ({mapLat,mapLong, events}: Props) => {
 
+    function LocationMarker() {
+        const [position, setPosition] = useState<LatLng>(new LatLng(0,0))
+        const map = useMapEvents({
+          click() {
+            map.locate()
+          },
+          locationfound(e) {
+            setPosition(e.latlng)
+            map.flyTo(e.latlng, 10)
+          },
+        })
+      
+        return position === null ? null : (
+          <Marker position={position}>
+            <Popup>You are here</Popup>
+          </Marker>
+        )
+      }
+
     function Refresh({mapLat,mapLong}: Props) {
         const map = useMap()
           map.setView([mapLat, mapLong], map.getZoom())
@@ -36,20 +55,24 @@ let Map = ({mapLat,mapLong, events}: Props) => {
     return(
     <div className='map-container'>
     <MapContainer center={[mapLat,mapLong]} zoom={8} scrollWheelZoom={false} >
+        {/* {LocationMarker()} */}
         <Refresh mapLat={mapLat} mapLong={mapLong} events={events}></Refresh>
         <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[mapLat,mapLong]}>
+        <LocationMarker/>
+        {/* <Marker position={[mapLat,mapLong]}>
             <Popup>
             You are <br /> HERE
             </Popup>
-        </Marker>
+        </Marker> */}
         {events.map((event:LocalEvent) => (
             <Marker key={event.id} position={[event.venue.latitude,event.venue.longitude]}>
-                <Popup>
-                    {event.name}<br />{event.venue.name}
+                <Popup className='pop-up'>
+                    {event.name}<br />
+                    <img className='marker-img' alt='None' src={event.img}></img>
+                    <br/>{event.venue.name}, {event.distance} miles away
                 </Popup>
             </Marker>
         ))}
