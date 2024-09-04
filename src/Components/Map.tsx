@@ -1,8 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMapEvents, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
-import { LatLng, LeafletEvent, map } from 'leaflet';
-import {useState,useEffect } from 'react';
-import LocalVenue from '../LocalVenueClass';
+import { LatLng } from 'leaflet';
+import {useState } from 'react';
 import LocalEvent from '../LocalEventClass';
 import '../Styles/Map.css'
 
