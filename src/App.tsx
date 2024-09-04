@@ -13,9 +13,9 @@ function App() {
 
   const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
 
-
   //state for setting token
   const [token,setToken] = useState("");
+
   
   //pass into nav bar to call onclick for login/logout button
   const handleLogin = () => {
@@ -29,8 +29,55 @@ function App() {
     setArtists([]);
     setID("");
     setDisplayName("");
+    setTracks([]);
     window.localStorage.removeItem("token");
+    window.localStorage.removeItem("expireTime");
   }
+
+  const checkActivity = () => {
+    if(localStorage.getItem("token"))
+    {
+      const expireTime = localStorage.getItem("expireTime");
+      if(expireTime && expireTime<String(Date.now()))
+      {
+        console.log("Logging out")
+        handleLogout();
+      }
+    }
+  }
+
+  const updateExpire = () => {
+    if(localStorage.getItem("token"))
+    {
+      const newTime = Date.now()+60000;
+      window.localStorage.setItem("expireTime",String(newTime));
+    }
+  }
+
+  //set interval for activity check
+  useEffect(()=> {
+    const interval = setInterval( () => {
+      checkActivity();
+    },10000);
+    return () => clearInterval(interval);
+  },[]);
+
+  //update expire on user active
+  useEffect(() => {
+    updateExpire();
+    //set event listers
+    window.addEventListener('click',updateExpire);
+    window.addEventListener('keypress',updateExpire);
+    window.addEventListener('scroll',updateExpire);
+    window.addEventListener('mousemove',updateExpire);
+    //clean up
+    return () => {
+      window.removeEventListener('click',updateExpire);
+      window.removeEventListener('keypress',updateExpire);
+      window.removeEventListener('scroll',updateExpire);
+      window.removeEventListener('mousemove',updateExpire);
+    }
+  })
 
   //use states to set variables
   const [displayName,setDisplayName] = useState("");
@@ -39,12 +86,14 @@ function App() {
   //get data from api and set variables
   let userProfile = async () => {
     if(!token || token==="" || ID.length>0) return;
+    console.log("Filled?:",displayName)
     const {data} = await axios.get("https://api.spotify.com/v1/me",{
       //this is how you set the header, we set it by default upon authentication
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
+    console.log('get called')
     // console.log(data)
     setDisplayName(data["display_name"]);
     setID(data["id"]);
@@ -64,12 +113,14 @@ function App() {
   const [genres, setGenres] = useState<string[]>([]);
   let topArtists = async () => {
     if(!token || token==="" || artists.length > 0) return;
+    console.log("Filled?:",artists[0])
     const {data} = await axios.get("https://api.spotify.com/v1/me/top/artists",{
       //this is how you set the header, we set it by default upon authentication
     headers: {
       Authorization: `Bearer ${token}`
     }
     });
+    console.log('get called')
     // console.log(data);
     setArtists(data.items);
     //add genres to set
@@ -90,12 +141,14 @@ function App() {
   const [tracks, setTracks] = useState([]);
   let topTracks = async () => {
     if(!token || token==="" || tracks.length > 0) return;
+    console.log('Filled track?:',tracks[0])
     const {data} = await axios.get("https://api.spotify.com/v1/me/top/tracks",{
       //this is how you set the header, we set it by default upon authentication
     headers: {
       Authorization: `Bearer ${token}`
     }
     });
+    console.log('get called')
     // console.log(data);
     setTracks(data.items);
     return data;
@@ -112,17 +165,20 @@ function App() {
       token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token"))?.split("=")[1]!;
       
       window.localStorage.setItem("token",token);
+      updateExpire();
       window.location.hash = "";
     }
+
     userProfile();
     topArtists();
     topTracks();
+
     setToken(token!);
     // axios.defaults.baseURL = 'https://api.spotify.com/v1';
     // axios.defaults.headers['Authorization'] = `Bearer ${token}`;
     // axios.defaults.headers['Content-Type'] = 'application/json';
     
-  });
+  },[token, tracks]);
 
 
 

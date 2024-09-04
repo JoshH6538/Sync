@@ -58,7 +58,7 @@ export default function MusicMap({genres}: Props) {
         // console.log(latitude,longitude,precision)
         // let ghash = Geohash.encode(latitude,longitude,precision);
         // console.log(ghash)
-        let URL = `${Constants.EVENTS_BASE_URL}&latlong=${latitude},${longitude}&radius=50&unit=miles&locale=*&sort=distance,asc`;
+        let URL = `${Constants.EVENTS_BASE_URL}&latlong=${latitude},${longitude}&radius=100&unit=miles&locale=*&sort=distance,asc`;
         if(genreIds.length>0)
         {
             console.log("specific")
@@ -89,8 +89,6 @@ export default function MusicMap({genres}: Props) {
         return(
             <>
                 <Map mapLat={latitude} mapLong={longitude} events={events}></Map>
-                {events ? <p>YEP!</p> :<p>Nope</p>}
-                
             </>
         );
     }

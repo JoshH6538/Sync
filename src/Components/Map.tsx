@@ -54,6 +54,9 @@ let Map = ({mapLat,mapLong, events}: Props) => {
         ))}
     </MapContainer>
     <h1>HELLO</h1>
+    {events.map((event:LocalEvent) => (
+            <p key={event.id}>{event.name}:<br />{event.venue.name} {event.venue.latitude},{event.venue.longitude}</p>
+        ))}
     </>
     );
 }
