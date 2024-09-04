@@ -4,6 +4,7 @@
 }
 
 .leaflet-container {
+    z-index: 99;
     display: block !important;
     height: 30vh;
     width: 50%;
