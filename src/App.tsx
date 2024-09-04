@@ -15,8 +15,7 @@ function App() {
 
   //state for setting token
   const [token,setToken] = useState("");
-
-  
+  // const [loggedIn, setLoggedIn] = useState(false);
   //pass into nav bar to call onclick for login/logout button
   const handleLogin = () => {
     const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + Constants.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN + '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';

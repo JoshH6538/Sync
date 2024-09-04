@@ -114,17 +114,16 @@ export default function MusicMap({genres}: Props) {
 
     
 
-    {if(latitude===0 && longitude ===0)
-        return (<>
-         <div className="home-container">
-            <h1>Please allow location</h1>
-            {/* <LocationPrompt></LocationPrompt> */}
-        </div>
-        </>);}
+    if(window.localStorage.getItem("token"))
     return(
     <div className="home-container">
         <h1>Music Map</h1>
         {eventMap(events)}
         {/* <Map mapLat={latitude} mapLong={longitude} events={events}></Map> */}
     </div>);
+    else
+    return(
+        <div className="home-container">
+            <h1>Please login.</h1>
+        </div>);
 }

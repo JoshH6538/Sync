@@ -5,11 +5,11 @@ import Spinner from '../Components/Spinner';
 interface Props {
     user: any,
     artists: any,
-    tracks: any
+    tracks: any,
 }
 
 export default function Home({user,artists,tracks}: Props) {
-   
+    if(window.localStorage.getItem("token"))
     return(
     <div className="home-container">
         <h1>Establishing a community around <span>music</span>.</h1>
@@ -22,4 +22,9 @@ export default function Home({user,artists,tracks}: Props) {
             <TopTracks tracks={tracks}></TopTracks> : <p></p>
         }
     </div>);
+    else
+    return(
+        <div className="home-container">
+            <h1>Please login.</h1>
+        </div>);
 }
