@@ -4,6 +4,7 @@ import { map } from 'leaflet';
 import { useEffect } from 'react';
 import LocalVenue from '../LocalVenueClass';
 import LocalEvent from '../LocalEventClass';
+import '../Styles/Map.css'
 
 // Leaflet.Icon.Default.imagePath =
 // '../node_modules/leaflet'
@@ -33,7 +34,7 @@ let Map = ({mapLat,mapLong, events}: Props) => {
     //     eventMarkers(events);
     // })
     return(
-    <>
+    <div className='map-container'>
     <MapContainer center={[mapLat,mapLong]} zoom={8} scrollWheelZoom={false} >
         <Refresh mapLat={mapLat} mapLong={mapLong} events={events}></Refresh>
         <TileLayer
@@ -53,11 +54,11 @@ let Map = ({mapLat,mapLong, events}: Props) => {
             </Marker>
         ))}
     </MapContainer>
-    <h1>HELLO</h1>
+    <br/><h1>Venues</h1><br/>
     {events.map((event:LocalEvent) => (
             <p key={event.id}>{event.name}:<br />{event.venue.name} {event.venue.latitude},{event.venue.longitude}</p>
         ))}
-    </>
+    </div>
     );
 }
 

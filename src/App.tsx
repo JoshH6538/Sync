@@ -49,7 +49,7 @@ function App() {
   const updateExpire = () => {
     if(localStorage.getItem("token"))
     {
-      const newTime = Date.now()+60000;
+      const newTime = Date.now()+600000;
       window.localStorage.setItem("expireTime",String(newTime));
     }
   }

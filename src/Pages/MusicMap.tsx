@@ -4,9 +4,9 @@ import axios from "axios";
 import Constants from "../Constants";
 import Genres from "../Genres";
 import Subgenres from "../Subgenres";
-import Geohash from "latlon-geohash";
 import LocalEvent from "../LocalEventClass";
 import LocalVenue from "../LocalVenueClass";
+import '../Styles/MusicMap.css'
 
 interface Props {
     genres: string[]
@@ -116,14 +116,13 @@ export default function MusicMap({genres}: Props) {
 
     if(window.localStorage.getItem("token"))
     return(
-    <div className="home-container">
+    <div className="music-map-container">
         <h1>Music Map</h1>
         {eventMap(events)}
-        {/* <Map mapLat={latitude} mapLong={longitude} events={events}></Map> */}
     </div>);
     else
     return(
-        <div className="home-container">
+        <div className="music-map-container">
             <h1>Please login.</h1>
         </div>);
 }

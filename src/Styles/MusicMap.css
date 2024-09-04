@@ -1,0 +1,12 @@
+.music-map-container {
+    background-color: rgb(55, 52, 52);
+    height: 300vh;
+    width: 100vw !important;
+    color: white;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    padding: 3%;
+    padding-top: 5%;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
