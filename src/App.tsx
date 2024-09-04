@@ -15,10 +15,11 @@ function App() {
 
   //state for setting token
   const [token,setToken] = useState("");
-  // const [loggedIn, setLoggedIn] = useState(false);
+
+  
   //pass into nav bar to call onclick for login/logout button
   const handleLogin = () => {
-    const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + Constants.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN + '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
+    const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + Constants.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN+window.location.pathname+ '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
     // window.location.href = '${SPOTIFY_AUTHORIZE_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL_AFTER_LOGIN}&scope=${SCOPES_URL_PARAM}&response_type=token&show_dialog=true';
     window.location.href = location;
   }
@@ -84,6 +85,7 @@ function App() {
 
   //get data from api and set variables
   let userProfile = async () => {
+    
     if(!token || token==="" || ID.length>0) return;
     console.log("Filled?:",displayName)
     const {data} = await axios.get("https://api.spotify.com/v1/me",{
@@ -171,7 +173,7 @@ function App() {
     userProfile();
     topArtists();
     topTracks();
-
+    // console.log(location.pathname);
     setToken(token!);
     // axios.defaults.baseURL = 'https://api.spotify.com/v1';
     // axios.defaults.headers['Authorization'] = `Bearer ${token}`;
