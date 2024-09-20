@@ -1,7 +1,8 @@
-import Map from "../Components/Map";
+import MapWindow from "../Components/MapWindow";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Constants from "../Constants";
+import Constants from "../Information/Constants";
+import TicketmasterCredentials from "../Information/Credentials/TicketmasterCredentials";
 import Genres from "../Genres";
 import Subgenres from "../Subgenres";
 import LocalEvent from "../LocalEventClass";
@@ -57,7 +58,7 @@ export default function MusicMap({genres}: Props) {
         // console.log(latitude,longitude,precision)
         // let ghash = Geohash.encode(latitude,longitude,precision);
         // console.log(ghash)
-        let URL = `${Constants.EVENTS_BASE_URL}&latlong=${latitude},${longitude}&radius=100&unit=miles&locale=*&sort=distance,asc`;
+        let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}&latlong=${latitude},${longitude}&radius=100&unit=miles&locale=*&sort=distance,asc`;
         if(genreIds.length>0)
         {
             console.log("specific")
@@ -87,7 +88,7 @@ export default function MusicMap({genres}: Props) {
 
         return(
             <>
-                <Map mapLat={latitude} mapLong={longitude} events={events}></Map>
+                <MapWindow mapLat={latitude} mapLong={longitude} events={events}></MapWindow>
             </>
         );
     }
