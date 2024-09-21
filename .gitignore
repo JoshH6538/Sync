@@ -25,6 +25,7 @@ dist-ssr
 
 # Credentials
 Credentials/
+*Credentials.tsx
 
 #External tools
 git-filter-repo
