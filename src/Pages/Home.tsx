@@ -12,7 +12,7 @@ export default function Home({user,artists,tracks}: Props) {
     if(window.localStorage.getItem("token"))
     return(
     <div className="home-container">
-        <h1>Establishing a community around <span>music</span>.</h1>
+        <h1>Establishing a community around <span>music.</span></h1>
         <h2>Welcome {user.name}</h2>
         { artists && artists.length > 0 ?
             <TopArtists artists={artists}></TopArtists> : <Spinner></Spinner>

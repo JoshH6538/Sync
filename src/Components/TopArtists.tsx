@@ -1,5 +1,5 @@
 import Card from './Card'
-import '../Styles/TopArtists.css'
+import '../Styles/TopStats.css'
 
 interface Props {
     artists: any
@@ -8,8 +8,10 @@ interface Props {
 export default function TopArtists({artists}: Props) {
     let num=0;
   return (
-    <div className='container'>
-        <h1>Top Artists</h1>
+    <div className='stats-container'>
+        <div className='stats-header-container'>
+            <h1 className='stats-header'>Top Artists</h1>
+        </div>
         <div className="grid">
         {artists.map((artist: any) => {
             return(

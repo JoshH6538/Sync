@@ -123,7 +123,7 @@ function App() {
     }
     });
     console.log('get called')
-    // console.log(data);
+    console.log(data);
     setArtists(data.items);
     //add genres to set
     let genreInfo:string[] = [];

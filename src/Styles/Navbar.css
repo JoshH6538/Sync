@@ -1,7 +1,7 @@
 .nav {
   z-index: 100;
   box-sizing: border-box;
-  background-color: #1f2129;
+  background-color: #35373f;
   position:fixed;
   top:0px;
   color: rgb(255, 255, 255);
@@ -11,6 +11,7 @@
   align-items: stretch;
   padding: 0 1rem;
   font-family:Georgia, 'Times New Roman', Times, serif;
+  border-bottom: 2px solid rgb(27, 27, 27);
 }
 img {
   max-width: 10rem;

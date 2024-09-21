@@ -1,5 +1,5 @@
 .home-container {
-    background-color: #35373f;
+    background-color: #1f2129;
     height: 100%;
     width: 100vw;
     color: white;
@@ -15,7 +15,7 @@
   }
   
   .home-container h1 span {
-    color:rgba(255, 48, 48, 0.791);
+    color:#9c3b3b;
   }
   
   .see {
