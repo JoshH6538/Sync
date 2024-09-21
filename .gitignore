@@ -25,3 +25,6 @@ dist-ssr
 
 # Credentials
 Credentials/
+
+#External tools
+git-filter-repo
