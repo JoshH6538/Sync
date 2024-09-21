@@ -29,7 +29,10 @@ export default function Navbar({ login, logout}: Props) {
 
     return(<>
         <nav className="nav">
-            <a href="/" className="site-title">Sync</a>
+            <div id='NameLogo'>
+                <a href="/" className="site-title">Sync</a>
+                <img src="src\Images\TabIcon.png" alt='icon1'></img>
+            </div>
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/MusicMap">Music Map</a></li>

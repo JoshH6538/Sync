@@ -1,5 +1,5 @@
 .home-container {
-    background-color: rgb(43, 43, 43);
+    background-color: #35373f;
     height: 100%;
     width: 100vw;
     color: white;
@@ -23,3 +23,8 @@
     top:100px;
     margin: 50px !important;
   }
+.Filler {
+  height: 100vh;
+  width: 100vw;
+  background-color: #35373f;
+}

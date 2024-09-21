@@ -1,7 +1,7 @@
 .nav {
   z-index: 100;
   box-sizing: border-box;
-  background-color: rgb(30, 30, 30);
+  background-color: #1f2129;
   position:fixed;
   top:0px;
   color: rgb(255, 255, 255);
@@ -11,6 +11,20 @@
   align-items: stretch;
   padding: 0 1rem;
   font-family:Georgia, 'Times New Roman', Times, serif;
+}
+img {
+  max-width: 10rem;
+  max-height: 2.5rem;
+  margin-top: 5% !important;
+  margin-bottom: .25% !important;
+}
+
+#NameLogo {
+  display: flex !important;
+}
+.btn-danger {
+  background-color: #703434 !important;
+  border-color: #542525 !important;
 }
 
 .site-title {

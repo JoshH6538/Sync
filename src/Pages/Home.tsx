@@ -25,6 +25,8 @@ export default function Home({user,artists,tracks}: Props) {
     else
     return(
         <div className="home-container">
-            <h1>Please login.</h1>
+            <div className='Filler'>
+                <h1>Please login.</h1>
+            </div>
         </div>);
 }
