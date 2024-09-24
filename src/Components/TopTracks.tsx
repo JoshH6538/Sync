@@ -1,5 +1,7 @@
-import Card from './Card'
 import '../Styles/TopStats.css'
+
+import Card from './Card'
+
 
 interface Props {
     tracks: any

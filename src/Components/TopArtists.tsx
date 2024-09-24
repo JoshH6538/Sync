@@ -16,7 +16,8 @@ export default function TopArtists({artists}: Props) {
         {artists.map((artist: any) => {
             return(
                 <div key={artist.id}>
-                    <Card text={artist.name} img={artist.images[0].url} altnum={num++}></Card>
+                    {artist.images.length > 0 ? <Card text={artist.name} img={artist.images[0].url} altnum={num++}></Card>
+                    : <Card text={artist.name} img='src\Images\placeholder.jpg' altnum={num++}></Card>}
                 </div>
             )
         })}

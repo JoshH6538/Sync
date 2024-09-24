@@ -1,4 +1,5 @@
-import '../Styles/Home.css'
+import '../Styles/Home.css';
+import TopStats from '../Components/TopStats';
 import TopArtists from "../Components/TopArtists";
 import TopTracks from '../Components/TopTracks';
 import Spinner from '../Components/Spinner';
@@ -15,7 +16,7 @@ export default function Home({user,artists,tracks}: Props) {
         <h1>Establishing a community around <span>music.</span></h1>
         <h2>Welcome {user.name}</h2>
         { artists && artists.length > 0 ?
-            <TopArtists artists={artists}></TopArtists> : <Spinner></Spinner>
+            <TopStats stats={artists} title='Top Stats'></TopStats> : <Spinner></Spinner>
         }
         <p></p>
         { tracks && tracks.length > 0 ?

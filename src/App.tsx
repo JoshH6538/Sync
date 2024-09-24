@@ -11,42 +11,61 @@ import SpotifyCredentials from './Information/Credentials/SpotifyCredentials';
 import axios from 'axios';
 
 function App() {
+  // --------------------- STATES & VARIABLES -------------------
 
+  // Used from url in get request to Spotify
   const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
-
-  //state for setting token
+  //states for setting information from Spotify API
   const [token,setToken] = useState("");
+  const [artists, setArtists] = useState([]);
+  const [genres, setGenres] = useState<string[]>([]);
 
-  
+  const [displayName,setDisplayName] = useState("");
+  const [ID,setID] = useState("");
+  const [displayPicture, setDisplayPicture] = useState("");
+
+  let userInfo = {
+    name: displayName,
+    id: ID,
+    image: displayPicture
+  }
+
+  // -------------------- LOGIN / LOGOUT --------------------------
+
   //pass into nav bar to call onclick for login/logout button
   const handleLogin = () => {
     const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + SpotifyCredentials.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN+window.location.pathname+ '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
-    // window.location.href = '${SPOTIFY_AUTHORIZE_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL_AFTER_LOGIN}&scope=${SCOPES_URL_PARAM}&response_type=token&show_dialog=true';
     window.location.href = location;
   }
-
+  //Remove information upon logout
   const handleLogout = () => {
     setToken("");
     setArtists([]);
     setID("");
     setDisplayName("");
     setTracks([]);
+    //removes from local storage on logout
     window.localStorage.removeItem("token");
     window.localStorage.removeItem("expireTime");
   }
 
+  // checks if user is active
   const checkActivity = () => {
+    //checks if user logged in
     if(localStorage.getItem("token"))
     {
+      //then pulls expire time from local storage
+      //to see if current time is past expiration
       const expireTime = localStorage.getItem("expireTime");
-      if(expireTime && expireTime<String(Date.now()))
-      {
+      if(expireTime && expireTime<String(Date.now())) {
+        // if so logs out
         console.log("Logging out")
         handleLogout();
       }
     }
   }
 
+  // will replace expireTime with the current time plus 1 hour
   const updateExpire = () => {
     if(localStorage.getItem("token"))
     {
@@ -55,7 +74,7 @@ function App() {
     }
   }
 
-  //set interval for activity check
+  //set interval for how often to check is user is active
   useEffect(()=> {
     const interval = setInterval( () => {
       checkActivity();
@@ -80,11 +99,9 @@ function App() {
     }
   })
 
-  //use states to set variables
-  const [displayName,setDisplayName] = useState("");
-  const [ID,setID] = useState("");
-
-  //get data from api and set variables
+  // --------------------- GETTING INFO FROM SPOTIFY ---------------------
+  
+  //get user data from api and set variables
   let userProfile = async () => {
     
     if(!token || token==="" || ID.length>0) return;
@@ -96,27 +113,18 @@ function App() {
     }
   })
     console.log('get called')
-    // console.log(data)
+    console.log(data)
     setDisplayName(data["display_name"]);
     setID(data["id"]);
-    // console.log(ID);
+    setDisplayPicture(data["images"][1]);
+    // console.log("------------->",data["images"][1]);
     return data;
   }
-
-  //group variables
-  let userInfo = {
-    name: displayName,
-    id: ID
-  }
-
   
-
-  const [artists, setArtists] = useState([]);
-  const [genres, setGenres] = useState<string[]>([]);
   let topArtists = async () => {
     if(!token || token==="" || artists.length > 0) return;
     console.log("Filled?:",artists[0])
-    const {data} = await axios.get("https://api.spotify.com/v1/me/top/artists",{
+    const {data} = await axios.get("https://api.spotify.com/v1/me/top/artists?&limit=38",{
       //this is how you set the header, we set it by default upon authentication
     headers: {
       Authorization: `Bearer ${token}`
@@ -130,6 +138,7 @@ function App() {
     // console.log('###########################')
     data.items.map((artist:any) => {
       // console.log('\t artist:',artist.name,'->')
+      console.log(artist)
       artist.genres.map((genre: any) => {
         // console.log(genre)
         genreInfo.push(genre)
