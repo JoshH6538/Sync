@@ -1,16 +1,24 @@
-import Card from './Card'
 import '../Styles/TopStats.css'
 
+import Card from './Card'
+import Button from './Button';
+import StatCountButton from './StatCountButton';
+
 interface Props {
-    artists: any
+    artists: any,
+    changeCount: any
 }
 
-export default function TopArtists({artists}: Props) {
+
+export default function TopArtists({artists, changeCount}: Props) {
     let num=0;
+
   return (
     <div className='stats-container'>
         <div className='stats-header-container'>
             <h1 className='stats-header'>Top Artists</h1>
+            <StatCountButton onClick={changeCount}></StatCountButton>
+            {/* <Button onClick={() => {changeCount(35)}}>Change Count</Button> */}
         </div>
         <div className="grid">
         {artists.map((artist: any) => {

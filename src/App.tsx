@@ -18,7 +18,12 @@ function App() {
   //states for setting information from Spotify API
   const [token,setToken] = useState("");
   const [artists, setArtists] = useState([]);
+  const [artistCount, setArtistCount] = useState(0);
+  const [prevACount, setPrevACount] = useState(0);
   const [genres, setGenres] = useState<string[]>([]);
+
+  const [trackCount, setTrackCount] = useState(0);
+  const [prevTCount, setPrevTCount] = useState(0);
 
   const [displayName,setDisplayName] = useState("");
   const [ID,setID] = useState("");
@@ -105,14 +110,14 @@ function App() {
   let userProfile = async () => {
     
     if(!token || token==="" || ID.length>0) return;
-    console.log("Filled?:",displayName)
+    // console.log("Filled?:",displayName)
     const {data} = await axios.get("https://api.spotify.com/v1/me",{
       //this is how you set the header, we set it by default upon authentication
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
-    console.log('get called')
+    console.log('get called for user')
     console.log(data)
     setDisplayName(data["display_name"]);
     setID(data["id"]);
@@ -122,23 +127,27 @@ function App() {
   }
   
   let topArtists = async () => {
-    if(!token || token==="" || artists.length > 0) return;
-    console.log("Filled?:",artists[0])
-    const {data} = await axios.get("https://api.spotify.com/v1/me/top/artists?&limit=38",{
+    // console.log("ARTIST:",artistCount,'= ',prevACount,'?')
+    if(!token || token==="" || (artists.length>0 && artistCount===prevACount)) return;
+    // if(artist)
+    // console.log("Filled?:",artists[0])
+    let url="https://api.spotify.com/v1/me/top/artists";
+    if(artistCount>0)url+=`?&limit=${artistCount}`;
+    const {data} = await axios.get(url,{
       //this is how you set the header, we set it by default upon authentication
     headers: {
       Authorization: `Bearer ${token}`
     }
     });
-    console.log('get called')
-    console.log(data);
+    console.log('get called for artists')
+    // console.log(data);
     setArtists(data.items);
     //add genres to set
     let genreInfo:string[] = [];
     // console.log('###########################')
     data.items.map((artist:any) => {
       // console.log('\t artist:',artist.name,'->')
-      console.log(artist)
+      // console.log(artist)
       artist.genres.map((genre: any) => {
         // console.log(genre)
         genreInfo.push(genre)
@@ -148,18 +157,26 @@ function App() {
     setGenres(genreInfo)
     return data;
   }
+  async function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
   const [tracks, setTracks] = useState([]);
   let topTracks = async () => {
-    if(!token || token==="" || tracks.length > 0) return;
-    console.log('Filled track?:',tracks[0])
-    const {data} = await axios.get("https://api.spotify.com/v1/me/top/tracks",{
+    // console.log("TRACK:",trackCount,'= ',prevTCount,'?')
+    // console.log("sleeping")
+    // await sleep(10000);
+    if(!token || token==="" || (tracks.length>0 && trackCount===prevTCount)) return;
+    // console.log('Filled track?:',tracks[0])
+    let url = "https://api.spotify.com/v1/me/top/tracks";
+    if(trackCount>0)url+=`?&limit=${trackCount}`;
+    const {data} = await axios.get(url,{
       //this is how you set the header, we set it by default upon authentication
     headers: {
       Authorization: `Bearer ${token}`
     }
     });
-    console.log('get called')
+    console.log('get called for tracks')
     // console.log(data);
     setTracks(data.items);
     return data;
@@ -183,13 +200,13 @@ function App() {
     userProfile();
     topArtists();
     topTracks();
-    // console.log(location.pathname);
     setToken(token!);
+    // console.log(location.pathname);
     // axios.defaults.baseURL = 'https://api.spotify.com/v1';
     // axios.defaults.headers['Authorization'] = `Bearer ${token}`;
     // axios.defaults.headers['Content-Type'] = 'application/json';
-    
-  },[token, tracks]);
+    console.log("Exiting Use Effect")
+  },[token, artistCount, trackCount]);
 
 
 
@@ -204,12 +221,30 @@ function App() {
    })
    }, [])
     */
-
+   
+  const setStatCount = (count:number, setter:React.Dispatch<React.SetStateAction<number>>) =>{
+    // console.log("BUTTON CLICKED")
+    // console.log("current count state:",trackCount)
+    // console.log("new count:",count)
+    // console.log('========================')
+    if(count>0 && count <= 50) {
+      if(setter === setArtistCount) {
+        setPrevACount(artistCount);
+      }
+      else if (setter === setTrackCount) {
+        setPrevTCount(trackCount);
+      }
+      setter(count);
+    }
+  }
   // Defines different pages of the site
-  let page = <Home user={userInfo} artists={artists} tracks={tracks}/>
+  // let page = <Home user={userInfo} artists={artists} tracks={tracks}/>
+  let page = <Home user={userInfo} artists={artists} tracks={tracks} 
+  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount}/>
   switch(window.location.pathname) {
     case "/":
-      page = <Home user={userInfo} artists={artists} tracks={tracks}/>
+      page = <Home user={userInfo} artists={artists} tracks={tracks} 
+  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount}/>
       break
     case "/MusicMap":
       // if(genres.values.length>0)
@@ -219,7 +254,9 @@ function App() {
       page = <About/>
       break
     default:
-      page = <Home user={userInfo} artists={artists} tracks={tracks}/>
+      // 
+      page = <Home user={userInfo} artists={artists} tracks={tracks} 
+  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount}/>
       break
   }
 

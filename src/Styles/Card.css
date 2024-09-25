@@ -1,10 +1,10 @@
 .card{
     background-color: #34343400 !important;
     max-height: 25vw !important;
-    max-width: 25rem;
+    max-width: 25vw !important;
     min-height: 25vw !important;
     min-width: 33rem;
-    font-size: 1.25rem;
+    font-size: 1.5vmax;
     color: rgb(255, 255, 255);
     padding: 3%;
     padding-top: 0%;
@@ -43,6 +43,10 @@
     font-weight: bold;
 }
 
-@media screen {
+@media only screen and (max-width: 600px) {
+    
+}
+
+@media only screen and (min-width: 150vh){
     
 }

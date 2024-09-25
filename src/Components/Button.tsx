@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 
 interface Props {
-    children: ReactNode;
+    children?: ReactNode;
     color?: 'primary' | 'secondary' | 'dark';
-    onClick: ()=> void;
+    onClick: any
 }
 
 

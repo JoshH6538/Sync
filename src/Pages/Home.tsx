@@ -6,20 +6,33 @@ interface Props {
     user: any,
     artists: any,
     tracks: any,
+    artistCount: any,
+    trackCount: any,
+    updateStatCounts: any
+    // updateArtistCount: any,
+    // updateTracksCount: any
 }
 
-export default function Home({user,artists,tracks}: Props) {
+export default function Home({user,artists,tracks, artistCount, trackCount, updateStatCounts}: Props) {
+    const setArtistCount = (count:number) => {
+        console.log('click')
+        updateStatCounts(count,artistCount);
+    }
+    const setTrackCount = (count:number) => {
+        console.log('click')
+        updateStatCounts(count,trackCount);
+    }
     if(window.localStorage.getItem("token"))
     return(
     <div className="home-container">
         <h1>Establishing a community around <span>music.</span></h1>
         <h2>Welcome {user.name}</h2>
         { artists && artists.length > 0 ?
-            <TopArtists artists={artists}></TopArtists> : <Spinner></Spinner>
+            <TopArtists artists={artists} changeCount={setArtistCount} ></TopArtists> : <Spinner></Spinner>
         }
         <p></p>
         { tracks && tracks.length > 0 ?
-            <TopTracks tracks={tracks}></TopTracks> : <p></p>
+            <TopTracks tracks={tracks} changeCount={setTrackCount}></TopTracks> : <p></p>
         }
     </div>);
     else
