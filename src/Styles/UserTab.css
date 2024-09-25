@@ -3,7 +3,7 @@
     padding: 5%;
     border-radius: 1rem;
     padding-top: 0rem;
-    padding-bottom: 1rem;
+    padding-bottom: 5rem;
     display: flex;
     /* text-align: right; */
     border: solid rgb(30, 30, 30);
@@ -12,13 +12,17 @@
 
 .user-tab-container img{
     position: relative;
-    left: 5%;
-    min-height: 35vh;
+    min-height: 35vmin;
+    min-width: 35vmin;
     object-fit: cover;
     border-radius: 1rem;
+    padding: 0px;
+    margin: 0px;
 }
 .user-tab-container h1 {
+    
     position: relative;
     top: 20px;
     left: 5%;
+    font-size: 5vmin;
 }
