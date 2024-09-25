@@ -1,6 +1,7 @@
 import '../Styles/Home.css'
 import TopArtists from "../Components/TopArtists";
 import TopTracks from '../Components/TopTracks';
+import UserTab from '../Components/UserTab';
 import Spinner from '../Components/Spinner';
 interface Props {
     user: any,
@@ -26,7 +27,8 @@ export default function Home({user,artists,tracks, artistCount, trackCount, upda
     return(
     <div className="home-container">
         <h1>Establishing a community around <span>music.</span></h1>
-        <h2>Welcome {user.name}</h2>
+        <UserTab username={user.name} image={user.image}></UserTab>
+        {/* <h2>Welcome {user.name}</h2> */}
         { artists && artists.length > 0 ?
             <TopArtists artists={artists} changeCount={setArtistCount} ></TopArtists> : <Spinner></Spinner>
         }

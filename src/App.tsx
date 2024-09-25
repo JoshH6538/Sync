@@ -121,7 +121,7 @@ function App() {
     console.log(data)
     setDisplayName(data["display_name"]);
     setID(data["id"]);
-    setDisplayPicture(data["images"][1]);
+    setDisplayPicture(data["images"][1].url);
     // console.log("------------->",data["images"][1]);
     return data;
   }

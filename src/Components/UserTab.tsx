@@ -1,7 +1,15 @@
-import React from 'react'
+import '../Styles/UserTab.css'
 
-export default function UserTab() {
+interface Props {
+  username: string,
+  image: string
+}
+
+export default function UserTab({username, image}: Props) {
   return (
-    <div>UserTab</div>
+    <div className='user-tab-container'>
+      <img src={image} alt="none"></img>
+      <h1>Welcome, {username}!</h1>
+    </div>
   )
 }
