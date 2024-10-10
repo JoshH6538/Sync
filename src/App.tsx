@@ -20,10 +20,17 @@ function App() {
   const [artists, setArtists] = useState([]);
   const [artistCount, setArtistCount] = useState(0);
   const [prevACount, setPrevACount] = useState(0);
+  const [artistTime, setArtistTime] = useState("NONE");
+
+
+
   const [genres, setGenres] = useState<string[]>([]);
 
   const [trackCount, setTrackCount] = useState(0);
   const [prevTCount, setPrevTCount] = useState(0);
+  const [prevATime, setPrevATime] = useState("NONE");
+  const [prevTTime, setPrevTTime] = useState("NONE");
+  const [trackTime, setTrackTime] = useState("NONE");
 
   const [displayName,setDisplayName] = useState("");
   const [ID,setID] = useState("");
@@ -133,6 +140,7 @@ function App() {
     // console.log("Filled?:",artists[0])
     let url="https://api.spotify.com/v1/me/top/artists";
     if(artistCount>0)url+=`?&limit=${artistCount}`;
+    if(artistTime!="NONE")url+=`&time_range=${artistTime}`
     const {data} = await axios.get(url,{
       //this is how you set the header, we set it by default upon authentication
     headers: {
@@ -170,6 +178,7 @@ function App() {
     // console.log('Filled track?:',tracks[0])
     let url = "https://api.spotify.com/v1/me/top/tracks";
     if(trackCount>0)url+=`?&limit=${trackCount}`;
+    if(trackTime!="NONE")url+=`&time_range=${trackTime}`
     const {data} = await axios.get(url,{
       //this is how you set the header, we set it by default upon authentication
     headers: {
@@ -206,7 +215,7 @@ function App() {
     // axios.defaults.headers['Authorization'] = `Bearer ${token}`;
     // axios.defaults.headers['Content-Type'] = 'application/json';
     console.log("Exiting Use Effect")
-  },[token, artistCount, trackCount]);
+  },[token, artistCount, trackCount, artistTime, trackTime]);
 
 
 
@@ -237,14 +246,28 @@ function App() {
       setter(count);
     }
   }
+
+  const setStatTime = (time:string, setter:React.Dispatch<React.SetStateAction<string>>) => {
+    if(time === 'short_term' || time === 'medium_term' || time === 'long_term') {
+      if(setter === setArtistTime) {
+        setPrevATime(artistTime);
+      }
+      else if (setter === setTrackTime) {
+        setPrevATime(trackTime);
+      }
+      setter(time);
+    }
+  }
   // Defines different pages of the site
   // let page = <Home user={userInfo} artists={artists} tracks={tracks}/>
   let page = <Home user={userInfo} artists={artists} tracks={tracks} 
-  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount}/>
+  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
+  updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
   switch(window.location.pathname) {
     case "/":
       page = <Home user={userInfo} artists={artists} tracks={tracks} 
-  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount}/>
+      artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
+      updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
       break
     case "/MusicMap":
       // if(genres.values.length>0)
@@ -256,7 +279,8 @@ function App() {
     default:
       // 
       page = <Home user={userInfo} artists={artists} tracks={tracks} 
-  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount}/>
+      artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
+      updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
       break
   }
 

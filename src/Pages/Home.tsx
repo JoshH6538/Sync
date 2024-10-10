@@ -9,12 +9,15 @@ interface Props {
     tracks: any,
     artistCount: any,
     trackCount: any,
-    updateStatCounts: any
+    updateStatCounts: any,
+    updateStatTimes: any,
+    artistTime: any,
+    trackTime: any
     // updateArtistCount: any,
     // updateTracksCount: any
 }
 
-export default function Home({user,artists,tracks, artistCount, trackCount, updateStatCounts}: Props) {
+export default function Home({user,artists,tracks, artistCount, trackCount, updateStatCounts, updateStatTimes, artistTime, trackTime}: Props) {
     const setArtistCount = (count:number) => {
         console.log('click')
         updateStatCounts(count,artistCount);
@@ -23,6 +26,14 @@ export default function Home({user,artists,tracks, artistCount, trackCount, upda
         console.log('click')
         updateStatCounts(count,trackCount);
     }
+    const setArtistTime = (time:string) => {
+        console.log('click')
+        updateStatTimes(time,artistTime);
+    }
+    const setTrackTime = (time:string) => {
+        console.log('click')
+        updateStatTimes(time,trackTime);
+    }
     if(window.localStorage.getItem("token"))
     return(
     <div className="home-container">
@@ -30,11 +41,11 @@ export default function Home({user,artists,tracks, artistCount, trackCount, upda
         <UserTab username={user.name} image={user.image}></UserTab>
         {/* <h2>Welcome {user.name}</h2> */}
         { artists && artists.length > 0 ?
-            <TopArtists artists={artists} changeCount={setArtistCount} ></TopArtists> : <Spinner></Spinner>
+            <TopArtists artists={artists} changeCount={setArtistCount} changeTime={setArtistTime} ></TopArtists> : <Spinner></Spinner>
         }
         <p></p>
         { tracks && tracks.length > 0 ?
-            <TopTracks tracks={tracks} changeCount={setTrackCount}></TopTracks> : <p></p>
+            <TopTracks tracks={tracks} changeCount={setTrackCount} changeTime={setTrackTime}></TopTracks> : <p></p>
         }
     </div>);
     else

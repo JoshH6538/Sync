@@ -3,14 +3,16 @@ import '../Styles/TopStats.css'
 import Card from './Card'
 import Button from './Button';
 import StatCountButton from './StatCountButton';
+import StatTimeButton from './StatTimeButton';
 
 interface Props {
     artists: any,
-    changeCount: any
+    changeCount: any,
+    changeTime: any
 }
 
 
-export default function TopArtists({artists, changeCount}: Props) {
+export default function TopArtists({artists, changeCount, changeTime}: Props) {
     let num=0;
 
   return (
@@ -18,6 +20,7 @@ export default function TopArtists({artists, changeCount}: Props) {
         <div className='stats-header-container'>
             <h1 className='stats-header'>Top Artists</h1>
             <StatCountButton onClick={changeCount}></StatCountButton>
+            <StatTimeButton onClick={changeTime}></StatTimeButton>
             {/* <Button onClick={() => {changeCount(35)}}>Change Count</Button> */}
         </div>
         <div className="grid">
