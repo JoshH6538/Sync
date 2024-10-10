@@ -45,11 +45,12 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
 }
-
-@media only screen and (min-width: 200vh){
+/* 
+@media only screen and (min-width: 300vh){
     .grid {
         grid-template-columns: repeat(10, 1fr);
         grid-gap: 0em 0em;
-        /* grid-column: ; */
+        grid-column: ; 
     }
-}
+} 
+*/
