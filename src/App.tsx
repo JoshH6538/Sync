@@ -135,11 +135,12 @@ function App() {
   
   let topArtists = async () => {
     // console.log("ARTIST:",artistCount,'= ',prevACount,'?')
-    if(!token || token==="" || (artists.length>0 && artistCount===prevACount)) return;
+    if(!token || token==="" || (artists.length>0 && artistCount===prevACount && artistTime===prevATime)) return;
     // if(artist)
     // console.log("Filled?:",artists[0])
     let url="https://api.spotify.com/v1/me/top/artists";
-    if(artistCount>0)url+=`?&limit=${artistCount}`;
+    if((artistCount>0 || artistTime!="NONE") && url.length>0 && url[url.length - 1]!='?')url+='?';
+    if(artistCount>0)url+=`&limit=${artistCount}`;
     if(artistTime!="NONE")url+=`&time_range=${artistTime}`
     const {data} = await axios.get(url,{
       //this is how you set the header, we set it by default upon authentication
@@ -174,10 +175,11 @@ function App() {
     // console.log("TRACK:",trackCount,'= ',prevTCount,'?')
     // console.log("sleeping")
     // await sleep(10000);
-    if(!token || token==="" || (tracks.length>0 && trackCount===prevTCount)) return;
+    if(!token || token==="" || (tracks.length>0 && trackCount===prevTCount && trackTime===prevTTime)) return;
     // console.log('Filled track?:',tracks[0])
     let url = "https://api.spotify.com/v1/me/top/tracks";
-    if(trackCount>0)url+=`?&limit=${trackCount}`;
+    if((trackCount>0 || trackTime!="NONE") && url.length>0 && url[url.length - 1]!='?')url+='?';
+    if(trackCount>0)url+=`&limit=${trackCount}`;
     if(trackTime!="NONE")url+=`&time_range=${trackTime}`
     const {data} = await axios.get(url,{
       //this is how you set the header, we set it by default upon authentication
