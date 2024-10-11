@@ -5,8 +5,7 @@
     color: white;
     font-family:Georgia, 'Times New Roman', Times, serif;
     padding: 3%;
-    padding-top: 5%;
-    justify-content: center !important;
-    justify-items: center !important;
-    align-items: center !important;
+    padding-top: 10%;
+    display: flexbox;
+    justify-content: space-between;
 }

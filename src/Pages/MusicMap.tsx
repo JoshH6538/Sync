@@ -8,9 +8,10 @@ import Subgenres from "../Subgenres";
 import LocalEvent from "../LocalEventClass";
 import LocalVenue from "../LocalVenueClass";
 import '../Styles/MusicMap.css'
+import EventList from "../Components/EventList";
 
 interface Props {
-    genres: string[]
+    genres: string[],
 }
 
 export default function MusicMap({genres}: Props) {
@@ -119,6 +120,8 @@ export default function MusicMap({genres}: Props) {
     <div className="music-map-container">
         <h1>Music Map</h1>
         {eventMap(events)}
+        <EventList events={events}></EventList>
+
     </div>);
     else
     return(

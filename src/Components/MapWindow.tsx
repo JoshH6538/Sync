@@ -77,10 +77,10 @@ let Map = ({mapLat,mapLong, events}: Props) => {
             </Marker>
         ))}
     </MapContainer>
-    <br/><h1>Venues</h1><br/>
+    {/* <br/><h1>Venues</h1><br/>
     {events.map((event:LocalEvent) => (
             <p key={event.id}>{event.name}:<br />{event.venue.name} {event.venue.latitude},{event.venue.longitude}</p>
-        ))}
+        ))} */}
     </div>
     );
 }

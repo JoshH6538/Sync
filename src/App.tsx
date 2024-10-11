@@ -255,7 +255,7 @@ function App() {
         setPrevATime(artistTime);
       }
       else if (setter === setTrackTime) {
-        setPrevATime(trackTime);
+        setPrevTTime(trackTime);
       }
       setter(time);
     }
