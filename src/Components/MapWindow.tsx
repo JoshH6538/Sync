@@ -71,7 +71,7 @@ let Map = ({mapLat,mapLong, events}: Props) => {
             <Marker key={event.id} position={[event.venue.latitude,event.venue.longitude]}>
                 <Popup className='pop-up'>
                     {event.name}<br />
-                    <img className='marker-img' alt='None' src={event.img}></img>
+                    <img className='marker-img' alt='None' src={event.image}></img>
                     <br/>{event.venue.name}, {event.distance} miles away
                 </Popup>
             </Marker>
