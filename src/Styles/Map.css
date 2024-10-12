@@ -1,14 +1,16 @@
 /*---------------- LEAFLET MAP -------------------------*/
 .map-container {
     display: block !important;
+    width: 60%;
 }
 
 .leaflet-container {
     z-index: 99;
     display: block !important;
-    height: 30vh;
+    height: 30%;
     width: 100%;
-    border-radius: 5%;
+    border-radius: 1%;
+    border: solid rgba(98, 53, 36, 0.879);
   }
   
   .grid{

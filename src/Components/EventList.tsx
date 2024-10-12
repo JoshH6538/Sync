@@ -12,11 +12,11 @@ export default function EventList({events}: Props) {
     let num=0;
 
   return (
-    <div className='eventlist-container'>
-        <div className='eventlist-header-container'>
-            <h1 className='eventlist-header'>Top Events</h1>
+    <div id='el1' className='eventlist-container'>
+        <div id='el2'className='eventlist-header-container'>
+            <h1 id='el3' className='eventlist-header'>Top Events</h1>
         </div>
-        <div className="grid">
+        <div id='el4' className="grid">
         {events.map((event: any) => {
             return(
                 <div key={event.id}>
