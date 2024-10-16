@@ -2,7 +2,6 @@ import '../Styles/EventList.css'
 
 import EventCard from './EventCard';
 import LocalEvent from '../LocalEventClass'
-
 interface Props {
     events: LocalEvent[]
 }
@@ -10,7 +9,7 @@ interface Props {
 
 export default function EventList({events}: Props) {
     let num=0;
-
+    console.log(events)
   return (
     <div id='el1' className='eventlist-container'>
         <div id='el2'className='eventlist-header-container'>
@@ -20,8 +19,9 @@ export default function EventList({events}: Props) {
         {events.map((event: any) => {
             return(
                 <div key={event.id}>
-                    {event.image.length > 0 ? <EventCard text={event.name} img={event.image} altnum={num++}></EventCard>
-                    : <EventCard text={event.name} img='src\Images\placeholder.jpg' altnum={num++}></EventCard>}
+
+                    {event.image.length > 0 ? <EventCard text={event.name} img={event.image} altnum={num++} url={event.url}></EventCard>
+                    : <EventCard text={event.name} img='src\Images\placeholder.jpg' altnum={num++} url={'http://localhost:5173/MusicMap'}></EventCard>}
                 </div>
             )
         })}

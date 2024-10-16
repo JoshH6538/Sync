@@ -4,13 +4,15 @@ import '../Styles/EventCard.css'
 interface Props {
     text: ReactNode,
     img: string,
-    altnum: number
+    altnum: number,
+    url: string
 }
 
-export default function EventCard({text, img, altnum}: Props) {
+export default function EventCard({text, img, altnum, url}: Props) {
   const alt = "card"+{altnum};
   return (
     <>
+    <a href={url}>
         <div id='ec1' className="card border-0">
         <div id='ec2' className="row g-0">
             <div id='ec3' className="col-md-4">
@@ -23,6 +25,7 @@ export default function EventCard({text, img, altnum}: Props) {
             </div>
         </div>
         </div>
+    </a>
     </>
   )
 }

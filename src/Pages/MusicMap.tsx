@@ -69,12 +69,13 @@ export default function MusicMap({genres}: Props) {
         const {data} = await axios.get(URL,{
         //this is how you set the header, we set it by default upon authentication
         });
-        console.log(data);
+        console.log("HERE:",data);
         let eventList:LocalEvent[] = [];
         data._embedded.events.map((event:any) => {
             // console.log(event.name,event.images[0],event._embedded.venues[0])
             let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
-            let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance);
+            let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance, event.url);
+            console.log('URL:',event.url)
             eventList.push(currentEvent);
         })
         setEvents(eventList);
