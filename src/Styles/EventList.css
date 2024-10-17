@@ -6,6 +6,8 @@
     border: solid rgb(30, 30, 30);
     text-align: left; 
     width: 40%;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    height: max-content;
 }
 
 #el4 {
@@ -16,10 +18,11 @@
     width: 100% !important;
     box-sizing: border-box;
     gap: 0px !important;
+    overflow-y: hidden !important;
 }
 #el2 {
     display: flex;
-    height: 5rem;
+    height: max-content;
     background-color: #703434;
     align-items: center !important;
     text-align: center;

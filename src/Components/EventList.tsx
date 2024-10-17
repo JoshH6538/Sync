@@ -25,6 +25,7 @@ export default function EventList({events}: Props) {
                 </div>
             )
         })}
+        <p></p>
         </div>
     </div>
   )
