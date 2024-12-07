@@ -56,9 +56,6 @@ export default function MusicMap({genres}: Props) {
     let localEvents = async () => {
         if((latitude === 0 && longitude === 0) || genreIds.length<1) return;
         if(fetched) return;
-        // console.log(latitude,longitude,precision)
-        // let ghash = Geohash.encode(latitude,longitude,precision);
-        // console.log(ghash)
         let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}&latlong=${latitude},${longitude}&radius=100&unit=miles&locale=*&sort=distance,asc`;
         if(genreIds.length>0)
         {

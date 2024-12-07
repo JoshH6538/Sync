@@ -17,31 +17,32 @@ function App() {
   const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
   //states for setting information from Spotify API
   const [token,setToken] = useState("");
+  
   const [artists, setArtists] = useState([]);
   const [artistCount, setArtistCount] = useState(0);
-  const [prevACount, setPrevACount] = useState(0);
   const [artistTime, setArtistTime] = useState("NONE");
-
-
+  const [prevACount, setPrevACount] = useState(0);
+  const [prevATime, setPrevATime] = useState("NONE");
 
   const [genres, setGenres] = useState<string[]>([]);
 
+  const [tracks, setTracks] = useState([]);
   const [trackCount, setTrackCount] = useState(0);
-  const [prevTCount, setPrevTCount] = useState(0);
-  const [prevATime, setPrevATime] = useState("NONE");
-  const [prevTTime, setPrevTTime] = useState("NONE");
   const [trackTime, setTrackTime] = useState("NONE");
+  const [prevTCount, setPrevTCount] = useState(0);
+  const [prevTTime, setPrevTTime] = useState("NONE");
 
   const [displayName,setDisplayName] = useState("");
   const [ID,setID] = useState("");
   const [displayPicture, setDisplayPicture] = useState("");
-
+  
   let userInfo = {
     name: displayName,
     id: ID,
     image: displayPicture
   }
-
+  
+  console.log(typeof(userInfo))
   // -------------------- LOGIN / LOGOUT --------------------------
 
   //pass into nav bar to call onclick for login/logout button
@@ -132,12 +133,11 @@ function App() {
     // console.log("------------->",data["images"][1]);
     return data;
   }
+
   
   let topArtists = async () => {
     // console.log("ARTIST:",artistCount,'= ',prevACount,'?')
     if(!token || token==="" || (artists.length>0 && artistCount===prevACount && artistTime===prevATime)) return;
-    // if(artist)
-    // console.log("Filled?:",artists[0])
     let url="https://api.spotify.com/v1/me/top/artists";
     if((artistCount>0 || artistTime!="NONE") && url.length>0 && url[url.length - 1]!='?')url+='?';
     if(artistCount>0)url+=`&limit=${artistCount}`;
@@ -151,6 +151,7 @@ function App() {
     console.log('get called for artists')
     // console.log(data);
     setArtists(data.items);
+    console.log("TYPE:::::",typeof(artists))
     //add genres to set
     let genreInfo:string[] = [];
     // console.log('###########################')
@@ -170,7 +171,7 @@ function App() {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-  const [tracks, setTracks] = useState([]);
+  
   let topTracks = async () => {
     // console.log("TRACK:",trackCount,'= ',prevTCount,'?')
     // console.log("sleeping")
@@ -192,8 +193,6 @@ function App() {
     setTracks(data.items);
     return data;
   }
-
-  
 
   //if url contains the hash, pull token from hash and set the token in state
   useEffect(() => {

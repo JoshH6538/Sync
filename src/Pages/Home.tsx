@@ -4,9 +4,9 @@ import TopTracks from '../Components/TopTracks';
 import UserTab from '../Components/UserTab';
 import Spinner from '../Components/Spinner';
 interface Props {
-    user: any,
-    artists: any,
-    tracks: any,
+    user: object,
+    artists: object,
+    tracks: object,
     artistCount: any,
     trackCount: any,
     updateStatCounts: any,
