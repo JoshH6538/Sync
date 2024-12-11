@@ -1,13 +1,20 @@
+import '../Styles/About.css';
+
 export default function About() {
     return (
-        <div className="about-container" style={{ padding: '2rem', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
-            <h1 style={{ fontSize: '2.5rem', color: '#333' }}>About Me</h1>
-            <p style={{ fontSize: '1.2rem', color: '#555', lineHeight: '1.6', marginTop: '1rem' }}>
-                Sync is a website that takes in Spotify user analytics and suggests nearby events accordingly.
-            </p>
-            <p style={{ fontSize: '1.2rem', color: '#555', lineHeight: '1.6', marginTop: '1rem' }}>
-                Sync relies on Spotify and Ticketmaster APIs, as well as Leaflet!
-            </p>
+        <div className="about-page-container">
+            <div className="about-container">
+                <img className="about-img" src='src\Images\AboutBack.jpg'></img>
+                <h1>About Sync</h1>
+                <p>
+                    Sync is an innovative platform designed to enhance your music experience. By analyzing your Spotify user analytics,
+                    Sync curates personalized suggestions for nearby events that align with your music taste.
+                </p>
+                <p>
+                    Discover concerts, festivals, and gatherings tailored to your preferences, and stay connected with the music
+                    community around you. Sync bridges the gap between your favorite tunes and unforgettable live experiences.
+                </p>
+            </div>
         </div>
     );
 }
