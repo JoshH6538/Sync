@@ -113,7 +113,7 @@ export default function MusicMap({genres}: Props) {
 
     
 
-    if(window.localStorage.getItem("token"))
+    if(sessionStorage.getItem("token"))
     return(
     <><h1 id='page-title'>Music Map</h1>
     <div className="music-map-container">

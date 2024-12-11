@@ -58,18 +58,18 @@ function App() {
     setDisplayName("");
     setTracks([]);
     //removes from local storage on logout
-    window.localStorage.removeItem("token");
-    window.localStorage.removeItem("expireTime");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("expireTime");
   }
 
   // checks if user is active
   const checkActivity = () => {
     //checks if user logged in
-    if(localStorage.getItem("token"))
+    if(sessionStorage.getItem("token"))
     {
       //then pulls expire time from local storage
       //to see if current time is past expiration
-      const expireTime = localStorage.getItem("expireTime");
+      const expireTime = sessionStorage.getItem("expireTime");
       if(expireTime && expireTime<String(Date.now())) {
         // if so logs out
         console.log("Logging out")
@@ -80,10 +80,10 @@ function App() {
 
   // will replace expireTime with the current time plus 1 hour
   const updateExpire = () => {
-    if(localStorage.getItem("token"))
+    if(sessionStorage.getItem("token"))
     {
       const newTime = Date.now()+600000;
-      window.localStorage.setItem("expireTime",String(newTime));
+      sessionStorage.setItem("expireTime",String(newTime));
     }
   }
 
@@ -197,12 +197,12 @@ function App() {
   //if url contains the hash, pull token from hash and set the token in state
   useEffect(() => {
     const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
+    let token = sessionStorage.getItem("token");
 
     if(!token && hash) {
       token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token"))?.split("=")[1]!;
       
-      window.localStorage.setItem("token",token);
+      sessionStorage.setItem("token",token);
       updateExpire();
       window.location.hash = "";
     }

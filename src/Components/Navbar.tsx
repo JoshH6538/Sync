@@ -8,7 +8,7 @@ interface Props {
 
 export default function Navbar({ login, logout}: Props) {
 
-    const token = window.localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     const displayButton = () => {
         if(!token)

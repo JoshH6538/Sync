@@ -34,7 +34,7 @@ export default function Home({user,artists,tracks, artistCount, trackCount, upda
         console.log('click')
         updateStatTimes(time,trackTime);
     }
-    if(window.localStorage.getItem("token"))
+    if(sessionStorage.getItem("token"))
     return(
     <div className="home-container">
         <h1>Establishing a community around <span>music.</span></h1>
