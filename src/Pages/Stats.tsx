@@ -1,4 +1,4 @@
-import '../Styles/Home.css'
+import '../Styles/Stats.css'
 import TopArtists from "../Components/TopArtists";
 import TopTracks from '../Components/TopTracks';
 import UserTab from '../Components/UserTab';
@@ -17,7 +17,7 @@ interface Props {
     // updateTracksCount: any
 }
 
-export default function Home({user,artists,tracks, artistCount, trackCount, updateStatCounts, updateStatTimes, artistTime, trackTime}: Props) {
+export default function Stats({user,artists,tracks, artistCount, trackCount, updateStatCounts, updateStatTimes, artistTime, trackTime}: Props) {
     const setArtistCount = (count:number) => {
         console.log('click')
         updateStatCounts(count,artistCount);
@@ -36,7 +36,7 @@ export default function Home({user,artists,tracks, artistCount, trackCount, upda
     }
     if(sessionStorage.getItem("token"))
     return(
-    <div className="home-container">
+    <div className="stats-container">
         <h1>Establishing a community around <span>music.</span></h1>
         <UserTab username={user.name} image={user.image}></UserTab>
         {/* <h2>Welcome {user.name}</h2> */}
@@ -50,7 +50,7 @@ export default function Home({user,artists,tracks, artistCount, trackCount, upda
     </div>);
     else
     return(
-        <div className="home-container">
+        <div className="stats-container">
             <div className='Filler'>
                 <h1>Please login.</h1>
             </div>

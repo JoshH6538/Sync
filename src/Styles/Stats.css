@@ -1,4 +1,4 @@
-.home-container {
+.stats-container {
     background-color: #1f2129;
     height: 100%;
     width: 100vw;
@@ -10,11 +10,11 @@
     justify-items: center;
   }
   
-  .home-container h1 {
+  .stats-container h1 {
     margin: 5%;
   }
   
-  .home-container h1 span {
+  .stats-container h1 span {
     color:#9c3b3b;
   }
   

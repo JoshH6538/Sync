@@ -34,7 +34,7 @@ export default function Navbar({ login, logout}: Props) {
                 <img src="src\Images\TabIcon.png" alt='icon1'></img>
             </div>
             <ul>
-                <li><a href="/">Home</a></li>
+                <li><a href="/">Stats</a></li>
                 <li><a href="/MusicMap">Music Map</a></li>
                 <li><a href="/About">About</a></li>
                 {displayButton()}

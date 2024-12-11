@@ -1,9 +1,9 @@
 // Style Imports
 import './Styles/App.css'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import Navbar from "./Components/Navbar";
-import Home from "./Pages/Home"
+import Stats from "./Pages/Stats"
 import MusicMap from "./Pages/MusicMap";
 import About from "./Pages/About";
 import Constants from "./Information/Constants";
@@ -260,13 +260,13 @@ function App() {
     }
   }
   // Defines different pages of the site
-  // let page = <Home user={userInfo} artists={artists} tracks={tracks}/>
-  let page = <Home user={userInfo} artists={artists} tracks={tracks} 
+  // let page = <Stats user={userInfo} artists={artists} tracks={tracks}/>
+  let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
   artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
   switch(window.location.pathname) {
     case "/":
-      page = <Home user={userInfo} artists={artists} tracks={tracks} 
+      page = <Stats user={userInfo} artists={artists} tracks={tracks} 
       artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
       updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
       break
@@ -279,7 +279,7 @@ function App() {
       break
     default:
       // 
-      page = <Home user={userInfo} artists={artists} tracks={tracks} 
+      page = <Stats user={userInfo} artists={artists} tracks={tracks} 
       artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
       updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
       break

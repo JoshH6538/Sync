@@ -2,6 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com/leaflet@1.9.4/dist/leaflet.js; style-src 'self' https://unpkg.com; object-src 'none';"> -->
+
+
     <link rel="icon" href="/src/Images/TabIcon.png" />
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -12,17 +15,18 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
 
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
     <style type="text/css">
       html, body { 
           height:100%
       }
-      </style>
+    </style>
+    <script type="module" src="/src/main.tsx"></script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- Test moving up into head for CSP -->
+    <!-- <script type="module" src="/src/main.tsx"></script> -->
   </body>
 </html>
