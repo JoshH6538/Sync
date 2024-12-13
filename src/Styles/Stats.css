@@ -1,29 +1,29 @@
-.stats-container {
-    background-color: #1f2129 !important;
+.stats-page-container {
+    background-color: #1e2534 !important;
     height: 100%;
     width: 100vw;
     color: white;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    padding: 3%;
+    padding: 0%;
     padding-top: 5%;
     justify-content: center;
     justify-items: center;
-    margin-top: 50px;
+    margin-top: 10px;
   }
   
-  .stats-container h1 {
-    margin: 5%;
-  }
+.stats-page-container h1 {
+  margin: 5%;
+}
+
+.stats-page-container h1 span {
+  color:#9c3b3b;
+}
   
-  .stats-container h1 span {
-    color:#9c3b3b;
-  }
-  
-  .see {
-    position:fixed;
-    top:100px;
-    margin: 50px !important;
-  }
+.see {
+  position:fixed;
+  top:100px;
+  margin: 50px !important;
+}
 .Filler {
   height: 100vh;
   width: 100vw;

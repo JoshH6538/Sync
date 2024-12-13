@@ -37,7 +37,7 @@ export default function Stats({user,artists,tracks, artistCount, trackCount, upd
     }
     if(sessionStorage.getItem("token"))
     return(
-    <div className="stats-container">
+    <div className="stats-page-container">
         <h1>Establishing a community around <span>music.</span></h1>
         <UserTab username={user.name} image={user.image}></UserTab>
         {/* <h2>Welcome {user.name}</h2> */}

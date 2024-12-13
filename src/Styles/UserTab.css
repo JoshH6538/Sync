@@ -2,7 +2,6 @@
     background-color: #2f313b;
     padding: 5%;
     border-radius: 1rem;
-    padding-top: 0rem;
     padding-bottom: 5rem;
     display: flex;
     /* text-align: right; */
@@ -16,8 +15,8 @@
     min-width: 35vmin;
     object-fit: cover;
     border-radius: 1rem;
-    padding: 0px;
-    margin: 0px;
+    -webkit-filter: drop-shadow(0px 5px 2px #1b1b1b);
+    filter: drop-shadow(-2px 6px 2px #1b1b1b);
 }
 .user-tab-container h1 {
     
