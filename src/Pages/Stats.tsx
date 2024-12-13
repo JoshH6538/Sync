@@ -3,6 +3,7 @@ import TopArtists from "../Components/TopArtists";
 import TopTracks from '../Components/TopTracks';
 import UserTab from '../Components/UserTab';
 import Spinner from '../Components/Spinner';
+import LoginPrompt from '../Components/LoginPrompt';
 interface Props {
     user: object,
     artists: object,
@@ -52,7 +53,8 @@ export default function Stats({user,artists,tracks, artistCount, trackCount, upd
     return(
         <div className="stats-container">
             <div className='Filler'>
-                <h1>Please login.</h1>
+                {/* <h1>Please login.</h1> */}
+
             </div>
         </div>);
 }

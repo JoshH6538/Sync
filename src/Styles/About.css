@@ -4,7 +4,6 @@ body {
     background-position: 50% 50%;
     z-index: -1;
     color: white;
-    overflow: hidden;
 }
 .about-container {
     margin-top: 20vh !important;
@@ -61,4 +60,8 @@ body {
     border: 0px solid ;
     border-radius: 1vmax;
     box-shadow: 0 4px 6px rgba(39, 39, 39, 0.5);
+    max-width: 100% !important;
+    max-height: 60vh !important;
+    margin-top: 5% !important;
+    margin-bottom: .25% !important;
 }

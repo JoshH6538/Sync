@@ -6,6 +6,7 @@ import Navbar from "./Components/Navbar";
 import Stats from "./Pages/Stats"
 import MusicMap from "./Pages/MusicMap";
 import About from "./Pages/About";
+import PromptPage from './Pages/PromptPage';
 import Constants from "./Information/Constants";
 import SpotifyCredentials from './Information/Credentials/SpotifyCredentials';
 import axios from 'axios';
@@ -265,7 +266,7 @@ function App() {
   artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
   switch(window.location.pathname) {
-    case "/":
+    case "/Stats":
       page = <Stats user={userInfo} artists={artists} tracks={tracks} 
       artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
       updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
@@ -278,13 +279,13 @@ function App() {
       page = <About/>
       break
     default:
-      // 
-      page = <Stats user={userInfo} artists={artists} tracks={tracks} 
-      artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
-      updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
+      page = <About/>
       break
   }
-
+  if(window.location.pathname == '/' || window.location.pathname == '/About') {
+    console.log("NO PROMPT")
+  }
+  else if(!sessionStorage.getItem("token")) page = <PromptPage login={handleLogin} logout={handleLogout}></PromptPage>
   return(
   <div>
     <Navbar login={handleLogin} logout={handleLogout}></Navbar>
