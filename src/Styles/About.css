@@ -2,7 +2,7 @@ body {
     background-image: url('../Images/AboutBack.jpg');
     background-size: cover;
     background-position: 50% 50%;
-    z-index: -1;
+
     color: white;
 }
 .about-container {

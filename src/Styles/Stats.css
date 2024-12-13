@@ -1,5 +1,5 @@
 .stats-container {
-    background-color: #1f2129;
+    background-color: #1f2129 !important;
     height: 100%;
     width: 100vw;
     color: white;
@@ -8,6 +8,7 @@
     padding-top: 5%;
     justify-content: center;
     justify-items: center;
+    margin-top: 50px;
   }
   
   .stats-container h1 {
