@@ -51,7 +51,7 @@ export default function Stats({user,artists,tracks, artistCount, trackCount, upd
     </div>);
     else
     return(
-        <div className="stats-container">
+        <div className="stats-page-container">
             <div className='Filler'>
                 {/* <h1>Please login.</h1> */}
 

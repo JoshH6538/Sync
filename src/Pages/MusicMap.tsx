@@ -27,11 +27,11 @@ export default function MusicMap({genres}: Props) {
     const[events, setEvents] = useState<LocalEvent[]>([])
 
     let getGenreIds = () => {
-        // console.log(genres)
+        console.log("GENRES------------------------------------\n")
         let leftovers:string[] = [];
         let ids:string[] = [];
         genres.forEach((genre) => {
-            // console.log("Genre:",genre)
+            // console.log("Genre: ",genre, "in subgenre?:", genre in Subgenres)
             if(genre in Subgenres)
             {
                 // console.log(genre)
@@ -42,15 +42,20 @@ export default function MusicMap({genres}: Props) {
                 leftovers.push(genre);
             }
         })
-        leftovers.forEach((genre) => {
-            // console.log("Genre:",genre)
-            if(genre in Genres)
-            {
-                // console.log(genre)
-                ids.push(Genres[genre]);
-            }
-        })
-        setGenreIds(ids)
+        console.log("SUBGENRES:", ids);
+
+        //Adds regular genres to api request V
+
+        // leftovers.forEach((genre) => {
+        //     // console.log("Genre:",genre)
+        //     if(genre in Genres)
+        //     {
+        //         // console.log(genre)
+        //         ids.push(Genres[genre]);
+        //     }
+        // })
+        // console.log("IDS------------------------------------\n",genres)
+        setGenreIds(ids);
         return ids;
     }
     let localEvents = async () => {
@@ -60,7 +65,7 @@ export default function MusicMap({genres}: Props) {
         if(genreIds.length>0)
         {
             console.log("specific")
-            URL+="&genreId="+genreIds.join(',');
+            URL+="&subGenreId="+genreIds.join(',');
             console.log(URL)
         }
         const {data} = await axios.get(URL,{
@@ -68,12 +73,17 @@ export default function MusicMap({genres}: Props) {
         });
         console.log("HERE:",data);
         let eventList:LocalEvent[] = [];
+        // let count = 0;
         data._embedded.events.map((event:any) => {
+            // console.log(count)
+            // if(count<1) {
             // console.log(event.name,event.images[0],event._embedded.venues[0])
-            let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
-            let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance, event.url);
-            console.log('URL:',event.url)
-            eventList.push(currentEvent);
+                let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
+                let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance, event.url);
+                console.log('URL:',event.url)
+                eventList.push(currentEvent);
+            // }
+            // count++
         })
         setEvents(eventList);
         // console.log("EVENT LIST: ",eventList);
