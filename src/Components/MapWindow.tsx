@@ -1,6 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMapEvents, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
-import { LatLng, LeafletEvent, map } from 'leaflet';
+import { LatLng} from 'leaflet';
+import L from 'leaflet';
 import {useState,useEffect } from 'react';
 import LocalVenue from '../LocalVenueClass';
 import LocalEvent from '../LocalEventClass';
@@ -16,39 +17,61 @@ import '../Styles/Map.css'
 //     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 // });
 interface Props {
-    mapLat: number;
-    mapLong: number;
-    events: LocalEvent[]
+  mapLat: number;
+  mapLong: number;
+  events: LocalEvent[];
+  selectedCoordinates?: [number, number] | null;
+}
+
+function LocationMarker() {
+  const [position, setPosition] = useState<LatLng>(new LatLng(0,0))
+  const userIcon = L.icon({
+    iconUrl: ('../Images/TempUserIcon.png'),
+    iconAnchor: undefined,
+    popupAnchor: undefined,
+    shadowUrl: undefined,
+    shadowSize: undefined,
+    shadowAnchor: undefined,
+    iconSize: new L.Point(25, 15),
+    className: 'leaflet-div-icon'
+  });
+  const map = useMapEvents({
+    click() {
+      map.locate()
+    },
+    locationfound(e) {
+      setPosition(e.latlng)
+      map.flyTo(e.latlng, 10)
+    },
+  })
+
+  return position === null ? null : (
+    <Marker position={position}>
+      <Popup>You are here</Popup>
+    </Marker>
+  )
+}
+function Refresh({mapLat,mapLong}: Props) {
+  const map = useMap();
+  map.setView([mapLat, mapLong], map.getZoom());
+  return null;
 }
 
 
-
-let Map = ({mapLat,mapLong, events}: Props) => {
-
-    function LocationMarker() {
-        const [position, setPosition] = useState<LatLng>(new LatLng(0,0))
-        const map = useMapEvents({
-          click() {
-            map.locate()
-          },
-          locationfound(e) {
-            setPosition(e.latlng)
-            map.flyTo(e.latlng, 10)
-          },
-        })
-      
-        return position === null ? null : (
-          <Marker position={position}>
-            <Popup>You are here</Popup>
-          </Marker>
-        )
+let Map = ({mapLat,mapLong, events, selectedCoordinates}: Props) => {
+  function CenterOnEvent({ coordinates }: { coordinates: [number, number] | null }) {
+    const map = useMap();
+  
+    useEffect(() => {
+      if (coordinates) {
+        map.flyTo(coordinates, 13, { duration: 1 }); // Adjust zoom level if needed
       }
-
-    function Refresh({mapLat,mapLong}: Props) {
-        const map = useMap()
-          map.setView([mapLat, mapLong], map.getZoom())
-        return null
-      }
+    }, [coordinates, map]);
+  
+    return null;
+  }
+  
+    
     // useEffect(() => {
     //     eventMarkers(events);
     // })
@@ -67,6 +90,7 @@ let Map = ({mapLat,mapLong, events}: Props) => {
             You are <br /> HERE
             </Popup>
         </Marker> */}
+        {selectedCoordinates && <CenterOnEvent coordinates={selectedCoordinates} />}
         {events.map((event:LocalEvent) => (
             <Marker key={event.id} position={[event.venue.latitude,event.venue.longitude]}>
                 <Popup className='pop-up'>

@@ -43,7 +43,7 @@ function App() {
     image: displayPicture
   }
   
-  console.log(typeof(userInfo))
+  // console.log(typeof(userInfo))
   // -------------------- LOGIN / LOGOUT --------------------------
 
   //pass into nav bar to call onclick for login/logout button
@@ -152,7 +152,6 @@ function App() {
     console.log('get called for artists')
     // console.log(data);
     setArtists(data.items);
-    console.log("TYPE:::::",typeof(artists))
     //add genres to set
     let genreInfo:string[] = [];
     // console.log('###########################')

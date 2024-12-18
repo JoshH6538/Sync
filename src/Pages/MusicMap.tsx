@@ -27,7 +27,7 @@ export default function MusicMap({genres}: Props) {
     const[events, setEvents] = useState<LocalEvent[]>([])
 
     let getGenreIds = () => {
-        console.log("GENRES------------------------------------\n")
+        // console.log("GENRES------------------------------------\n")
         let leftovers:string[] = [];
         let ids:string[] = [];
         genres.forEach((genre) => {
@@ -42,7 +42,7 @@ export default function MusicMap({genres}: Props) {
                 leftovers.push(genre);
             }
         })
-        console.log("SUBGENRES:", ids);
+        // console.log("SUBGENRES:", ids);
 
         //Adds regular genres to api request V
 
@@ -64,23 +64,22 @@ export default function MusicMap({genres}: Props) {
         let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}&latlong=${latitude},${longitude}&radius=100&unit=miles&locale=*&sort=distance,asc`;
         if(genreIds.length>0)
         {
-            console.log("specific")
             URL+="&subGenreId="+genreIds.join(',');
             console.log(URL)
         }
         const {data} = await axios.get(URL,{
         //this is how you set the header, we set it by default upon authentication
         });
-        console.log("HERE:",data);
+        // console.log("HERE:",data);
         let eventList:LocalEvent[] = [];
         // let count = 0;
         data._embedded.events.map((event:any) => {
             // console.log(count)
             // if(count<1) {
-            // console.log(event.name,event.images[0],event._embedded.venues[0])
+            // console.log(event.name,event.url)
                 let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
                 let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance, event.url);
-                console.log('URL:',event.url)
+                // console.log('URL:',event.url)
                 eventList.push(currentEvent);
             // }
             // count++
@@ -93,14 +92,26 @@ export default function MusicMap({genres}: Props) {
         return events;
     }
 
+
+    const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
+
+    const handleEventSelect = (lat: number, lng: number) => {
+        setSelectedCoordinates([lat, lng]);
+    };
+
     let eventMap = (events:any) => {
 
         return(
             <>
-                <MapWindow mapLat={latitude} mapLong={longitude} events={events}></MapWindow>
+                <MapWindow mapLat={latitude} mapLong={longitude} events={events} selectedCoordinates={selectedCoordinates}></MapWindow>
             </>
         );
     }
+
+
+
+
+    
 
     React.useEffect(() =>{
     navigator.geolocation.getCurrentPosition((position) => {
@@ -117,7 +128,7 @@ export default function MusicMap({genres}: Props) {
 
     useEffect(() => {
         localEvents();
-        console.log("EvEnTs:",events)
+        // console.log("EvEnTs:",events)
     },[latitude,longitude,precision,genreIds,events])
 
 
@@ -128,7 +139,7 @@ export default function MusicMap({genres}: Props) {
     <><h1 id='page-title'>Music Map</h1>
     <div className="music-map-container">
         {eventMap(events)}
-        <EventList events={events}></EventList>
+        <EventList events={events} onEventSelect={handleEventSelect}></EventList>
 
     </div></>);
     else
