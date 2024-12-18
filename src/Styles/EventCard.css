@@ -1,7 +1,7 @@
 
 #event-card-border {
     background-color: #de181800 !important;
-    min-height: 5vh !important;
+    min-height: 7.5vmax !important;
     min-width: 100% !important;
     max-width: 100% !important;
     font-size: 12px;
@@ -14,30 +14,39 @@
     border-color: rgba(0, 20, 38, 0.33) !important;
     border-style: solid !important;
 }
+#event-card-border:hover, #event-card-border:focus {
+    border-color: #93B1BF !important;
+}
 #event-card-row{
     width: 100%;
     margin: 0 !important;
     padding: 0 !important;
     line-height: 0;
+    display: flex !important;
+    flex-wrap: nowrap;
+    overflow-x: hidden;
 }
 #event-card-col1 {
     display: flex;
     justify-content: center; /* Centers horizontally */
     align-items: center; /* Centers vertically */
-    width: 40%;
+    width: auto;
     padding: 0px;
+    flex-grow: 1;
+    max-width: 40%;
 }
 #event-card-col2 {
     margin: 0 !important;
     padding: 0 !important;
-    width: 60%;
+    width: auto;
     display: flex;
     flex-direction: column;
     justify-content: center; /* Vertically centers the content */
     height: 100%; /* Ensures the container takes up the full height */
+    flex-grow: 2;
 }
 #event-card-col1, #event-card-col2 {
-    height: 5vh !important;
+    height: 7.5vmax !important;
     overflow: hidden;
 }
 
@@ -53,6 +62,9 @@
     display: block;
     margin: 0 auto; /* Optional: centers horizontally */
 
+}
+#event-card-img:hover, #event-card-img:focus {
+    cursor: pointer;
 }
 
 #event-card-name-container {
@@ -79,6 +91,7 @@
 }
 .small-name {
     font-size: 12px;
+    font-weight: normal !important;
 }
 .large-name {
     font-size: 10px;
@@ -106,9 +119,11 @@
     text-align: center; /* Centers the text horizontally */
     font-size: 10px;
 }
+
 .details a:hover {
     color: rgb(170, 170, 170);
 }
+
 .details a:active {
     font-weight: bold;
 }
@@ -125,5 +140,22 @@
     #event-card-name-container p {
         white-space: normal;
         height: 100%;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .small-name {
+        font-size: 16px;
+        font-weight: normal !important;
+    }
+    .large-name {
+        font-size: 12px;
+    }
+    
+}
+
+@media only screen and (min-width: 1200px) {
+    #event-card-img {
+        object-fit:cover;
     }
 }

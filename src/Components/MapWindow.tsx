@@ -18,15 +18,17 @@ interface Props {
   selectedCoordinates?: [number, number] | null,
   selectedID?: string | null
 }
+// ICONS
+// Defines User ICON
+const userIcon = L.icon({
+  iconUrl: userIconUrl,
+  iconSize: [25, 25],
+  className: 'leaflet-user-icon'
+});
 
 function LocationMarker() {
   const [position, setPosition] = useState<LatLng>(new LatLng(0,0))
-  // Defines User ICON
-  const userIcon = L.icon({
-    iconUrl: userIconUrl,
-    iconSize: [25, 25],
-    className: 'leaflet-user-icon'
-  });
+  
   // MAP FUNCTIONS
   const map = useMapEvents({
     // On map click, go to user
