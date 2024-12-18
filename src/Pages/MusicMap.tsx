@@ -26,25 +26,20 @@ export default function MusicMap({genres}: Props) {
     //list of event objects
     const[events, setEvents] = useState<LocalEvent[]>([])
 
+    // Retrieves genre ids from hashmap and sets genreids state
     let getGenreIds = () => {
-        // console.log("GENRES------------------------------------\n")
         let leftovers:string[] = [];
         let ids:string[] = [];
         genres.forEach((genre) => {
-            // console.log("Genre: ",genre, "in subgenre?:", genre in Subgenres)
-            if(genre in Subgenres)
-            {
-                // console.log(genre)
+            if(genre in Subgenres) {
                 ids.push(Subgenres[genre]);
             }
-            else
-            {
+            else {
                 leftovers.push(genre);
             }
         })
-        // console.log("SUBGENRES:", ids);
 
-        //Adds regular genres to api request V
+        // //Adds regular genres to api request V
 
         // leftovers.forEach((genre) => {
         //     // console.log("Genre:",genre)
@@ -54,97 +49,88 @@ export default function MusicMap({genres}: Props) {
         //         ids.push(Genres[genre]);
         //     }
         // })
-        // console.log("IDS------------------------------------\n",genres)
+
         setGenreIds(ids);
         return ids;
     }
+
+    // Makes API request to Ticketmaster and populates eventList w/ event objects
     let localEvents = async () => {
+        // Base Case: Return if user position has not been retrieved
         if((latitude === 0 && longitude === 0) || genreIds.length<1) return;
+        // Base Case: Return if request has already been made
         if(fetched) return;
+        // URL used for get request
         let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}&latlong=${latitude},${longitude}&radius=100&unit=miles&locale=*&sort=distance,asc`;
-        if(genreIds.length>0)
-        {
+        // adds subgenre query to url
+        if(genreIds.length>0) {
             URL+="&subGenreId="+genreIds.join(',');
-            console.log(URL)
         }
+        // GET REQUEST
         const {data} = await axios.get(URL,{
         //this is how you set the header, we set it by default upon authentication
         });
-        // console.log("HERE:",data);
         let eventList:LocalEvent[] = [];
-        // let count = 0;
+        // Creates event object w/ venue object from data for each entry
         data._embedded.events.map((event:any) => {
-            // console.log(count)
-            // if(count<1) {
-            // console.log(event.name,event.url)
-                let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
-                let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance, event.url);
-                // console.log('URL:',event.url)
-                eventList.push(currentEvent);
-            // }
-            // count++
+            let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
+            let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance, event.url);
+            eventList.push(currentEvent);
         })
         setEvents(eventList);
-        // console.log("EVENT LIST: ",eventList);
-        // console.log(events)
-        //add genres to set
         setFetched(true);
         return events;
     }
 
-
+    // Used to show active event
     const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
+    const [selectedID, setSelectedID] = useState<string | null>(null);
 
-    const handleEventSelect = (lat: number, lng: number) => {
+    // Sets new coords on event click
+    const handleEventSelect = (lat: number, lng: number, id:string) => {
         setSelectedCoordinates([lat, lng]);
+        setSelectedID(id);
     };
 
     let eventMap = (events:any) => {
-
         return(
             <>
-                <MapWindow mapLat={latitude} mapLong={longitude} events={events} selectedCoordinates={selectedCoordinates}></MapWindow>
+                <MapWindow mapLat={latitude} mapLong={longitude} events={events} selectedCoordinates={selectedCoordinates} selectedID={selectedID}></MapWindow>
             </>
         );
     }
-
-
-
-
     
-
-    React.useEffect(() =>{
-    navigator.geolocation.getCurrentPosition((position) => {
-        setlatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
-        setPrecision(position.coords.accuracy);
-        // console.log({genres})
-    })
+    React.useEffect(() => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            setlatitude(position.coords.latitude);
+            setLongitude(position.coords.longitude);
+            setPrecision(position.coords.accuracy);
+        });
     })
 
+    // Updates genreids on change to genres
     useEffect(() =>{
         getGenreIds();
     },[genres])
 
+    // Updates events when any info is changed
     useEffect(() => {
         localEvents();
-        // console.log("EvEnTs:",events)
-    },[latitude,longitude,precision,genreIds,events])
-
-
-    
+    }, [latitude,longitude,precision,genreIds,events]);
 
     if(sessionStorage.getItem("token"))
     return(
-    <><h1 id='page-title'>Music Map</h1>
-    <div className="music-map-container">
-        {eventMap(events)}
-        <EventList events={events} onEventSelect={handleEventSelect}></EventList>
-
-    </div></>);
-    else
-    return(
+        <>
+        <h1 id='page-title'>Music Map</h1>
+        <div className="music-map-container">
+            {eventMap(events)}
+            <EventList events={events} onEventSelect={handleEventSelect}></EventList>
+        </div>
+        </>
+    );
+    else return(
         <div className="music-map-container">
             <h1>Please login.</h1>
-        </div>);
+        </div>
+    );
 }

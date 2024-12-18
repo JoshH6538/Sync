@@ -4,7 +4,7 @@ import EventCard from './EventCard';
 import LocalEvent from '../LocalEventClass'
 interface Props {
     events: LocalEvent[],
-    onEventSelect: (lat: number, lng: number) => void
+    onEventSelect: (lat: number, lng: number, id: string) => void
 }
 
 
@@ -21,7 +21,7 @@ export default function EventList({events, onEventSelect}: Props) {
             return(
                 <div key={event.id}>
 
-                    {event.image.length > 0 ? <EventCard text={event.name} img={event.image} altnum={num++} url={event.url} onClick={() => onEventSelect(event.venue.latitude, event.venue.longitude)}></EventCard>
+                    {event.image.length > 0 ? <EventCard text={event.name} img={event.image} altnum={num++} url={event.url} onClick={() => onEventSelect(event.venue.latitude, event.venue.longitude, event.id)}></EventCard>
                     : <EventCard text={event.name} img='src\Images\placeholder.jpg' altnum={num++} url={'http://localhost:5173/MusicMap'} onClick={()=>{return null;}}></EventCard>}
                 </div>
             )
