@@ -1,0 +1,80 @@
+#event-settings-container {
+    background-color: #585C6E;
+    display: flex;
+    justify-content: center; /* Centers the form horizontally */
+    align-items: center; /* Centers the form vertically */
+    padding:  5px 20px;
+}
+#event-settings-form {
+    display: flex;
+    align-items: center; /* Aligns items horizontally */
+}
+
+#radius-settings {
+    display: flex;
+    align-items: center; /* Aligns label, input, and select on the same line */
+    margin-right: 10px; /* Adds space between the input/select and the button */
+}
+  
+#radius-settings label {
+    font-size: 18px;
+    font-weight:500;
+    color: white;
+    margin-right: 5px; /* Adds space between the label and the input */
+}
+#radius, #radiusUnit {
+    border: solid 0px;
+    border-radius: 3px;
+    margin: 0px 3px;
+    font-weight:500;
+    background-color: #e7ecee;
+    color: rgb(54, 54, 54);
+    
+}
+#radius {
+    padding-left: 10px;
+    max-width: 30%;
+}
+#radius::placeholder {
+
+}
+#radiusUnit {
+    padding-left: 5px;
+    font-size: 17.5px;
+}
+
+#event-settings-submit {
+    border: solid 0px;
+    border-radius: 3px;
+    margin-left: 10px;
+    background-color: #642D2D;
+    color: rgb(220, 220, 220);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight:500;
+}
+
+#event-settings-submit:hover{
+    color: white; /* Change text color on hover */
+    animation: expand .4s ease-in-out;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+#event-settings-submit:not(:hover) {
+    animation: restore .4s ease-in-out;
+    animation-iteration-count: 1;
+    animation-fill-mode: backwards;
+}
+#event-settings-submit:disabled {
+    background-color: #3c3c3c;
+    cursor: default;
+}
+#event-settings-submit:hover{
+    color: rgb(220, 220, 220);
+    animation: none;
+}
+#event-settings-submit:not(:hover){
+    animation: none;
+}

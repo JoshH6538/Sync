@@ -22,7 +22,7 @@
 .lg-button{
     padding: 12px 25px;
     background-color: #642D2D;
-    color: #fff;
+    color: rgb(220, 220, 220);
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -30,7 +30,7 @@
 }
 .lg-button:hover {
     color: white; /* Change text color on hover */
-    animation: grow .4s ease-in-out;
+    animation: expand .4s ease-in-out;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
