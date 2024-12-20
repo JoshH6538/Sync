@@ -1,15 +1,29 @@
+body{
+    background-image: none !important;
+    background-color: rgb(55, 52, 52);
+}
 #event-settings-container {
+    color: white;
+    justify-content: space-between;
     background-color: #585C6E;
     display: flex;
     justify-content: center; /* Centers the form horizontally */
-    align-items: center; /* Centers the form vertically */
-    padding:  5px 20px;
+    padding: 5px 20px;
+    border-radius: .5rem;
+    border: solid rgb(45, 45, 45) 2px;
+    margin: 20px;
+    margin-left: 3%;
+    -webkit-filter: drop-shadow(0px 5px 2px #1b1b1b);
+    filter: drop-shadow(0px 4px 2px #1b1b1b);
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
 #event-settings-form {
+    width: 100%;
     display: flex;
     align-items: center; /* Aligns items horizontally */
+    justify-content: center;
 }
-
 #radius-settings {
     display: flex;
     align-items: center; /* Aligns label, input, and select on the same line */
@@ -29,14 +43,10 @@
     font-weight:500;
     background-color: #e7ecee;
     color: rgb(54, 54, 54);
-    
 }
 #radius {
     padding-left: 10px;
     max-width: 30%;
-}
-#radius::placeholder {
-
 }
 #radiusUnit {
     padding-left: 5px;
@@ -46,7 +56,7 @@
 #event-settings-submit {
     border: solid 0px;
     border-radius: 3px;
-    margin-left: 10px;
+    margin-left: 0%;
     background-color: #642D2D;
     color: rgb(220, 220, 220);
     border: none;
@@ -55,7 +65,6 @@
     transition: background-color 0.3s;
     font-weight:500;
 }
-
 #event-settings-submit:hover{
     color: white; /* Change text color on hover */
     animation: expand .4s ease-in-out;
@@ -71,10 +80,10 @@
     background-color: #3c3c3c;
     cursor: default;
 }
-#event-settings-submit:hover{
+#event-settings-submit:disabled :hover{
     color: rgb(220, 220, 220);
     animation: none;
 }
-#event-settings-submit:not(:hover){
+#event-settings-submit:disabled :not(:hover){
     animation: none;
 }

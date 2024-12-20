@@ -221,7 +221,8 @@ export default function MusicMap({genres}: Props) {
     if(sessionStorage.getItem("token"))
     return(
         <>
-        <h1 id='page-title'>Music Map</h1>
+        {/* <h1 id='page-title'>Music Map</h1> */}
+        <h2>Event Settings</h2>
         <EventSettings/>
         <div className="music-map-container">
             {eventMap(events)}
