@@ -10,8 +10,6 @@ import LocalVenue from "../LocalVenueClass";
 import '../Styles/MusicMap.css'
 import EventList from "../Components/EventList";
 import EventSettings from "../Components/EventSettings";
-import { useDebounce } from "../Scripts/useDebounce";
-import { NONAME } from "dns";
 
 interface Props {
     genres: string[],

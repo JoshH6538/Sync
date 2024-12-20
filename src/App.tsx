@@ -3,9 +3,9 @@ import './Styles/App.css'
 
 import { useEffect, useState } from 'react';
 import Navbar from "./Components/Navbar";
+import About from "./Pages/About";
 import Stats from "./Pages/Stats"
 import MusicMap from "./Pages/MusicMap";
-import About from "./Pages/About";
 import PromptPage from './Pages/PromptPage';
 import Constants from "./Information/Constants";
 import SpotifyCredentials from './Information/Credentials/SpotifyCredentials';

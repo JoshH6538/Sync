@@ -1,3 +1,10 @@
+body {
+    background-image: none !important;
+    background-size: cover;
+    background-position: 50% 50%;
+    color: white;
+    background-color: rgb(55, 52, 52) !important;
+}
 #page-title {
     padding-top: 9vh;
     padding-left: 5vh;
