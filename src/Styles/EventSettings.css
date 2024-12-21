@@ -80,10 +80,10 @@ body{
     background-color: #3c3c3c;
     cursor: default;
 }
-#event-settings-submit:disabled :hover{
-    color: rgb(220, 220, 220);
+#event-settings-submit:disabled:hover{
+    color: rgb(220, 220, 220) !important;
     animation: none;
 }
-#event-settings-submit:disabled :not(:hover){
-    animation: none;
+#event-settings-submit:disabled:not(:hover){
+    animation: none !important;
 }
