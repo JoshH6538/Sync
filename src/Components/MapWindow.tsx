@@ -5,7 +5,7 @@ import L from 'leaflet';
 import {useState, useEffect, useRef } from 'react';
 import LocalVenue from '../LocalVenueClass';
 import LocalEvent from '../LocalEventClass';
-import userIconUrl from '../Images/TempUserIcon.png';
+import userIconUrl from '../../public/assets/Images/TempUserIcon.png';
 import '../Styles/Map.css'
 
 interface Props {
