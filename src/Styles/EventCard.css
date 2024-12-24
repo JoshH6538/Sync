@@ -1,3 +1,4 @@
+
 #event-card-border {
     background-color: #de181800 !important;
     min-height: 7.5vmax !important;
@@ -13,7 +14,6 @@
     border-color: rgba(0, 20, 38, 0.33) !important;
     border-style: solid !important;
 }
-
 #event-card-border:hover, #event-card-border:focus {
     border-color: #93B1BF !important;
 }
