@@ -24,19 +24,18 @@ body{
     align-items: center; /* Aligns items horizontally */
     justify-content: center;
 }
-#radius-settings {
+#radius-settings, #sort-setting {
     display: flex;
     align-items: center; /* Aligns label, input, and select on the same line */
     margin-right: 10px; /* Adds space between the input/select and the button */
 }
-  
-#radius-settings label {
+.settings-label {
     font-size: 18px;
     font-weight:500;
     color: white;
     margin-right: 5px; /* Adds space between the label and the input */
 }
-#radius, #radiusUnit {
+#radius, .select-setting {
     border: solid 0px;
     border-radius: 3px;
     margin: 0px 3px;
@@ -48,7 +47,7 @@ body{
     padding-left: 10px;
     max-width: 30%;
 }
-#radiusUnit {
+.select-setting {
     padding-left: 5px;
     font-size: 17.5px;
 }

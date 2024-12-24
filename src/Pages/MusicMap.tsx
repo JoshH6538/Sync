@@ -10,6 +10,7 @@ import LocalVenue from "../LocalVenueClass";
 import '../Styles/MusicMap.css'
 import EventList from "../Components/EventList";
 import EventSettings from "../Components/EventSettings";
+import SortOptions from "../SortOptions";
 
 interface Props {
     genres: string[],
@@ -29,6 +30,8 @@ export default function MusicMap({genres}: Props) {
     //event settings for user to change
     const[radius, setRadius] = useState(0);
     const[radiusUnit, setRadiusUnit] = useState('');
+    const[sortObject, setSortObject] = useState('');
+    const[sortOrder, setSortOrder] = useState('');
 
     // Retrieves genre ids from hashmap and sets genreids state
     let getGenreIds = () => {
@@ -74,7 +77,10 @@ export default function MusicMap({genres}: Props) {
         if(radiusUnit && (radiusUnit==='miles' || radiusUnit=='km') ) URL+= `&unit=${radiusUnit}`;
         // else { console.log("INVALID UNITS"); return;}
         else URL+= `&unit=miles`;
-        URL+= `&locale=*&sort=distance,asc`;
+        if(sortObject && sortOrder && SortOptions.has(sortObject) && SortOptions.has(sortOrder))
+            URL+=`&sort=${sortObject},${sortOrder}`;
+        else URL += `&sort=distance,asc`;
+        URL+= `&locale=*`;
         // adds subgenre query to url
         if(genreIds.length>0) {
             URL+="&subGenreId="+genreIds.join(',');
@@ -128,10 +134,14 @@ export default function MusicMap({genres}: Props) {
     interface FormDataValues {
         radius: number;
         unit: string;
+        sortObject: string;
+        sortOrder: string;
       }
     let prevFormData:FormDataValues = {
         radius: -1,
-        unit: 'NONE'
+        unit: 'NONE',
+        sortObject: 'NONE',
+        sortOrder: 'None'
     };
 
     let isListenerAttached = false;
@@ -149,18 +159,28 @@ export default function MusicMap({genres}: Props) {
 
                 const radiusEl = document.getElementById("radius") as HTMLInputElement;
                 const unitEl = document.getElementById("radiusUnit") as HTMLInputElement;
-                if (radiusEl && unitEl) {
+                const sObjectEl = document.getElementById("sortObject") as HTMLInputElement;
+                const sOrderEl = document.getElementById("sortOrder") as HTMLInputElement;
+                if (radiusEl && unitEl && sObjectEl && sOrderEl) {
                     const formData:FormDataValues = {
                         radius: Number(radiusEl.value),
-                        unit: unitEl.value
+                        unit: unitEl.value,
+                        sortObject: sObjectEl.value,
+                        sortOrder: sOrderEl.value
                     }
                     let newForm = false;
-                    if(formData['radius']!==prevFormData['radius'] || formData['unit']!==prevFormData['unit']) newForm=true;
+                    if(formData['radius']!==prevFormData['radius'] || formData['unit']!==prevFormData['unit']
+                        || formData['sortObject']!==prevFormData['sortObject'] || formData['sortOrder']!==prevFormData['sortOrder']) newForm=true;
                     if(newForm){
                         console.log("RADIUS:", radiusEl.value);
                         setRadius(radiusEl.value);
                         console.log("UNIT:", unitEl.value);
                         setRadiusUnit(unitEl.value);
+                        console.log("OBJECT:", sObjectEl.value);
+                        setSortObject(sObjectEl.value);
+                        console.log("ORDER:", sOrderEl.value);
+                        setSortOrder(sOrderEl.value);
+                        
                         prevFormData = formData;
                     }
                     else {
@@ -206,7 +226,7 @@ export default function MusicMap({genres}: Props) {
 
     useEffect(() => {
         setFetched(false);
-    }, [radius, radiusUnit]);
+    }, [radius, radiusUnit, sortObject, sortOrder]);
 
     useEffect(() => {
         if (!fetched) {
