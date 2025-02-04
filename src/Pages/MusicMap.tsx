@@ -173,7 +173,7 @@ export default function MusicMap({genres}: Props) {
                         || formData['sortObject']!==prevFormData['sortObject'] || formData['sortOrder']!==prevFormData['sortOrder']) newForm=true;
                     if(newForm){
                         console.log("RADIUS:", radiusEl.value);
-                        setRadius(radiusEl.value);
+                        setRadius(Number(radiusEl.value));
                         console.log("UNIT:", unitEl.value);
                         setRadiusUnit(unitEl.value);
                         console.log("OBJECT:", sObjectEl.value);
