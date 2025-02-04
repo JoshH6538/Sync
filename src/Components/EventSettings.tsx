@@ -6,7 +6,7 @@ export default function EventSettings() {
         <form id='event-settings-form' >
             <div id='radius-settings'>
                 <label className='settings-label'>Radius</label>
-                <input type='number' placeholder=' 10 - 1000' id='radius' step="10"></input>
+                <input type='number' placeholder=' 10 - 1000' id='radius' step="1"></input>
                 <select id='radiusUnit' className='select-setting'>
                     <option value="miles">Miles</option>
                     <option value="km">km</option>
