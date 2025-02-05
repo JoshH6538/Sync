@@ -1,7 +1,6 @@
 import '../Styles/TopStats.css'
 
 import Card from './Card'
-import Button from './Button';
 import StatCountButton from './StatCountButton';
 import StatTimeButton from './StatTimeButton';
 

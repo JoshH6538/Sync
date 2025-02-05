@@ -167,15 +167,9 @@ function App() {
     setGenres(genreInfo)
     return data;
   }
-  async function sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
-  
   let topTracks = async () => {
     // console.log("TRACK:",trackCount,'= ',prevTCount,'?')
-    // console.log("sleeping")
-    // await sleep(10000);
     if(!token || token==="" || (tracks.length>0 && trackCount===prevTCount && trackTime===prevTTime)) return;
     // console.log('Filled track?:',tracks[0])
     let url = "https://api.spotify.com/v1/me/top/tracks";

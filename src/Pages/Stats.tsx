@@ -3,17 +3,29 @@ import TopArtists from "../Components/TopArtists";
 import TopTracks from '../Components/TopTracks';
 import UserTab from '../Components/UserTab';
 import Spinner from '../Components/Spinner';
-import LoginPrompt from '../Components/LoginPrompt';
+
+interface User {
+    name: string,
+    image: string
+}
+
+interface Artist {
+    length: number
+}
+interface Track {
+    length: number
+}
+
 interface Props {
-    user: object,
-    artists: object,
-    tracks: object,
+    user: User,
+    artists: Artist[],
+    tracks: Track[],
     artistCount: any,
     trackCount: any,
-    updateStatCounts: any,
-    updateStatTimes: any,
-    artistTime: any,
-    trackTime: any
+    updateStatCounts: (count: number, type:React.Dispatch<React.SetStateAction<number>>) => void,
+    updateStatTimes: (time: string, type:React.Dispatch<React.SetStateAction<string>>) => void,
+    artistTime: React.Dispatch<React.SetStateAction<string>>,
+    trackTime: React.Dispatch<React.SetStateAction<string>>
     // updateArtistCount: any,
     // updateTracksCount: any
 }
