@@ -1,7 +1,6 @@
 import '../Styles/TopStats.css'
 
 import Card from './Card'
-import Button from './Button'
 import StatCountButton from './StatCountButton'
 import StatTimeButton from './StatTimeButton'
 
@@ -16,7 +15,7 @@ export default function TopTracks({tracks, changeCount, changeTime}: Props) {
   return (
     <div className='stats-container'>
          <div className='stats-header-container'>
-            <h1 className='stats-header'>Top Tracks</h1>
+            <h1 className='stats-header'>Top Tracks |</h1>
             <StatCountButton onClick={changeCount}></StatCountButton>
             <StatTimeButton onClick={changeTime}></StatTimeButton>
             {/* <Button onClick={() => {changeCount(35)}}>Change Count</Button> */}

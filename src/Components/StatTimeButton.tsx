@@ -1,3 +1,4 @@
+import '../Styles/TriButton.css';
 interface Props {
     color?: 'primary' | 'secondary' | 'dark' | 'danger';
     onClick: any
@@ -6,10 +7,13 @@ interface Props {
 
 const StatTimeButton = ({color = 'danger',onClick}: Props) => {
     return (
-        <div className="btn-group" role="group" aria-label="Basic example">
-            <button type="button" className={"btn btn-"+color} onClick={()=>{onClick('short_term')}}>1 Month</button>
-            <button type="button" className={"btn btn-"+color} onClick={()=>{onClick('medium_term')}}>6 Months</button>
-            <button type="button" className={"btn btn-"+color} onClick={()=>{onClick('long_term')}}>1 Year</button>
+        <div className="count-container">
+            <h3>Range</h3>
+            <div className="btn-group tri-button" role="group" aria-label="Basic example">
+                <button type="button" className={"btn time-btn btn-"+color} onClick={()=>{onClick('short_term')}}>1 Month</button>
+                <button type="button" className={"btn time-btn btn-"+color}  onClick={()=>{onClick('medium_term')}}>6 Months</button>
+                <button type="button" className={"btn time-btn btn-"+color}  onClick={()=>{onClick('long_term')}}>1 Year</button>
+            </div>
         </div>
   )
 }

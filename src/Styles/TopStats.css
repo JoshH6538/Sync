@@ -23,7 +23,7 @@
     margin: 0px !important;
     padding: 0px !important;
     padding-right: 2% !important;
-    padding-left: 8% !important;
+    padding-left: 2% !important;
     width: 100%;
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
@@ -37,7 +37,8 @@
 
 .stats-header{
     margin: 0px !important;
-    width: 100%;
+    margin-left: 0px;
+    padding-right: 2%;
 }
 
 @media only screen and (max-width: 600px) {

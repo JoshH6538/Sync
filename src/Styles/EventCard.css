@@ -1,92 +1,161 @@
 
-#ec1 {
+#event-card-border {
     background-color: #de181800 !important;
-    max-height: 5vmax !important;
-    min-height: 5vmax !important;
+    min-height: 7.5vmax !important;
     min-width: 100% !important;
     max-width: 100% !important;
-    font-size: 1.2vw;
+    font-size: 12px;
     color: #ffffff;
     padding: 0% !important;
     margin: 0px!important;
     display: block;
     box-sizing: border-box;
-    border-radius: 0 !important;
+    border-width: 1px !important;
+    border-color: rgba(0, 20, 38, 0.33) !important;
+    border-style: solid !important;
 }
-#ec2 {
+#event-card-border:hover, #event-card-border:focus {
+    border-color: #93B1BF !important;
+}
+#event-card-row{
     width: 100%;
     margin: 0 !important;
     padding: 0 !important;
+    line-height: 0;
+    display: flex !important;
+    flex-wrap: nowrap;
+    overflow-x: hidden;
 }
-
-#ec3,
-#ec5 {
+#event-card-col1 {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    width: auto;
+    padding: 0px;
+    flex-grow: 1;
+    max-width: 40%;
+}
+#event-card-col2 {
     margin: 0 !important;
     padding: 0 !important;
-    max-height: 5vmax !important;
-    min-height: 5vmax !important;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertically centers the content */
+    height: 100%; /* Ensures the container takes up the full height */
+    flex-grow: 2;
 }
-#ec4 {
+#event-card-col1, #event-card-col2 {
+    height: 7.5vmax !important;
+    overflow: hidden;
+}
+
+#event-card-img{
     border-radius: 0 !important;
     border: solid rgb(114, 119, 119) .05rem;
     margin: 0px !important;
     padding: 0px !important;
     width: 25% !important;
-    object-fit: cover;
-    /* border-bottom-left-radius: 0% !important;
-    border-top-left-radius: 5% !important;
-    border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important; */
-    max-height: 5vmax !important;
-    min-height: 5vmax !important;
-}
-.details {
-    padding: 0;
-    width: 100%;
-    border-radius: 0 !important;
+    object-position: 50% 50%;
+    object-fit:contain;
+    height: 100%;
+    display: block;
+    margin: 0 auto; /* Optional: centers horizontally */
 
 }
+#event-card-img:hover, #event-card-img:focus {
+    cursor: pointer;
+}
 
-.details > a {
-    color: white;
-    text-decoration: none;
-    text-align: center;
-}
-.details > a:hover {
-    color: rgb(170, 170, 170);
-}
-.details > a:active {
-    font-weight: bold;
-}
-#ec6 {
+#event-card-name-container {
     border-radius: 0 !important;
     margin: 0px !important;
     padding: 0px !important;
     border: solid rgb(114, 119, 119) .05rem;
-    margin-top: 0 !important;
-    padding-top: 5% !important;
     background-color: #585c6e;
-    min-height: 60%;
-    max-height: 70%;
+    display: flex;
+    align-items: center; /* Centers the text vertically within the container */
+    justify-content: center;
+    height: 100%; /* Ensures the container has full height to center the text */
+    width: 100% !important; 
 }
-#ec7 {
+#event-card-name {
     font-weight: bold;
-    margin: 0;
+    margin: 0; /* Remove any margin if needed */
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    line-height: 1.5 !important;
+    hyphens: auto !important; /* Allows hyphenation of words to break better */
 }
 .small-name {
-    font-size: 1.25vmax;
+    font-size: 12px;
+    font-weight: normal !important;
 }
 .large-name {
-    font-size: .8vmax;
+    font-size: 10px;
+}
+.details {
+    height: 40%; /* Set button height to 30% of the parent */
+    display: flex;
+    align-items: center; /* Centers the text vertically within the container */
+    justify-content: center;
+    padding: 0 !important; /* Remove padding */
+    width: 100%; /* Ensure the button spans the full width */
+    box-sizing: border-box; /* Ensures padding and border don't affect the width */
+    white-space: normal !important; /* Allow the text to wrap onto the next line */
+    word-wrap: break-word !important; /* Ensure long words break to the next line if necessary */
+    overflow-wrap: break-word !important; /* Prevent overflow for long words */
+    word-break: break-word !important; /* Ensure the text breaks properly in narrow containers */
+    line-height: 1.5 !important; /* Adjust line height for readability */
 }
 
-/* @media only screen and (max-width: 750px) {
-    #ec1 {
-        max-height: 5vmin !important;
-        min-height: 5vmin !important;
+.details a {
+    color: white;
+    text-decoration: none;
+    display: block; /* Makes the link a block element, taking full width and height */
+    width: 100%; /* Ensures the link takes the full width of the button */
+    text-align: center; /* Centers the text horizontally */
+    font-size: 10px;
+}
+
+.details a:hover {
+    color: rgb(170, 170, 170);
+}
+
+.details a:active {
+    font-weight: bold;
+}
+@media only screen and (max-width: 780px) {
+    #event-card-border{
+        min-height: 10vh !important;
     }
-    #ec4 {
-        max-height: 5vmin !important;
-        min-height: 5vmin !important;
+    #event-card-col1, #event-card-col2 {
+        min-height: 10vh !important;
     }
-} */
+    #event-card-img {
+        object-fit: cover;
+    }
+    #event-card-name-container p {
+        white-space: normal;
+        height: 100%;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .small-name {
+        font-size: 16px;
+        font-weight: normal !important;
+    }
+    .large-name {
+        font-size: 12px;
+    }
+    
+}
+
+@media only screen and (min-width: 1200px) {
+    #event-card-img {
+        object-fit:cover;
+    }
+}

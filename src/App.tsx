@@ -1,11 +1,12 @@
 // Style Imports
 import './Styles/App.css'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import Navbar from "./Components/Navbar";
-import Home from "./Pages/Home"
-import MusicMap from "./Pages/MusicMap";
 import About from "./Pages/About";
+import Stats from "./Pages/Stats"
+import MusicMap from "./Pages/MusicMap";
+import PromptPage from './Pages/PromptPage';
 import Constants from "./Information/Constants";
 import SpotifyCredentials from './Information/Credentials/SpotifyCredentials';
 import axios from 'axios';
@@ -17,31 +18,32 @@ function App() {
   const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
   //states for setting information from Spotify API
   const [token,setToken] = useState("");
+  
   const [artists, setArtists] = useState([]);
   const [artistCount, setArtistCount] = useState(0);
-  const [prevACount, setPrevACount] = useState(0);
   const [artistTime, setArtistTime] = useState("NONE");
-
-
+  const [prevACount, setPrevACount] = useState(0);
+  const [prevATime, setPrevATime] = useState("NONE");
 
   const [genres, setGenres] = useState<string[]>([]);
 
+  const [tracks, setTracks] = useState([]);
   const [trackCount, setTrackCount] = useState(0);
-  const [prevTCount, setPrevTCount] = useState(0);
-  const [prevATime, setPrevATime] = useState("NONE");
-  const [prevTTime, setPrevTTime] = useState("NONE");
   const [trackTime, setTrackTime] = useState("NONE");
+  const [prevTCount, setPrevTCount] = useState(0);
+  const [prevTTime, setPrevTTime] = useState("NONE");
 
   const [displayName,setDisplayName] = useState("");
   const [ID,setID] = useState("");
   const [displayPicture, setDisplayPicture] = useState("");
-
+  
   let userInfo = {
     name: displayName,
     id: ID,
     image: displayPicture
   }
-
+  
+  // console.log(typeof(userInfo))
   // -------------------- LOGIN / LOGOUT --------------------------
 
   //pass into nav bar to call onclick for login/logout button
@@ -57,18 +59,18 @@ function App() {
     setDisplayName("");
     setTracks([]);
     //removes from local storage on logout
-    window.localStorage.removeItem("token");
-    window.localStorage.removeItem("expireTime");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("expireTime");
   }
 
   // checks if user is active
   const checkActivity = () => {
     //checks if user logged in
-    if(localStorage.getItem("token"))
+    if(sessionStorage.getItem("token"))
     {
       //then pulls expire time from local storage
       //to see if current time is past expiration
-      const expireTime = localStorage.getItem("expireTime");
+      const expireTime = sessionStorage.getItem("expireTime");
       if(expireTime && expireTime<String(Date.now())) {
         // if so logs out
         console.log("Logging out")
@@ -79,10 +81,10 @@ function App() {
 
   // will replace expireTime with the current time plus 1 hour
   const updateExpire = () => {
-    if(localStorage.getItem("token"))
+    if(sessionStorage.getItem("token"))
     {
       const newTime = Date.now()+600000;
-      window.localStorage.setItem("expireTime",String(newTime));
+      sessionStorage.setItem("expireTime",String(newTime));
     }
   }
 
@@ -132,12 +134,11 @@ function App() {
     // console.log("------------->",data["images"][1]);
     return data;
   }
+
   
   let topArtists = async () => {
     // console.log("ARTIST:",artistCount,'= ',prevACount,'?')
     if(!token || token==="" || (artists.length>0 && artistCount===prevACount && artistTime===prevATime)) return;
-    // if(artist)
-    // console.log("Filled?:",artists[0])
     let url="https://api.spotify.com/v1/me/top/artists";
     if((artistCount>0 || artistTime!="NONE") && url.length>0 && url[url.length - 1]!='?')url+='?';
     if(artistCount>0)url+=`&limit=${artistCount}`;
@@ -166,15 +167,9 @@ function App() {
     setGenres(genreInfo)
     return data;
   }
-  async function sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
-  const [tracks, setTracks] = useState([]);
   let topTracks = async () => {
     // console.log("TRACK:",trackCount,'= ',prevTCount,'?')
-    // console.log("sleeping")
-    // await sleep(10000);
     if(!token || token==="" || (tracks.length>0 && trackCount===prevTCount && trackTime===prevTTime)) return;
     // console.log('Filled track?:',tracks[0])
     let url = "https://api.spotify.com/v1/me/top/tracks";
@@ -193,17 +188,15 @@ function App() {
     return data;
   }
 
-  
-
   //if url contains the hash, pull token from hash and set the token in state
   useEffect(() => {
     const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
+    let token = sessionStorage.getItem("token");
 
     if(!token && hash) {
       token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token"))?.split("=")[1]!;
       
-      window.localStorage.setItem("token",token);
+      sessionStorage.setItem("token",token);
       updateExpire();
       window.location.hash = "";
     }
@@ -261,13 +254,13 @@ function App() {
     }
   }
   // Defines different pages of the site
-  // let page = <Home user={userInfo} artists={artists} tracks={tracks}/>
-  let page = <Home user={userInfo} artists={artists} tracks={tracks} 
-  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
+  // let page = <Stats user={userInfo} artists={artists} tracks={tracks}/>
+  let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
+  artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
   switch(window.location.pathname) {
-    case "/":
-      page = <Home user={userInfo} artists={artists} tracks={tracks} 
+    case "/Stats":
+      page = <Stats user={userInfo} artists={artists} tracks={tracks} 
       artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
       updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
       break
@@ -279,13 +272,13 @@ function App() {
       page = <About/>
       break
     default:
-      // 
-      page = <Home user={userInfo} artists={artists} tracks={tracks} 
-      artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
-      updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
+      page = <About/>
       break
   }
-
+  if(window.location.pathname == '/' || window.location.pathname == '/About') {
+    console.log("NO PROMPT")
+  }
+  else if(!sessionStorage.getItem("token")) page = <PromptPage login={handleLogin} logout={handleLogout}></PromptPage>
   return(
   <div>
     <Navbar login={handleLogin} logout={handleLogout}></Navbar>

@@ -3,12 +3,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Constants from "../Information/Constants";
 import TicketmasterCredentials from "../Information/Credentials/TicketmasterCredentials";
-import Genres from "../Genres";
+// import Genres from "../Genres";
 import Subgenres from "../Subgenres";
 import LocalEvent from "../LocalEventClass";
 import LocalVenue from "../LocalVenueClass";
 import '../Styles/MusicMap.css'
 import EventList from "../Components/EventList";
+import EventSettings from "../Components/EventSettings";
+import SortOptions from "../SortOptions";
 
 interface Props {
     genres: string[],
@@ -25,108 +27,230 @@ export default function MusicMap({genres}: Props) {
     const[genreIds, setGenreIds] = useState<string[]>([])
     //list of event objects
     const[events, setEvents] = useState<LocalEvent[]>([])
+    //event settings for user to change
+    const[radius, setRadius] = useState(0);
+    const[radiusUnit, setRadiusUnit] = useState('');
+    const[sortObject, setSortObject] = useState('');
+    const[sortOrder, setSortOrder] = useState('');
 
+    // Retrieves genre ids from hashmap and sets genreids state
     let getGenreIds = () => {
-        // console.log(genres)
         let leftovers:string[] = [];
         let ids:string[] = [];
         genres.forEach((genre) => {
-            // console.log("Genre:",genre)
-            if(genre in Subgenres)
-            {
-                // console.log(genre)
+            if(genre in Subgenres) {
                 ids.push(Subgenres[genre]);
             }
-            else
-            {
+            else {
                 leftovers.push(genre);
             }
         })
-        leftovers.forEach((genre) => {
-            // console.log("Genre:",genre)
-            if(genre in Genres)
-            {
-                // console.log(genre)
-                ids.push(Genres[genre]);
-            }
-        })
-        setGenreIds(ids)
+
+        // //Adds regular genres to api request V
+
+        // leftovers.forEach((genre) => {
+        //     // console.log("Genre:",genre)
+        //     if(genre in Genres)
+        //     {
+        //         // console.log(genre)
+        //         ids.push(Genres[genre]);
+        //     }
+        // })
+
+        setGenreIds(ids);
         return ids;
     }
+
+    // Makes API request to Ticketmaster and populates eventList w/ event objects
     let localEvents = async () => {
+        // Base Case: Return if user position has not been retrieved
         if((latitude === 0 && longitude === 0) || genreIds.length<1) return;
-        if(fetched) return;
-        // console.log(latitude,longitude,precision)
-        // let ghash = Geohash.encode(latitude,longitude,precision);
-        // console.log(ghash)
-        let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}&latlong=${latitude},${longitude}&radius=100&unit=miles&locale=*&sort=distance,asc`;
-        if(genreIds.length>0)
-        {
-            console.log("specific")
-            URL+="&genreId="+genreIds.join(',');
-            console.log(URL)
+        console.log("FETCHED?:",fetched)
+        // Base Case: Return if request has already been made
+        if(fetched) {console.log("Returning"); return;}
+        console.log("RADIUS CHECK:", radius, "\nUNIT CHECK:",radiusUnit)
+        // URL used for get request
+        let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}&latlong=${latitude},${longitude}`;
+        if(radius && radius>=5 && radius<=1000) URL+= `&radius=${radius}`;
+        // else { console.log("INVALID RADIUS"); return;}
+        else URL+= `&radius=100`;
+        if(radiusUnit && (radiusUnit==='miles' || radiusUnit=='km') ) URL+= `&unit=${radiusUnit}`;
+        // else { console.log("INVALID UNITS"); return;}
+        else URL+= `&unit=miles`;
+        if(sortObject && sortOrder && SortOptions.has(sortObject) && SortOptions.has(sortOrder))
+            URL+=`&sort=${sortObject},${sortOrder}`;
+        else URL += `&sort=distance,asc`;
+        URL+= `&locale=*`;
+        // adds subgenre query to url
+        if(genreIds.length>0) {
+            URL+="&subGenreId="+genreIds.join(',');
         }
+        // GET REQUEST
+        console.log(URL)
+        console.log("MAKING EVENT REQUEST///////////////////////////////\n///////////////////////")
+        
         const {data} = await axios.get(URL,{
         //this is how you set the header, we set it by default upon authentication
         });
-        console.log("HERE:",data);
-        let eventList:LocalEvent[] = [];
-        data._embedded.events.map((event:any) => {
-            // console.log(event.name,event.images[0],event._embedded.venues[0])
-            let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
-            let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance, event.url);
-            console.log('URL:',event.url)
-            eventList.push(currentEvent);
-        })
-        setEvents(eventList);
-        // console.log("EVENT LIST: ",eventList);
-        // console.log(events)
-        //add genres to set
+        console.log(data.page.totalElements)
+        if(data.page.totalElements>0) {
+            console.log('UPDATING EVENTS')
+            let eventList:LocalEvent[] = [];
+            // Creates event object w/ venue object from data for each entry
+            data._embedded.events.map((event:any) => {
+                let currentVenue = new LocalVenue(event._embedded.venues[0].name, event._embedded.venues[0].location.latitude,event._embedded.venues[0].location.longitude);
+                let currentEvent = new LocalEvent(event.name,event.id,event.images[0].url, currentVenue,event.distance, event.url);
+                eventList.push(currentEvent);
+            })
+            setEvents(eventList);
+        }
+        else {
+            alert('No results found. Please adjust your search settings.')
+            // console.log('NO EVENTS FOUND');
+        }
         setFetched(true);
         return events;
     }
 
-    let eventMap = (events:any) => {
+    // Used to show active event
+    const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
+    const [selectedID, setSelectedID] = useState<string | null>(null);
 
+    // Sets new coords on event click
+    const handleEventSelect = (lat: number, lng: number, id:string) => {
+        setSelectedCoordinates([lat, lng]);
+        setSelectedID(id);
+    };
+
+    let eventMap = (events:any) => {
         return(
             <>
-                <MapWindow mapLat={latitude} mapLong={longitude} events={events}></MapWindow>
+                <MapWindow mapLat={latitude} mapLong={longitude} events={events} selectedCoordinates={selectedCoordinates} selectedID={selectedID}></MapWindow>
             </>
         );
     }
 
-    React.useEffect(() =>{
-    navigator.geolocation.getCurrentPosition((position) => {
-        setlatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
-        setPrecision(position.coords.accuracy);
-        // console.log({genres})
-    })
-    })
+    ////////////////////// EVENT SETTINGS LISTENER ///////////////////////////////////
+    interface FormDataValues {
+        radius: number;
+        unit: string;
+        sortObject: string;
+        sortOrder: string;
+      }
+    let prevFormData:FormDataValues = {
+        radius: -1,
+        unit: 'NONE',
+        sortObject: 'NONE',
+        sortOrder: 'None'
+    };
 
+    let isListenerAttached = false;
+
+    window.onload = () => {
+        const form = document.getElementById('event-settings-form') as HTMLFormElement;
+        if (form && !isListenerAttached) {
+            form.addEventListener("submit", function (event: Event) {
+                event.preventDefault(); // Prevent the default form submission
+                const submitButton = document.getElementById('event-settings-submit') as HTMLButtonElement;
+                // Disable the submit button temporarily
+                if (submitButton) {
+                    submitButton.disabled = true;
+                }
+
+                const radiusEl = document.getElementById("radius") as HTMLInputElement;
+                const unitEl = document.getElementById("radiusUnit") as HTMLInputElement;
+                const sObjectEl = document.getElementById("sortObject") as HTMLInputElement;
+                const sOrderEl = document.getElementById("sortOrder") as HTMLInputElement;
+                if (radiusEl && unitEl && sObjectEl && sOrderEl) {
+                    const formData:FormDataValues = {
+                        radius: Number(radiusEl.value),
+                        unit: unitEl.value,
+                        sortObject: sObjectEl.value,
+                        sortOrder: sOrderEl.value
+                    }
+                    let newForm = false;
+                    if(formData['radius']!==prevFormData['radius'] || formData['unit']!==prevFormData['unit']
+                        || formData['sortObject']!==prevFormData['sortObject'] || formData['sortOrder']!==prevFormData['sortOrder']) newForm=true;
+                    if(newForm){
+                        console.log("RADIUS:", radiusEl.value);
+                        setRadius(Number(radiusEl.value));
+                        console.log("UNIT:", unitEl.value);
+                        setRadiusUnit(unitEl.value);
+                        console.log("OBJECT:", sObjectEl.value);
+                        setSortObject(sObjectEl.value);
+                        console.log("ORDER:", sOrderEl.value);
+                        setSortOrder(sOrderEl.value);
+                        
+                        prevFormData = formData;
+                    }
+                    else {
+                        alert('Form not submitted: You cannot submit the same form twice.')
+                        // console.log("DID NOT SUBMIT: IDENTICAL FORM",formData,prevFormData);
+                    }
+                    
+                } else {
+                    console.error("Radius element not found or is not an input field.");
+                }
+                setTimeout(() => {
+                    if (submitButton) {
+                      submitButton.disabled = false; // Re-enable button
+                    }
+                  }, 5000); 
+            });
+            isListenerAttached = true; // Mark that the listener has been attached
+          
+        }
+        
+    }
+    ////////////////////// EVENT SETTINGS LISTENER ///////////////////////////////////
+    
+    React.useEffect(() => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            setlatitude(position.coords.latitude);
+            setLongitude(position.coords.longitude);
+            setPrecision(position.coords.accuracy);
+        });
+    });
+
+
+    // Updates genreids on change to genres
     useEffect(() =>{
         getGenreIds();
     },[genres])
 
+    // Updates events when any info is changed
     useEffect(() => {
+        // useDebounce(localEvents, 10000);
         localEvents();
-        console.log("EvEnTs:",events)
-    },[latitude,longitude,precision,genreIds,events])
+    }, [latitude,longitude,precision,genreIds,events]);
+
+    useEffect(() => {
+        setFetched(false);
+    }, [radius, radiusUnit, sortObject, sortOrder]);
+
+    useEffect(() => {
+        if (!fetched) {
+            // useDebounce(localEvents, 10000);
+          localEvents();
+        }
+      }, [fetched]);
 
 
-    
-
-    if(window.localStorage.getItem("token"))
+    if(sessionStorage.getItem("token"))
     return(
-    <><h1 id='page-title'>Music Map</h1>
-    <div className="music-map-container">
-        {eventMap(events)}
-        <EventList events={events}></EventList>
-
-    </div></>);
-    else
-    return(
+        <>
+        {/* <h1 id='page-title'>Music Map</h1> */}
+        <h2>Event Settings</h2>
+        <EventSettings/>
+        <div className="music-map-container">
+            {eventMap(events)}
+            <EventList events={events} onEventSelect={handleEventSelect}></EventList>
+        </div>
+        </>
+    );
+    else return(
         <div className="music-map-container">
             <h1>Please login.</h1>
-        </div>);
+        </div>
+    );
 }

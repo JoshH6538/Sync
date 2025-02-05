@@ -1,0 +1,42 @@
+.body {
+    overflow-y: scroll !important;
+}
+.lg-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 100%;
+    background-color: #2d2d2d;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+.lg-message {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.lg-button{
+    padding: 12px 25px;
+    background-color: #642D2D;
+    color: rgb(220, 220, 220);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.lg-button:hover {
+    color: white; /* Change text color on hover */
+    animation: expand .4s ease-in-out;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+  
+.lg-button:not(:hover) {
+    animation: restore .4s ease-in-out;
+    animation-iteration-count: 1;
+    animation-fill-mode: backwards;
+}
