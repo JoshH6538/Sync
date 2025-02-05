@@ -256,7 +256,7 @@ function App() {
   // Defines different pages of the site
   // let page = <Stats user={userInfo} artists={artists} tracks={tracks}/>
   let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
-  artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
+  artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
   switch(window.location.pathname) {
     case "/Stats":

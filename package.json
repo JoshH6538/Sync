@@ -1,5 +1,5 @@
 {
-  "homepage": "https://joshh6538.github.io/ReactMap/",
+  "homepage": "https://joshh6538.github.io/Sync/",
   "name": "react",
   "private": true,
   "version": "0.0.0",
@@ -32,6 +32,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "gh-pages": "^6.3.0",
     "typescript": "^5.2.2",
     "vite": "^5.4.9"
   }
