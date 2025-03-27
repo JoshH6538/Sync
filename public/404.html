@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found</title>
-    <script>
-      // Check if the path is a React route
-      if (!window.location.pathname.startsWith('/Sync/')) {
-          // Redirect to the homepage if it's not part of the React app
-          window.location.replace("/Sync");
-      }
-    </script>
-</head>
-<body>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Redirecting...</title>
+        <script>
+            // Redirect to index.html so React Router can handle routing
+            window.location.replace("/Sync");
+        </script>
+    </head>
+    <body></body>
 </html>
