@@ -260,6 +260,7 @@ function App() {
   let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
   artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
+  console.log("PATH:",window.location.pathname)
   switch(window.location.pathname) {
     case "/Sync/Stats":
       page = <Stats user={userInfo} artists={artists} tracks={tracks} 
