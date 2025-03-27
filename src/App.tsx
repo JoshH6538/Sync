@@ -11,6 +11,8 @@ import Constants from "./Information/Constants";
 import SpotifyCredentials from './Information/Credentials/SpotifyCredentials';
 import axios from 'axios';
 
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 function App() {
   // --------------------- STATES & VARIABLES -------------------
 
@@ -255,45 +257,92 @@ function App() {
       setter(time);
     }
   }
-  // Defines different pages of the site
-  // let page = <Stats user={userInfo} artists={artists} tracks={tracks}/>
-  let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
-  artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
-  updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
-  const rawPath = window.location.pathname;
-  const path = rawPath.endsWith('/') && rawPath.length > 1
-      ? rawPath.slice(0, -1)
-      : rawPath;
 
-  console.log("PATH:", rawPath);
-  console.log("Normalized PATH:", path);
-  switch(path) {
-    case "/Sync/Stats":
-      page = <Stats user={userInfo} artists={artists} tracks={tracks} 
-      artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
-      updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
-      break
-    case "/Sync/MusicMap":
-      // if(genres.values.length>0)
-      page = <MusicMap genres={genres}/>
-      break
-    case "/Sync/About":
-      page = <About/>
-      break
-    default:
-      page = <About/>
-      break
-  }
-  if(path === '/Sync' || path === '/Sync/About') {
-    console.log("NO PROMPT")
-  }
-  else if(!sessionStorage.getItem("token")) page = <PromptPage login={handleLogin} logout={handleLogout}></PromptPage>
-  return(
-  <div>
-    <Navbar login={handleLogin} logout={handleLogout}></Navbar>
-    {/*token ? <button className="btn btn-danger see" onClick={topArtists}>User</button> : <h3>login first</h3>*/}
-    {page}
-  </div>);
+  // --------------------- PAGE RENDERING ---------------------
+  // // Defines different pages of the site
+  // // let page = <Stats user={userInfo} artists={artists} tracks={tracks}/>
+  // let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
+  // artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
+  // updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
+  // const rawPath = window.location.pathname;
+  // const path = rawPath.endsWith('/') && rawPath.length > 1
+  //     ? rawPath.slice(0, -1)
+  //     : rawPath;
+
+  // console.log("PATH:", rawPath);
+  // console.log("Normalized PATH:", path);
+  // switch(path) {
+  //   case "/Sync/Stats":
+  //     page = <Stats user={userInfo} artists={artists} tracks={tracks} 
+  //     artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
+  //     updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
+  //     break
+  //   case "/Sync/MusicMap":
+  //     // if(genres.values.length>0)
+  //     page = <MusicMap genres={genres}/>
+  //     break
+  //   case "/Sync/About":
+  //     page = <About/>
+  //     break
+  //   default:
+  //     page = <About/>
+  //     break
+  // }
+  // if(path === '/Sync' || path === '/Sync/About') {
+  //   console.log("NO PROMPT")
+  // }
+  // else if(!sessionStorage.getItem("token")) page = <PromptPage login={handleLogin} logout={handleLogout}></PromptPage>
+  // return(
+  // <div>
+  //   <Navbar login={handleLogin} logout={handleLogout}></Navbar>
+  //   {/*token ? <button className="btn btn-danger see" onClick={topArtists}>User</button> : <h3>login first</h3>*/}
+  //   {page}
+  // </div>);
+  
+  // -------------------------------------------------------------------------------
+  // Check if the token exists in session storage
+  const isLoggedIn = sessionStorage.getItem("token");
+  const page = isLoggedIn ? (
+    <Routes>
+      <Route 
+        path="/Stats" 
+        element={<Stats 
+                   user={userInfo} 
+                   artists={artists} 
+                   tracks={tracks} 
+                   artistCount={setArtistCount} 
+                   trackCount={setTrackCount} 
+                   updateStatCounts={setStatCount} 
+                   updateStatTimes={setStatTime} 
+                   artistTime={setArtistTime} 
+                   trackTime={setTrackTime} 
+                 />} 
+      />
+      <Route 
+        path="/MusicMap" 
+        element={<MusicMap genres={genres} />} 
+      />
+      <Route 
+        path="/About" 
+        element={<About />} 
+      />
+      <Route 
+        path="/" 
+        element={<About />} 
+      /> {/* Default route */}
+    </Routes>
+  ) : (
+    <PromptPage login={handleLogin} logout={handleLogout} />
+  );
+
+  return (
+    <Router basename="/Sync">
+      <div>
+        <Navbar login={handleLogin} logout={handleLogout} />
+        {page} {/* Render the appropriate page */}
+      </div>
+    </Router>
+  );
 }
 
 export default App;
