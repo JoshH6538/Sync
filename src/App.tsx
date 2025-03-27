@@ -48,7 +48,9 @@ function App() {
 
   //pass into nav bar to call onclick for login/logout button
   const handleLogin = () => {
-    const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + SpotifyCredentials.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN+window.location.pathname+ '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
+    // Removes trailing slash from url
+    const pathname = window.location.pathname.replace(/\/$/, '');
+    const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + SpotifyCredentials.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN+pathname+ '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
     window.location.href = location;
   }
   //Remove information upon logout
