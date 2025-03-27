@@ -260,28 +260,24 @@ function App() {
   let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
   artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
-  // Removes the /Sync from the url for the redirect
-  const pathname = window.location.pathname.replace(/^\/Sync\/?/, '');
-  console.log(window.location.pathname)
-  console.log("PATHNAME:",pathname)
-  switch(pathname) {
-    case "/Stats":
+  switch(window.location.pathname) {
+    case "/Sync/Stats":
       page = <Stats user={userInfo} artists={artists} tracks={tracks} 
       artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
       updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
       break
-    case "/MusicMap":
+    case "/Sync/MusicMap":
       // if(genres.values.length>0)
       page = <MusicMap genres={genres}/>
       break
-    case "/About":
+    case "/Sync/About":
       page = <About/>
       break
     default:
       page = <About/>
       break
   }
-  if(window.location.pathname == '/' || window.location.pathname == '/About') {
+  if(window.location.pathname == '/Sync/' || window.location.pathname == '/Sync/About') {
     console.log("NO PROMPT")
   }
   else if(!sessionStorage.getItem("token")) page = <PromptPage login={handleLogin} logout={handleLogout}></PromptPage>
