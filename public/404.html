@@ -8,8 +8,14 @@
         // Get the current URL path that was requested by the user
         var currentPath = window.location.pathname;
 
-        // Redirect to the same path inside /Sync to let React Router handle it
-        window.location.replace("/Sync" + currentPath);
+        // Check if the path starts with "/Sync" to avoid an infinite loop
+        if (!currentPath.startsWith("/Sync")) {
+            // Redirect to "/Sync" followed by the requested path
+            window.location.replace("/Sync" + currentPath);
+        } else {
+            // Otherwise, just load the page correctly
+            window.location.replace(currentPath);
+        }
     </script>
 </head>
 <body></body>
