@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Redirecting...</title>
-        <script>
-            // Redirect to index.html so React Router can handle routing
-            window.location.replace("/Sync");
-        </script>
-    </head>
-    <body></body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        // Get the current URL path that was requested by the user
+        var currentPath = window.location.pathname;
+
+        // Redirect to the same path inside /Sync to let React Router handle it
+        window.location.replace("/Sync" + currentPath);
+    </script>
+</head>
+<body></body>
 </html>
