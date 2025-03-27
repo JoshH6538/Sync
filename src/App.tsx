@@ -262,6 +262,8 @@ function App() {
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
   // Removes the /Sync from the url for the redirect
   const pathname = window.location.pathname.replace(/^\/Sync\/?/, '');
+  console.log(window.location.pathname)
+  console.log("PATHNAME:",pathname)
   switch(pathname) {
     case "/Stats":
       page = <Stats user={userInfo} artists={artists} tracks={tracks} 
