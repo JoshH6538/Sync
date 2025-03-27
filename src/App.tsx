@@ -260,10 +260,13 @@ function App() {
   let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
   artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
-  // Removes trailing slash from url
-  const path = window.location.pathname.replace(/\/$/, '');
-  console.log("PATH:",window.location.pathname)
-  console.log("PATH:",path)
+  const rawPath = window.location.pathname;
+  const path = rawPath.endsWith('/') && rawPath.length > 1
+      ? rawPath.slice(0, -1)
+      : rawPath;
+
+  console.log("PATH:", rawPath);
+  console.log("Normalized PATH:", path);
   switch(path) {
     case "/Sync/Stats":
       page = <Stats user={userInfo} artists={artists} tracks={tracks} 
