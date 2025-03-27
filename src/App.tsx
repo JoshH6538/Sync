@@ -260,8 +260,11 @@ function App() {
   let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
   artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
+  // Removes trailing slash from url
+  const path = window.location.pathname.replace(/\/$/, '');
   console.log("PATH:",window.location.pathname)
-  switch(window.location.pathname) {
+  console.log("PATH:",path)
+  switch(path) {
     case "/Sync/Stats":
       page = <Stats user={userInfo} artists={artists} tracks={tracks} 
       artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
@@ -278,7 +281,7 @@ function App() {
       page = <About/>
       break
   }
-  if(window.location.pathname == '/Sync/' || window.location.pathname == '/Sync/About') {
+  if(path === '/Sync' || path === '/Sync/About') {
     console.log("NO PROMPT")
   }
   else if(!sessionStorage.getItem("token")) page = <PromptPage login={handleLogin} logout={handleLogout}></PromptPage>
