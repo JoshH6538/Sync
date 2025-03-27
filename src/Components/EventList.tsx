@@ -21,8 +21,11 @@ export default function EventList({events, onEventSelect}: Props) {
             return(
                 <div key={event.id}>
 
+                    {/* {event.image.length > 0 ? <EventCard text={event.name} img={event.image} altnum={num++} url={event.url} onClick={() => onEventSelect(event.venue.latitude, event.venue.longitude, event.id)}></EventCard>
+                    : <EventCard text={event.name} img='src\Images\placeholder.jpg' altnum={num++} url={'http://localhost:5173/MusicMap'} onClick={()=>{return null;}}></EventCard>} */}
                     {event.image.length > 0 ? <EventCard text={event.name} img={event.image} altnum={num++} url={event.url} onClick={() => onEventSelect(event.venue.latitude, event.venue.longitude, event.id)}></EventCard>
-                    : <EventCard text={event.name} img='src\Images\placeholder.jpg' altnum={num++} url={'http://localhost:5173/MusicMap'} onClick={()=>{return null;}}></EventCard>}
+                    : <EventCard text={event.name} img='src\Images\placeholder.jpg' altnum={num++} url={'https://joshh6538.github.io/Sync/MusicMap'} onClick={()=>{return null;}}></EventCard>}
+                    
                 </div>
             )
         })}
