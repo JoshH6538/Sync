@@ -45,7 +45,7 @@ export default function Navbar({ login, logout}: Props) {
 
     return(<>
         <nav>
-        <a href="/"><img src='Images/TabIcon.png' className="Logo" alt="Tab Icon" /></a>
+        <a href="/Sync"><img src='Images/TabIcon.png' className="Logo" alt="Tab Icon" /></a>
             <ul id ="top-menu">
                 <li><a href="Stats">Stats</a></li>
                 <li><a href="MusicMap">Music Map</a></li>

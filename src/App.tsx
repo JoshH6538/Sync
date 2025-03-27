@@ -260,7 +260,9 @@ function App() {
   let page = <Stats user={userInfo} artists={artists} tracks={tracks} 
   artistCount={artistCount} trackCount={trackCount} updateStatCounts={setStatCount} 
   updateStatTimes={setStatTime} artistTime={setArtistTime} trackTime={setTrackTime}/>
-  switch(window.location.pathname) {
+  // Removes the /Sync from the url for the redirect
+  const pathname = window.location.pathname.replace(/^\/Sync\/?/, '');
+  switch(pathname) {
     case "/Stats":
       page = <Stats user={userInfo} artists={artists} tracks={tracks} 
       artistCount={setArtistCount} trackCount={setTrackCount} updateStatCounts={setStatCount} 
