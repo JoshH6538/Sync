@@ -45,11 +45,11 @@ export default function Navbar({ login, logout}: Props) {
 
     return(<>
         <nav>
-        <a href="/"><img src="src\Images\TabIcon.png" className="Logo"></img></a>
+        <a href="/Sync"><img src='Images/TabIcon.png' className="Logo" alt="Tab Icon" /></a>
             <ul id ="top-menu">
-                <li><a href="/Stats">Stats</a></li>
-                <li><a href="/MusicMap">Music Map</a></li>
-                <li><a href="/About">About</a></li>
+                <li><a href="Stats">Stats</a></li>
+                <li><a href="MusicMap">Music Map</a></li>
+                <li><a href="About">About</a></li>
                 {displayButton()}
                 <i className="fa-solid fa-x "></i>
             </ul>
