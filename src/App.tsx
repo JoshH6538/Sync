@@ -10,6 +10,7 @@ import PromptPage from './Pages/PromptPage';
 import Constants from "./Information/Constants";
 import SpotifyCredentials from './Information/Credentials/SpotifyCredentials';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
