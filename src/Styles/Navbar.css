@@ -124,6 +124,7 @@ nav ul li a::after{
 nav ul li a:hover::after{
   width: 100%;
 }
+  */
 
 #lgin-btn {
   max-height: 30px;
@@ -146,14 +147,35 @@ nav ul li a:hover::after{
   animation: restore .4s ease-in-out;
   animation-iteration-count: 1;
   animation-fill-mode: backwards;
-} */
-
-
-
-
-#nav-links {
-  color: rebeccapurple !important;
 }
+
+
+
+
+#navbar {
+  /* background-color: #35373f !important; */
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  padding-bottom: 0px;
+}
+
+#logo {
+  margin-left: 70px;
+}
+
+.collapseOverride {
+  background-color: #35373f !important;
+}
+
+.container {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.navbar-toggler {
+  z-index: 1;
+  margin-right: 15px !important;
+}
+
+
 
 /* --------- animations --------- */
 
