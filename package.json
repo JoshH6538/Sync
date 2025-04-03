@@ -20,7 +20,7 @@
     "react-bootstrap": "^2.10.9",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",
-    "react-router-dom": "^7.4.0"
+    "react-router-dom": "^7.4.1"
   },
   "devDependencies": {
     "@types/latlon-geohash": "^2.0.3",

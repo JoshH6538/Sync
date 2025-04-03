@@ -1,7 +1,7 @@
+import { Navbar as BootstrapNavbar, NavDropdown, Container, 
+    Nav, Image, Row } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import '../Styles/Navbar.css'
-// import { Navbar as BootstrapNavbar, NavDropdown, Container, 
-//     Nav, Image, Row } from 'react-bootstrap';
-
 
 interface Props {
     login: ()=>void
@@ -16,13 +16,13 @@ export default function Navbar({ login, logout}: Props) {
         if(!token)
             return(
                 <>
-                    <li><button id="lgin-btn" type="button" className="btn btn-danger nav-btn" onClick={login}>Login</button></li>
+                    <button id="lgin-btn" type="button" className="btn btn-danger nav-btn d-flex ms-auto" onClick={login}>Login</button>
                 </>
             );
         else
         return(
             <>
-                <li><button id="lgin-btn" type="button" className="btn btn-danger nav-btn" onClick={logout}>Logout</button></li>
+                <button id="lgin-btn" type="button" className="btn btn-danger nav-btn  d-flex ms-auto" onClick={logout}>Logout</button>
             </>
            
             
@@ -47,15 +47,25 @@ export default function Navbar({ login, logout}: Props) {
 
     return(<>
 
-    {/* <BootstrapNavbar expand="lg" className="bg-body-tertiary">
-      <Container><Row>
-        <BootstrapNavbar.Brand href="/Sync/"><Image src='Images/TabIcon.png' className="Logo" alt="Tab Icon"/></BootstrapNavbar.Brand>
+    <BootstrapNavbar expand="lg" className="bg-body-tertiary">
+      <Container>
+        <BootstrapNavbar.Brand href="/Sync/">
+            <Image
+              src="Images/TabIcon.png"
+              width="30"
+              height="30"
+              className="d-inline-block align-top mr-2"
+              alt="Logo"
+            />
+        </BootstrapNavbar.Brand>
         <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#link">Link</Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+          <Nav className="me-auto gap-4" id="nav-links">
+            <Nav.Link href="Stats">Stats</Nav.Link>
+            <Nav.Link href="MusicMap">Music Map</Nav.Link>
+            <Nav.Link href="About">About</Nav.Link>
+            
+            {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
                 Another action
@@ -65,13 +75,16 @@ export default function Navbar({ login, logout}: Props) {
               <NavDropdown.Item href="#action/3.4">
                 Separated link
               </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-        </BootstrapNavbar.Collapse>
-        </Row></Container>
-    </BootstrapNavbar> */}
+            </NavDropdown> */}
 
-        <nav>
+            
+          </Nav>
+          {displayButton()}
+        </BootstrapNavbar.Collapse>
+        </Container>
+    </BootstrapNavbar>
+
+        {/* <nav>
         <a href="/Sync"><img src='Images/TabIcon.png' className="Logo" alt="Tab Icon" /></a>
             <ul id ="top-menu">
                 <li><a href="Stats">Stats</a></li>
@@ -81,6 +94,6 @@ export default function Navbar({ login, logout}: Props) {
                 <i className="fa-solid fa-x "></i>
             </ul>
             <i className="fa-solid fa-bars" id="bars"></i>
-        </nav>
+        </nav> */}
     </>);
 }

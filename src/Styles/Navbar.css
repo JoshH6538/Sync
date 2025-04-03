@@ -63,7 +63,7 @@ img {
 */
 
 /* ////////////////////////////// */
-nav{
+/* nav{
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -130,13 +130,13 @@ nav ul li a:hover::after{
   display: inline-flex;
   align-items: center;
   font-size: 18px;
-  background-color: rgb(112, 52, 52); /* Set initial background color */
+  background-color: rgb(112, 52, 52);
   color: rgb(220, 220, 220);
 }
 
 #lgin-btn:hover {
-  color: white; /* Change text color on hover */
-  background-color: rgb(253, 0, 0); /* Smoothly change background color */
+  color: white;
+  background-color: rgb(253, 0, 0);
   animation: expand .4s ease-in-out;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
@@ -146,6 +146,13 @@ nav ul li a:hover::after{
   animation: restore .4s ease-in-out;
   animation-iteration-count: 1;
   animation-fill-mode: backwards;
+} */
+
+
+
+
+#nav-links {
+  color: rebeccapurple !important;
 }
 
 /* --------- animations --------- */
