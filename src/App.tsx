@@ -15,6 +15,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
+  let debug = true;
   // --------------------- STATES & VARIABLES -------------------
 
   // Used from url in get request to Spotify
@@ -52,8 +53,12 @@ function App() {
   //pass into nav bar to call onclick for login/logout button
   const handleLogin = () => {
     // Removes trailing slash from url
-    const pathname = window.location.pathname.replace(/\/$/, '');
-    const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + SpotifyCredentials.CLIENT_ID + '&redirect_uri=' + Constants.REDIRECT_URL_AFTER_LOGIN+pathname+ '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
+    let pathname = window.location.pathname.replace(/\/$/, '');
+    let redirect = Constants.REDIRECT_URL_AFTER_LOGIN;
+    // if(debug) {redirect = "http://localhost:5173";}
+    
+
+    const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + SpotifyCredentials.CLIENT_ID + '&redirect_uri=' + redirect+pathname+ '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
     window.location.href = location;
   }
   //Remove information upon logout
