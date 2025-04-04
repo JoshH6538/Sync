@@ -15,7 +15,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
-  // let debug = true;
+  let debug = true;
   // --------------------- STATES & VARIABLES -------------------
 
   // Used from url in get request to Spotify
@@ -55,7 +55,7 @@ function App() {
     // Removes trailing slash from url
     let pathname = window.location.pathname.replace(/\/$/, '');
     let redirect = Constants.REDIRECT_URL_AFTER_LOGIN;
-    // if(debug) {redirect = "http://localhost:5173";}
+    if(debug) {redirect = "http://localhost:5173";}
     
 
     const location:string = Constants.SPOTIFY_AUTHORIZE_ENDPOINT + '?client_id=' + SpotifyCredentials.CLIENT_ID + '&redirect_uri=' + redirect+pathname+ '&scope=' + SCOPES_URL_PARAM + '&response_type=token&show_dialog=true';
@@ -140,7 +140,7 @@ function App() {
     console.log(data)
     setDisplayName(data["display_name"]);
     setID(data["id"]);
-    setDisplayPicture(data["images"][1].url);
+    setDisplayPicture(data["images"][0].url);
     // console.log("------------->",data["images"][1]);
     return data;
   }

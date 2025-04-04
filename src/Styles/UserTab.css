@@ -1,12 +1,10 @@
-.user-tab-container {
+/* .user-tab-container {
     background-color: #2f313b;
     padding: 5%;
     border-radius: 1rem;
     padding-bottom: 5rem;
     display: flex;
-    /* text-align: right; */
     border: solid rgb(30, 30, 30);
-    /* align-items: center; */
     margin-bottom: 10px;
 }
 
@@ -25,4 +23,13 @@
     top: 20px;
     left: 5%;
     font-size: 5vmin;
+} */
+
+#user-tab {
+    background-color: #35373f !important;
+}
+
+#user-greeting {
+    -webkit-filter: drop-shadow(0px 5px 2px #1b1b1b);
+    filter: drop-shadow(0px 3px 2px #1b1b1b);
 }
