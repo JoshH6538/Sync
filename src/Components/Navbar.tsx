@@ -70,8 +70,8 @@ export default function Navbar({ login, logout }: Props) {
           <a className="navbar-brand mx-auto" href="/Sync/">
             <img
               src="Images/TabIcon.png"
-              width="30"
-              height="30"
+              width="35"
+              height="35"
               className="d-inline-block align-top"
               alt="Logo"
               id="logo"
@@ -80,7 +80,7 @@ export default function Navbar({ login, logout }: Props) {
 
           {/* <!-- Navbar Toggler for Collapsing --> */}
           <button
-            className="navbar-toggler"
+            className="navbar-toggler mb-2"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navbarNav"
@@ -91,39 +91,65 @@ export default function Navbar({ login, logout }: Props) {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-       {/* <!-- Navbar Links and Login Button --> */}
-      <div className="collapse navbar-collapse" id="navbarNav">
-        {/* <!-- Links only centered when collapsed --> */}
-        <ul className="navbar-nav w-100 text-center d-flex justify-content-center d-lg-none bg-gray-dark">
-          <li className="nav-item">
-            <a className="nav-link border-bottom border-dark-subtle border-top mt-3" href="Stats">Stats</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link border-bottom border-dark-subtle" href="MusicMap">Music Map</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link border-bottom border-dark-subtle" href="About">About</a>
-          </li>
-        </ul>
-        
-        {/* <!-- Links (Left-aligned when expanded) --> */}
-        <ul className="navbar-nav me-auto d-none d-lg-flex ms-5 gap-4" id="navlinksExpanded" >
-          <li className="nav-item">
-            <a className="nav-link" href="Stats">Stats</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="MusicMap">Music Map</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="About">About</a>
-          </li>
-        </ul>
+          {/* <!-- Navbar Links and Login Button --> */}
+          <div className="collapse navbar-collapse" id="navbarNav">
+            {/* <!-- Links only centered when collapsed --> */}
+            <ul className="navbar-nav w-100 text-center d-flex justify-content-center d-lg-none bg-gray-dark">
+              <li className="nav-item">
+                <a
+                  className="nav-link border-bottom border-dark-subtle border-top mt-3"
+                  href="Stats"
+                >
+                  Stats
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  className="nav-link border-bottom border-dark-subtle"
+                  href="MusicMap"
+                >
+                  Music Map
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  className="nav-link border-bottom border-dark-subtle"
+                  href="About"
+                >
+                  About
+                </a>
+              </li>
+            </ul>
+
+            {/* <!-- Links (Left-aligned when expanded) --> */}
+            <ul
+              className="navbar-nav me-auto d-none d-lg-flex ms-5 gap-4"
+              id="navlinksExpanded"
+            >
+              <li className="nav-item">
+                <a className="nav-link" href="Stats">
+                  Stats
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="MusicMap">
+                  Music Map
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="About">
+                  About
+                </a>
+              </li>
+            </ul>
 
             {/* <!-- Login Button (Right aligned when expanded, with the links when collapsed) --> */}
             <div className="d-none d-lg-block ms-auto">{displayButton()}</div>
 
             {/* <!-- Login Button (Visible when collapsed) --> */}
-            <div className="d-lg-none d-flex w-100 justify-content-center mt-2 mb-2">{displayButton()}</div>
+            <div className="d-lg-none d-flex w-100 justify-content-center mt-2 mb-2">
+              {displayButton()}
+            </div>
           </div>
         </div>
       </nav>
