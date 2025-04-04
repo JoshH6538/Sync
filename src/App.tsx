@@ -15,7 +15,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
-  let debug = true;
+  // let debug = true;
   // --------------------- STATES & VARIABLES -------------------
 
   // Used from url in get request to Spotify
