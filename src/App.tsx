@@ -338,7 +338,24 @@ function App() {
       /> {/* Default route */}
     </Routes>
   ) : (
-    <PromptPage login={handleLogin} logout={handleLogout} />
+    <Routes>
+      <Route 
+        path="/Stats" 
+        element={<PromptPage login={handleLogin} logout={handleLogout} />}
+      />
+      <Route 
+        path="/MusicMap" 
+        element={<PromptPage login={handleLogin} logout={handleLogout} />}
+      />
+      <Route 
+        path="/About" 
+        element={<About />} 
+      />
+      <Route 
+        path="/" 
+        element={<About />} 
+      /> {/* Default route */}
+    </Routes>
   );
 
   return (
