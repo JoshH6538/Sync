@@ -12,10 +12,9 @@ import SpotifyCredentials from "./Information/Credentials/SpotifyCredentials";
 import axios from "axios";
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { url } from "inspector";
 
 function App() {
-  let debug = true;
+  let debug = false;
   // --------------------- STATES & VARIABLES -------------------
 
   // Used from url in get request to Spotify
