@@ -27,14 +27,17 @@ export default function TopArtists({
             </h1>
 
             {/* Button Section */}
-            <div className="d-flex justify-content-between gap-3 mb-3">
-              <div className="d-flex justify-content-start">
-                <StatCountButton onClick={changeCount} />
-              </div>
-              <div className="d-flex justify-content-end">
-                <StatTimeButton onClick={changeTime} />
+            <div className="row mb-3">
+              <div className="col-12 d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-2">
+                <div className="d-flex justify-content-center justify-content-md-start w-sm-100 w-auto">
+                  <StatCountButton onClick={changeCount} />
+                </div>
+                <div className="d-flex justify-content-center justify-content-md-end w-sm-100 w-auto">
+                  <StatTimeButton onClick={changeTime} />
+                </div>
               </div>
             </div>
+
           </div>
         </div>
 
