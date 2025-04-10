@@ -14,7 +14,7 @@ import axios from "axios";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
-  let debug = false;
+  let debug = true;
   // --------------------- STATES & VARIABLES -------------------
 
   // Used from url in get request to Spotify
@@ -58,6 +58,7 @@ function App() {
     let redirect = Constants.REDIRECT_URL_AFTER_LOGIN;
     if (debug) {
       redirect = "http://localhost:5173";
+      if (pathname === "/Sync") pathname = "/Sync/";
     }
 
     const location: string =
