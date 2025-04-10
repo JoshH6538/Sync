@@ -37,6 +37,7 @@ nav ul li a{
   /* background-color: #35373f !important; */
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   padding-bottom: 0px;
+  min-height: 35px;
 
 }
 
