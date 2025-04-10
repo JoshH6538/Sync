@@ -1,16 +1,30 @@
-.tri-button {
-    margin-left: 10px;
-    margin-right: 10px;
-    max-height: 3rem;
-}
-.count-container {
-    display: flex;
-}
-.count-container h3 {
-    padding: 0;
-    margin-top: 10px;
-    font-size:1.5rem;
-}
-.time-btn {
-    font-size: .75rem;
-}
+/* Hover Effect */
+.tri-button .btn:hover {
+    background-color: #5b626f !important;
+    transform: scale(1.1); /* Slightly grow the button */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    border-color: #1d1d1d !important; /* Change border color on hover */
+  }
+  
+  /* Active (Clicked) Effect */
+  .tri-button .btn:active {
+    background-color: #5b626f !important; /* Darker shade when clicked */
+    transform: scale(1.05); /* Slightly shrink back */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Slight shadow on click */
+    border-color: #1d1d1d !important; /* Change border color on hover */
+
+  }
+  
+  /* Focus Effect */
+  .tri-button .btn:focus {
+    outline: none; /* Remove default focus outline */
+    background-color: #3e3f43 !important;
+    box-shadow: 0 0 0 2px rgba(37, 37, 37, 0.5);
+    border-color: #1d1d1d !important;
+    transform: scale(1.05); /* Slightly grow the button */
+  }
+  
+  /* Transition for smooth hover and click effects */
+  .tri-button .btn {
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  }
