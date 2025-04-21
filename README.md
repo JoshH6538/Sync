@@ -1,3 +1,5 @@
+Sync
+
 Music Analytics & Event Suggestion App
 Built with React, Spotify API, and Ticketmaster API
 
