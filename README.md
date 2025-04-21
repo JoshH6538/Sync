@@ -44,9 +44,11 @@ Why I Built It
 I wanted to build something that combined user data, live APIs, and a strong front-end experience — something that felt useful, personal, and fun. Sync challenged me to work with authentication, multiple APIs, and real-time filtering, and helped me sharpen my skills in React and user experience design.
 
 ⸻
- Try It Out
+Try It Out
 
 Live Demo Deployed!
+
+⸻
 
 License
 
