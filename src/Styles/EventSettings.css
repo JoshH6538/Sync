@@ -1,57 +1,3 @@
-body{
-    background-image: none !important;
-    background-color: rgb(55, 52, 52);
-}
-#event-settings-container {
-    color: white;
-    justify-content: space-between;
-    background-color: #585C6E;
-    display: flex;
-    justify-content: center; /* Centers the form horizontally */
-    padding: 5px 20px;
-    border-radius: .5rem;
-    border: solid rgb(45, 45, 45) 2px;
-    margin: 20px;
-    margin-left: 3%;
-    -webkit-filter: drop-shadow(0px 5px 2px #1b1b1b);
-    filter: drop-shadow(0px 4px 2px #1b1b1b);
-    margin-bottom: 0px;
-    margin-top: 0px;
-}
-#event-settings-form {
-    width: 100%;
-    display: flex;
-    align-items: center; /* Aligns items horizontally */
-    justify-content: center;
-}
-#radius-settings, #sort-setting {
-    display: flex;
-    align-items: center; /* Aligns label, input, and select on the same line */
-    margin-right: 10px; /* Adds space between the input/select and the button */
-}
-.settings-label {
-    font-size: 18px;
-    font-weight:500;
-    color: white;
-    margin-right: 5px; /* Adds space between the label and the input */
-}
-#radius, .select-setting {
-    border: solid 0px;
-    border-radius: 3px;
-    margin: 0px 3px;
-    font-weight:500;
-    background-color: #e7ecee;
-    color: rgb(54, 54, 54);
-}
-#radius {
-    padding-left: 10px;
-    max-width: 30%;
-}
-.select-setting {
-    padding-left: 5px;
-    font-size: 17.5px;
-}
-
 #event-settings-submit {
     border: solid 0px;
     border-radius: 3px;
@@ -85,4 +31,43 @@ body{
 }
 #event-settings-submit:disabled:not(:hover){
     animation: none !important;
+}
+
+input#radius[type="number"],
+select#radiusUnit,
+select#sortObject,
+select#sortOrder {
+  background-color: #d7d7d7;
+}
+
+
+/* Hover effect for settings blocks */
+#radius:hover,
+#radius:focus,
+#radius:active,
+#radiusUnit:hover,
+#radiusUnit:focus,
+#radiusUnit:active,
+#sortObject:hover,
+#sortObject:focus,
+#sortObject:active,
+#sortOrder:hover,
+#sortOrder:focus,
+#sortOrder:active {
+    background-color: #e7e7e7 !important;
+    box-shadow: 0 5px 10px #0000003a ;
+    transition: box-shadow 0.25s ease-in-out, background-color 0.25s ease-in-out;
+
+}
+
+/* Smooth transitions for form elements */
+input.form-control,
+select.form-select {
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+input.form-control:focus,
+select.form-select:focus {
+  border-color: #642D2D;
+  box-shadow: 0 0 0 0.2rem rgba(100, 45, 45, 0.25);
 }
