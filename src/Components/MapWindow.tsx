@@ -12,6 +12,7 @@ import L from "leaflet";
 import { useState, useEffect, useRef } from "react";
 import LocalEvent from "../LocalEventClass";
 import userIconUrl from "/Images/TempUserIcon.png";
+import locationIconUrl from "/Images/TabIcon.png";
 import "../Styles/Map.css";
 
 interface Props {
@@ -30,6 +31,13 @@ const userIcon = L.icon({
   iconUrl: userIconUrl,
   iconSize: [25, 25],
   className: "leaflet-user-icon",
+});
+
+const locationIcon = new L.Icon({
+  iconUrl: locationIconUrl, // Path to the image
+  iconSize: [32, 32], // Size of the icon (adjust as needed)
+  iconAnchor: [16, 32], // Anchor point of the icon (adjust to center it properly)
+  popupAnchor: [0, -32], // Position of the popup relative to the icon (adjust as needed)
 });
 
 function LocationMarker() {
@@ -106,6 +114,8 @@ let Map = ({
           <Marker
             key={event.id}
             position={[event.venue.latitude, event.venue.longitude]}
+            icon={locationIcon}
+            alt="Event Location Marker"
           >
             <Popup
               className="pop-up"
