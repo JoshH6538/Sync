@@ -1,36 +1,44 @@
-import '../Styles/EventList.css'
+import EventCard from "./EventCard";
+import LocalEvent from "../LocalEventClass";
 
-import EventCard from './EventCard';
-import LocalEvent from '../LocalEventClass'
 interface Props {
-    events: LocalEvent[],
-    onEventSelect: (lat: number, lng: number, id: string) => void
+  events: LocalEvent[];
+  onEventSelect: (lat: number, lng: number, id: string) => void;
 }
 
-
-export default function EventList({events, onEventSelect}: Props) {
-    let num=0;
-    // console.log(events[0].venue.latitude)
+export default function EventList({ events, onEventSelect }: Props) {
   return (
-    <div id='el1' className='eventlist-container'>
-        <div id='el2'className='eventlist-header-container'>
-            <h1 id='el3' className='eventlist-header'>Top Events</h1>
-        </div>
-        <div id='el4' className="grid">
-        {events.map((event: any) => {
-            return(
-                <div key={event.id}>
-
-                    {/* {event.image.length > 0 ? <EventCard text={event.name} img={event.image} altnum={num++} url={event.url} onClick={() => onEventSelect(event.venue.latitude, event.venue.longitude, event.id)}></EventCard>
-                    : <EventCard text={event.name} img='src\Images\placeholder.jpg' altnum={num++} url={'http://localhost:5173/MusicMap'} onClick={()=>{return null;}}></EventCard>} */}
-                    {event.image.length > 0 ? <EventCard text={event.name} img={event.image} altnum={num++} url={event.url} onClick={() => onEventSelect(event.venue.latitude, event.venue.longitude, event.id)}></EventCard>
-                    : <EventCard text={event.name} img='src\Images\placeholder.jpg' altnum={num++} url={'https://joshh6538.github.io/Sync/MusicMap'} onClick={()=>{return null;}}></EventCard>}
-                    
-                </div>
-            )
-        })}
-        <p></p>
-        </div>
+    <div className="row g-3 event-list">
+      <div className="col-12">
+        {events.map((event: any, index: number) => (
+          <div className="col-12 p-3" key={event.id}>
+            <EventCard
+              text={event.name}
+              img={
+                event.image.length > 0
+                  ? event.image
+                  : "src/Images/placeholder.jpg"
+              }
+              altnum={index}
+              url={
+                event.image.length > 0
+                  ? event.url
+                  : "https://joshh6538.github.io/Sync/MusicMap"
+              }
+              onClick={
+                event.image.length > 0
+                  ? () =>
+                      onEventSelect(
+                        event.venue.latitude,
+                        event.venue.longitude,
+                        event.id
+                      )
+                  : () => null
+              }
+            />
+          </div>
+        ))}
+      </div>
     </div>
-  )
+  );
 }

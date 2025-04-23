@@ -1,35 +1,73 @@
-body {
-    background-image: none !important;
-    background-size: cover;
-    background-position: 50% 50%;
+.top-events-title {
+    font-size: 3rem;
     color: white;
-    background-color: rgb(55, 52, 52) !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0px 6px 6px rgb(0, 0, 0);
+    background-clip: text;
+    padding: 10px 0;
+  }
+
+.event-page-container {
+    background-color: rgb(22, 27, 44);
 }
-#page-title {
-    padding-top: 9vh;
-    padding-left: 5vh;
-    background-color: rgb(55, 52, 52);
-    margin-bottom: 0%;
-    color: white;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+/* Map container responsive height */
+.event-list-map-container {
+    height: 75vh;
 }
-h2 {
-    margin-top: 5vh !important;
-    color: white;
-    display: flex;
-    justify-content: center;
-    padding: 0;
-    margin: 0;
-    -webkit-filter: drop-shadow(0px 5px 2px #121212);
-    filter: drop-shadow(0px 4px 2px #121212);
+.map-container {
+    height: 100%;
 }
-.music-map-container {
-    background-color: rgb(55, 52, 52);
-    height: 300vh;
-    width: 100vw !important;
-    color: white;
-    padding: 3%;
-    display: inline-flex;
-    justify-content: space-between;
-    padding-top: .5%;
+.event-list-container {
+    height: 100%;
+    overflow-y: scroll;
+    flex-grow: 1;
+    overflow-x: hidden;
+}
+  /* Styling the Scrollbar */
+  .event-list-container::-webkit-scrollbar {
+    width: px;  /* Set the width of the scrollbar */
+  }
+  
+  .event-list-container::-webkit-scrollbar-thumb {
+    background-color: #888;  /* Thumb color */
+    border-radius: 10px;  /* Rounded corners for the thumb */
+  }
+  
+  .event-list-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555;  /* Change color when hovering */
+  }
+  
+  /* Styling the Scrollbar Track */
+  .event-list-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;  /* Light background for the track */
+    border-radius: 10px;  /* Rounded corners for the track */
+  }
+  
+  /* Optional: For a more custom look, adjust width/height */
+  .event-list-container::-webkit-scrollbar {
+    height: 8px;  /* For horizontal scrollbar, use this */
+    width: 8px;   /* For vertical scrollbar, use this */
+  }
+  
+  .event-list-container::-webkit-scrollbar-track {
+    background: #f1f1f1;  /* Light gray background for the track */
+  }
+  
+  .event-list-container::-webkit-scrollbar-thumb {
+    background: #888; /* Darker thumb color */
+    border-radius: 10px;
+  }
+  
+  .event-list-container::-webkit-scrollbar-thumb:hover {
+    background: #555;  /* Hover effect for thumb */
+  }
+
+
+.toggle-icon:active {
+    color: #912929;
+}
+.toggle-icon:not(hover), .toggle-icon:not(focus), .toggle-icon:not(active) {
+    color: #CE3535;
 }

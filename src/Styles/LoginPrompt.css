@@ -1,6 +1,4 @@
-.body {
-    overflow-y: scroll !important;
-}
+
 .lg-container {
     display: flex;
     flex-direction: column;

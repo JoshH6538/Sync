@@ -63,20 +63,24 @@ export default function EventSettings() {
                 Sort by
               </label>
               <div className="col-12 col-md-8">
-                <select id="sortObject" className="form-select">
+                <select
+                  id="sortObject"
+                  className="form-select"
+                  defaultValue={"distance"}
+                >
                   <option value="name">Name</option>
                   <option value="date">Date</option>
                   <option value="relevance">Relevance</option>
-                  <option value="distance" selected>
-                    Distance
-                  </option>
+                  <option value="distance">Distance</option>
                 </select>
               </div>
               <div className="col-12 col-md-2 mt-2 mt-md-0">
-                <select id="sortOrder" className="form-select">
-                  <option value="asc" selected>
-                    ↑
-                  </option>
+                <select
+                  id="sortOrder"
+                  className="form-select"
+                  defaultValue={"asc"}
+                >
+                  <option value="asc">↑</option>
                   <option value="desc">↓</option>
                 </select>
               </div>

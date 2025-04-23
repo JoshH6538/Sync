@@ -1,161 +1,82 @@
-
-#event-card-border {
-    background-color: #de181800 !important;
-    min-height: 7.5vmax !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
-    font-size: 12px;
-    color: #ffffff;
-    padding: 0% !important;
-    margin: 0px!important;
-    display: block;
-    box-sizing: border-box;
-    border-width: 1px !important;
-    border-color: rgba(0, 20, 38, 0.33) !important;
-    border-style: solid !important;
-}
-#event-card-border:hover, #event-card-border:focus {
-    border-color: #93B1BF !important;
-}
-#event-card-row{
-    width: 100%;
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 0;
-    display: flex !important;
-    flex-wrap: nowrap;
-    overflow-x: hidden;
-}
-#event-card-col1 {
-    display: flex;
-    justify-content: center; /* Centers horizontally */
-    align-items: center; /* Centers vertically */
-    width: auto;
-    padding: 0px;
-    flex-grow: 1;
-    max-width: 40%;
-}
-#event-card-col2 {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Vertically centers the content */
-    height: 100%; /* Ensures the container takes up the full height */
-    flex-grow: 2;
-}
-#event-card-col1, #event-card-col2 {
-    height: 7.5vmax !important;
-    overflow: hidden;
+.event-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: inline-block; /* Ensure it behaves like an inline element */
+  width: 100%;
+  height: auto; 
+  overflow: visible;
 }
 
-#event-card-img{
-    border-radius: 0 !important;
-    border: solid rgb(114, 119, 119) .05rem;
-    margin: 0px !important;
-    padding: 0px !important;
-    width: 25% !important;
-    object-position: 50% 50%;
-    object-fit:contain;
-    height: 100%;
-    display: block;
-    margin: 0 auto; /* Optional: centers horizontally */
-
-}
-#event-card-img:hover, #event-card-img:focus {
-    cursor: pointer;
+/* Grow effect on hover */
+.event-hover:hover {
+  transform: scale(1.05);
+  background-color: #ffffff09 !important;
 }
 
-#event-card-name-container {
-    border-radius: 0 !important;
-    margin: 0px !important;
-    padding: 0px !important;
-    border: solid rgb(114, 119, 119) .05rem;
-    background-color: #585c6e;
-    display: flex;
-    align-items: center; /* Centers the text vertically within the container */
-    justify-content: center;
-    height: 100%; /* Ensures the container has full height to center the text */
-    width: 100% !important; 
-}
-#event-card-name {
-    font-weight: bold;
-    margin: 0; /* Remove any margin if needed */
-    white-space: normal !important;
-    word-wrap: break-word !important;
-    overflow-wrap: break-word !important;
-    word-break: break-word !important;
-    line-height: 1.5 !important;
-    hyphens: auto !important; /* Allows hyphenation of words to break better */
-}
-.small-name {
-    font-size: 12px;
-    font-weight: normal !important;
-}
-.large-name {
-    font-size: 10px;
-}
-.details {
-    height: 40%; /* Set button height to 30% of the parent */
-    display: flex;
-    align-items: center; /* Centers the text vertically within the container */
-    justify-content: center;
-    padding: 0 !important; /* Remove padding */
-    width: 100%; /* Ensure the button spans the full width */
-    box-sizing: border-box; /* Ensures padding and border don't affect the width */
-    white-space: normal !important; /* Allow the text to wrap onto the next line */
-    word-wrap: break-word !important; /* Ensure long words break to the next line if necessary */
-    overflow-wrap: break-word !important; /* Prevent overflow for long words */
-    word-break: break-word !important; /* Ensure the text breaks properly in narrow containers */
-    line-height: 1.5 !important; /* Adjust line height for readability */
+.event-hover img {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  object-fit: cover;
 }
 
-.details a {
-    color: white;
-    text-decoration: none;
-    display: block; /* Makes the link a block element, taking full width and height */
-    width: 100%; /* Ensures the link takes the full width of the button */
-    text-align: center; /* Centers the text horizontally */
-    font-size: 10px;
+.event-hover:hover img {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.925) !important;
 }
 
-.details a:hover {
-    color: rgb(170, 170, 170);
+.event-hover p {
+  color: rgb(215, 215, 211);
+  transition: font-weight 0.3s ease;  /* Smooth transition for font-weight */
+  font-weight: normal;
 }
 
-.details a:active {
-    font-weight: bold;
-}
-@media only screen and (max-width: 780px) {
-    #event-card-border{
-        min-height: 10vh !important;
-    }
-    #event-card-col1, #event-card-col2 {
-        min-height: 10vh !important;
-    }
-    #event-card-img {
-        object-fit: cover;
-    }
-    #event-card-name-container p {
-        white-space: normal;
-        height: 100%;
-    }
+.event-hover:hover p {
+  color: #ffffff; 
+  transition: color 0.3s ease; 
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+  font-weight: 500;
 }
 
-@media only screen and (min-width: 1200px) {
-    .small-name {
-        font-size: 16px;
-        font-weight: normal !important;
-    }
-    .large-name {
-        font-size: 12px;
-    }
-    
+#details-button {
+  background-color: #642D2D;
+  color: #cacdd0;
+  border: none;
 }
 
-@media only screen and (min-width: 1200px) {
-    #event-card-img {
-        object-fit:cover;
-    }
+#details-button:hover {
+  color: white;
+  background-color: rgb(142, 53, 53);
+  animation: expand .4s ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  box-shadow: 0px 2px 5px #1212127e;
+}
+
+#details-button:not(:hover) {
+  animation: restore .4s ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: backwards;
+}
+
+
+
+/* --------- animations --------- */
+
+@keyframes expand{
+  0%{
+      scale:initial;
+  }
+  100%{
+      transform: scale(1.05);
+      transform-origin: 50%;
+  } 
+}
+@keyframes restore{
+  0%{
+      transform: scale(1.05);
+      transform-origin: 50%;
+  }
+  100%{
+      transform: scale(1);
+      transform-origin: 50%;
+  }
+  
 }
