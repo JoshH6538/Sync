@@ -1,4 +1,5 @@
 import "../Styles/About.css";
+import { Link } from "react-router-dom";
 
 export default function About() {
   return (
@@ -44,7 +45,7 @@ export default function About() {
           </p>
           <p className="small">
             By continuing, you agree to our{" "}
-            <a href="/Privacy">Privacy Policy</a>.
+            <Link to="/Privacy">Privacy Policy</Link>
           </p>
         </div>
       </div>
