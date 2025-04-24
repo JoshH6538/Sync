@@ -16,7 +16,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   // Set to false when deploying to production
-  let debug = false;
+  let debug = true;
   // --------------------- STATES & VARIABLES -------------------
 
   // Used from url in get request to Spotify
@@ -149,10 +149,15 @@ function App() {
     });
     console.log("get called for user");
     console.log(data);
+    console.log(
+      '----------------------------------------------------data["external_urls"]["spotify"]',
+      data["external_urls"]["spotify"]
+    );
     setDisplayName(data["display_name"]);
     setID(data["id"]);
-    setDisplayPicture(data["images"][0].url);
+    setDisplayPicture(data.images?.[0]?.url || "Images/placeholder.jpg");
     setUserUrl(data["external_urls"]["spotify"]);
+
     // console.log("------------->",data["images"][1]);
     return data;
   };
@@ -260,18 +265,6 @@ function App() {
     // axios.defaults.headers['Content-Type'] = 'application/json';
     console.log("Exiting Use Effect");
   }, [token, artistCount, trackCount, artistTime, trackTime]);
-
-  // Asks for User Location
-  /*
-   const[latitude, setLatitude] = React.useState(0);
-   const[longitude, setLongitude] = React.useState(0);
-   React.useEffect(() =>{
-   navigator.geolocation.getCurrentPosition((position) => {
-       setLatitude(position.coords.latitude);
-       setLongitude(position.coords.longitude);
-   })
-   }, [])
-    */
 
   const setStatCount = (
     count: number,
