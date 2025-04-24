@@ -7,6 +7,7 @@ import About from "./Pages/About";
 import Stats from "./Pages/Stats";
 import MusicMap from "./Pages/MusicMap";
 import PromptPage from "./Pages/PromptPage";
+import Privacy from "./Pages/Privacy";
 import Constants from "./Information/Constants";
 import SpotifyCredentials from "./Information/Credentials/SpotifyCredentials";
 import axios from "axios";
@@ -182,7 +183,7 @@ function App() {
       },
     });
     console.log("get called for artists");
-    // console.log(data);
+    console.log(data);
     setArtists(data.items);
     //add genres to set
     let genreInfo: string[] = [];
@@ -227,7 +228,7 @@ function App() {
       },
     });
     console.log("get called for tracks");
-    // console.log(data);
+    console.log(data);
     setTracks(data.items);
     return data;
   };
@@ -385,6 +386,7 @@ function App() {
         element={<PromptPage login={handleLogin} logout={handleLogout} />}
       />
       <Route path="/About" element={<About />} />
+      <Route path="/Privacy" element={<Privacy />} />
       <Route path="/" element={<About />} /> {/* Default route */}
     </Routes>
   );
