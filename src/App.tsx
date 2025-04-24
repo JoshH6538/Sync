@@ -373,6 +373,7 @@ function App() {
       />
       <Route path="/MusicMap" element={<MusicMap genres={genres} />} />
       <Route path="/About" element={<About />} />
+      <Route path="/Privacy" element={<Privacy />} />
       <Route path="/" element={<About />} /> {/* Default route */}
     </Routes>
   ) : (
