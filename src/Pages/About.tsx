@@ -4,23 +4,49 @@ export default function About() {
   return (
     <div className="about-page-container">
       <div className="about-container">
-        <img className="about-img" src="Images/AboutBack.jpg"></img>
+        <img
+          className="about-img"
+          src="Images/AboutBack.jpg"
+          alt="About Sync Background"
+        />
         <h1>About Sync</h1>
         <p>
-          Sync is an innovative platform designed to enhance your music
-          experience. By analyzing your Spotify user analytics, Sync curates
-          personalized suggestions for nearby events that align with your music
-          taste.
+          Sync is a music-powered discovery platform that connects your Spotify
+          listening habits with live event experiences. Using Spotify’s Web API,
+          Sync analyzes your top artists, tracks, and genres to recommend
+          real-world concerts and music events near you, powered by
+          Ticketmaster.
         </p>
         <p>
-          Discover concerts, festivals, and gatherings tailored to your
-          preferences, and stay connected with the music community around you.
-          Sync bridges the gap between your favorite tunes and unforgettable
-          live experiences.
+          Whether you're into indie, hip hop, pop, or folk, Sync curates
+          personalized events so you never miss a show that fits your vibe. With
+          a responsive design, map integration, and guest mode access, Sync lets
+          you explore events effortlessly—even without a Spotify login.
         </p>
-        <p className="text-center mt-3 small">
-          By continuing, you agree to our <a href="Privacy">Privacy Policy</a>.
+        <p>
+          Your data is never stored or shared. Sync simply enhances your
+          listening experience by helping you turn tracks into memories.
         </p>
+        <div className="text-center mt-4">
+          <p className="small mb-1">
+            <strong>User data</strong> provided by{" "}
+            <a href="https://spotify.com" target="_blank" rel="noreferrer">
+              Spotify
+            </a>
+            .
+          </p>
+          <p className="small mb-1">
+            <strong>Event data</strong> provided by{" "}
+            <a href="https://ticketmaster.com" target="_blank" rel="noreferrer">
+              Ticketmaster
+            </a>
+            .
+          </p>
+          <p className="small">
+            By continuing, you agree to our{" "}
+            <a href="/Privacy">Privacy Policy</a>.
+          </p>
+        </div>
       </div>
     </div>
   );
