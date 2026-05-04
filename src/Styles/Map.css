@@ -1,42 +1,43 @@
 /*---------------- LEAFLET MAP -------------------------*/
+
 .map-container {
-    display: block !important;
-    width: 60%;
+  display: block !important;
+  width: 100%;  /* Adjust width to take up full parent */
+  height: 50vh; /* Use 50vh to make the map fill 50% of the screen height */
 }
 
 .leaflet-container {
-    z-index: 99;
-    display: block !important;
-    height: 30%;
-    width: 100%;
-    border-radius: 1%;
-    border: solid rgba(98, 53, 36, 0.879);
-  }
-  
-  .grid{
-    padding: 80px 0;
-    overflow-x: auto;
-    color: #ababab;
-    align-content: center;
-    text-align: center;
-    margin-top:20%;
-    font-size: 4vh;
-    width: 100%;
-  }
+  z-index: 99;
+  display: block !important;
+  height: 100%;  /* Ensure the map fills the container */
+  width: 100%;   /* Make sure it stretches to fill the container */
+  border-radius: 1%;
+  border: solid rgba(98, 53, 36, 0.879);
+}
 
-  .pop-up{
-    height: 10rem;
-    width: 10rem;
-    justify-content: center;
-    align-items: center;
-    font-size: smaller;
-    text-align: center;
-  }
+.grid {
+  padding: 80px 0;
+  overflow-x: auto;
+  color: #ababab;
+  align-content: center;
+  text-align: center;
+  margin-top: 20%;
+  font-size: 4vh;
+  width: 100%;
+}
 
-  
-  .marker-img {
-    justify-content: center;
-    height: 30%;
-    width: 30%;
-    background-color: red;
-  }
+.pop-up {
+  height: 10rem;
+  width: 10rem;
+  justify-content: center;
+  align-items: center;
+  font-size: smaller;
+  text-align: center;
+}
+
+.marker-img {
+  justify-content: center;
+  height: 100%;  /* Make image fill the marker container */
+  width: 100%;   /* Make image fill the marker container */
+  background-color: transparent;  /* Remove red background */
+}

@@ -1,57 +1,14 @@
-.stats-container {
-    background-color: #2f313b;
-    border-radius: 1rem;
-    padding-top: 0rem;
-    padding-bottom: .05rem;
-    text-align: center;
-    border: solid rgb(30, 30, 30);
-}
-
-
-.grid {
-    padding-top: 0px !important;
-    margin-top: 0px !important;
-    display:grid;
-    grid-template-columns: repeat(5, 1fr);
-    align-items: center !important;
-}
-.stats-header-container {
-    display: flex;
-    height: 5rem;
-    background-color: #703434;
-    align-items: center !important;
-    margin: 0px !important;
-    padding: 0px !important;
-    padding-right: 2% !important;
-    padding-left: 2% !important;
-    width: 100%;
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
-    border-bottom: solid rgb(30, 30, 30);
-}
-
-.btn-danger {
-    background-color: #642d2d!important;
-    border-color: #5c2929 !important;
-}
-
-.stats-header{
-    margin: 0px !important;
-    margin-left: 0px;
-    padding-right: 2%;
-}
-
-@media only screen and (max-width: 600px) {
-    .grid {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
-}
-/* 
-@media only screen and (min-width: 300vh){
-    .grid {
-        grid-template-columns: repeat(10, 1fr);
-        grid-gap: 0em 0em;
-        grid-column: ; 
-    }
-} 
-*/
+.top-stats-title {
+    font-size: 3rem;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0px 6px 6px rgb(0, 0, 0);
+    background-clip: text;
+    padding: 10px 0;
+  }
+  
+  .bi {
+    margin-right: 8px; /* Adds space between icon and text */
+    color: #ce3535; /* A matching color for the icon */
+  }
