@@ -59,18 +59,15 @@ export default function MusicMap({ genres }: Props) {
   const localEvents = async () => {
     if ((latitude === 0 && longitude === 0) || genreIds.length < 1 || fetched)
       return;
+    const keyword = genres.slice(0, 1);
 
-    let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}&latlong=${latitude},${longitude}`;
-    URL += `&radius=${radius >= 5 && radius <= 1000 ? radius : 100}`;
-    URL += `&unit=${
-      ["miles", "km"].includes(radiusUnit) ? radiusUnit : "miles"
-    }`;
-    URL +=
-      SortOptions.has(sortObject) && SortOptions.has(sortOrder)
-        ? `&sort=${sortObject},${sortOrder}`
-        : `&sort=distance,asc`;
-    URL += `&locale=*`;
-    if (genreIds.length > 0) URL += `&subGenreId=${genreIds.join(",")}`;
+    let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}`;
+    URL += `&latlong=${latitude},${longitude}`;
+    URL += `&radius=100`;
+    URL += `&unit=miles`;
+    URL += `&keyword=${keyword}`;
+    URL += `&size=50`;
+    URL += `&sort=date,asc`;
 
     try {
       const { data } = await axios.get(URL);
@@ -80,7 +77,7 @@ export default function MusicMap({ genres }: Props) {
             const venue = new LocalVenue(
               event._embedded.venues[0].name,
               event._embedded.venues[0].location.latitude,
-              event._embedded.venues[0].location.longitude
+              event._embedded.venues[0].location.longitude,
             );
             return new LocalEvent(
               event.name,
@@ -88,9 +85,9 @@ export default function MusicMap({ genres }: Props) {
               event.images[0].url,
               venue,
               event.distance,
-              event.url
+              event.url,
             );
-          }
+          },
         );
         setEvents(eventList);
       } else {
@@ -133,10 +130,10 @@ export default function MusicMap({ genres }: Props) {
 
   useEffect(() => {
     const form = document.getElementById(
-      "event-settings-form"
+      "event-settings-form",
     ) as HTMLFormElement;
     const submitButton = document.getElementById(
-      "event-settings-submit"
+      "event-settings-submit",
     ) as HTMLButtonElement;
 
     const handleSubmit = (event: Event) => {
@@ -145,7 +142,7 @@ export default function MusicMap({ genres }: Props) {
       const radiusEl = document.getElementById("radius") as HTMLInputElement;
       const unitEl = document.getElementById("radiusUnit") as HTMLInputElement;
       const sObjectEl = document.getElementById(
-        "sortObject"
+        "sortObject",
       ) as HTMLInputElement;
       const sOrderEl = document.getElementById("sortOrder") as HTMLInputElement;
 

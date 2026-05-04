@@ -22,18 +22,18 @@ interface Props {
   user: User;
   artists: Artist[];
   tracks: Track[];
-  artistCount: any;
-  trackCount: any;
-  updateStatCounts: (
-    count: number,
-    type: React.Dispatch<React.SetStateAction<number>>
-  ) => void;
-  updateStatTimes: (
-    time: string,
-    type: React.Dispatch<React.SetStateAction<string>>
-  ) => void;
-  artistTime: React.Dispatch<React.SetStateAction<string>>;
-  trackTime: React.Dispatch<React.SetStateAction<string>>;
+
+  artistCount: number;
+  trackCount: number;
+
+  updateArtistCount: (count: number) => void;
+  updateTrackCount: (count: number) => void;
+
+  updateArtistTime: (time: string) => void;
+  updateTrackTime: (time: string) => void;
+
+  artistTime: string;
+  trackTime: string;
 }
 
 export default function Stats({
@@ -42,27 +42,29 @@ export default function Stats({
   tracks,
   artistCount,
   trackCount,
-  updateStatCounts,
-  updateStatTimes,
+  updateArtistCount,
+  updateTrackCount,
+  updateArtistTime,
+  updateTrackTime,
   artistTime,
   trackTime,
 }: Props) {
   const [view, setView] = useState<"artists" | "tracks">("artists"); // Track which view is active
 
   const setArtistCount = (count: number) => {
-    updateStatCounts(count, artistCount);
+    updateArtistCount(count);
   };
 
   const setTrackCount = (count: number) => {
-    updateStatCounts(count, trackCount);
+    updateTrackCount(count);
   };
 
   const setArtistTime = (time: string) => {
-    updateStatTimes(time, artistTime);
+    updateArtistTime(time);
   };
 
   const setTrackTime = (time: string) => {
-    updateStatTimes(time, trackTime);
+    updateTrackTime(time);
   };
 
   if (sessionStorage.getItem("token"))
