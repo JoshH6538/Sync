@@ -8,7 +8,7 @@ import LocalEvent from "../LocalEventClass";
 import LocalVenue from "../LocalVenueClass";
 import EventList from "../Components/EventList";
 import EventSettings from "../Components/EventSettings";
-import SortOptions from "../SortOptions";
+
 import "../Styles/MusicMap.css";
 
 interface Props {

@@ -40,14 +40,11 @@ export default function Stats({
   user,
   artists,
   tracks,
-  artistCount,
-  trackCount,
+
   updateArtistCount,
   updateTrackCount,
   updateArtistTime,
   updateTrackTime,
-  artistTime,
-  trackTime,
 }: Props) {
   const [view, setView] = useState<"artists" | "tracks">("artists"); // Track which view is active
 

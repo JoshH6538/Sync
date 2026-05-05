@@ -73,8 +73,7 @@ function App() {
     const codeChallenge = base64encode(hashed);
 
     sessionStorage.setItem("code_verifier", codeVerifier);
-
-    const redirect = "http://127.0.0.1:5173/Sync/";
+    // const redirect = "http://127.0.0.1:5173/Sync/";
 
     const location =
       Constants.SPOTIFY_AUTHORIZE_ENDPOINT +
@@ -82,7 +81,7 @@ function App() {
       SpotifyCredentials.CLIENT_ID +
       "&response_type=code" +
       "&redirect_uri=" +
-      encodeURIComponent(redirect) +
+      encodeURIComponent(Constants.REDIRECT_URL_AFTER_LOGIN) +
       "&scope=" +
       SCOPES_URL_PARAM +
       "&code_challenge_method=S256" +
@@ -118,7 +117,7 @@ function App() {
           client_id: SpotifyCredentials.CLIENT_ID,
           grant_type: "authorization_code",
           code: code,
-          redirect_uri: "http://127.0.0.1:5173/Sync/",
+          redirect_uri: Constants.REDIRECT_URL_AFTER_LOGIN,
           code_verifier: codeVerifier!,
         });
 
