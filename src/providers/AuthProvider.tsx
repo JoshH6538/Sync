@@ -6,8 +6,7 @@ import {
   useEffect,
   useRef,
 } from "react";
-import Constants from "../Information/Constants";
-import SpotifyCredentials from "../Information/Credentials/SpotifyCredentials";
+import Constants from "../Constants";
 import axios from "axios";
 
 interface AuthContextType {
@@ -52,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const location =
       Constants.SPOTIFY_AUTHORIZE_ENDPOINT +
       "?client_id=" +
-      SpotifyCredentials.CLIENT_ID +
+      import.meta.env.VITE_SPOTIFY_CLIENT_ID +
       "&response_type=code" +
       "&redirect_uri=" +
       encodeURIComponent(redirectURI) +
@@ -95,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
         const body = new URLSearchParams({
-          client_id: SpotifyCredentials.CLIENT_ID,
+          client_id: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
           grant_type: "authorization_code",
           code,
           redirect_uri: redirectURI,

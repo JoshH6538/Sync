@@ -1,13 +1,12 @@
-import MapWindow from "../Components/MapWindow";
+import MapWindow from "../components/MapWindow";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import Constants from "../Information/Constants";
-import TicketmasterCredentials from "../Information/Credentials/TicketmasterCredentials";
+import Constants from "../Constants";
 import Subgenres from "../Subgenres";
 import LocalEvent from "../LocalEventClass";
 import LocalVenue from "../LocalVenueClass";
-import EventList from "../Components/EventList";
-import EventSettings from "../Components/EventSettings";
+import EventList from "../components/EventList";
+import EventSettings from "../components/EventSettings";
 
 import "../Styles/MusicMap.css";
 
@@ -61,7 +60,7 @@ export default function MusicMap({ genres }: Props) {
       return;
     const keyword = genres.slice(0, 1);
 
-    let URL = `${Constants.EVENTS_BASE_URL}${TicketmasterCredentials.TICKET_KEY}`;
+    let URL = `${Constants.EVENTS_BASE_URL}${import.meta.env.VITE_TICKETMASTER_KEY}`;
     URL += `&latlong=${latitude},${longitude}`;
     URL += `&radius=100`;
     URL += `&unit=miles`;

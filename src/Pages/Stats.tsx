@@ -1,8 +1,8 @@
 import "../Styles/Stats.css";
-import TopArtists from "../Components/TopArtists";
-import TopTracks from "../Components/TopTracks";
-import UserTab from "../Components/UserTab";
-import Spinner from "../Components/Spinner";
+import TopArtists from "../components/TopArtists";
+import TopTracks from "../components/TopTracks";
+import UserTab from "../components/UserTab";
+import Spinner from "../components/Spinner";
 import { useState } from "react";
 
 interface User {

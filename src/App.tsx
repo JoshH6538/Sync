@@ -1,17 +1,13 @@
-import "./Styles/App.css";
-
-import { useEffect, useState } from "react";
-
 import { useAuth } from "./providers/AuthProvider";
 import { useSpotifyData } from "./hooks/useSpotifyData";
 
-import Navbar from "./Components/Navbar";
-import About from "./Pages/About";
-import Stats from "./Pages/Stats";
-import MusicMap from "./Pages/MusicMap";
-import PromptPage from "./Pages/PromptPage";
-import Privacy from "./Pages/Privacy";
-import axios from "axios";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Stats from "./pages/Stats";
+import MusicMap from "./pages/MusicMap";
+import PromptPage from "./pages/PromptPage";
+import Privacy from "./pages/Privacy";
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -58,7 +54,7 @@ function App() {
       <Route path="/MusicMap" element={<MusicMap genres={genres} />} />
       <Route path="/About" element={<About />} />
       <Route path="/Privacy" element={<Privacy />} />
-      <Route path="/" element={<About />} />
+      <Route path="/" element={<Home />} />
     </Routes>
   ) : (
     <Routes>
@@ -72,7 +68,7 @@ function App() {
       />
       <Route path="/About" element={<About />} />
       <Route path="/Privacy" element={<Privacy />} />
-      <Route path="/" element={<About />} />
+      <Route path="/" element={<Home />} />
     </Routes>
   );
 
