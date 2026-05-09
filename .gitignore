@@ -32,3 +32,16 @@ git-filter-repo
 
 .env
 .env*
+
+node_modules/
+dist/
+.env
+.env.*
+.DS_Store
+*.log
+.vscode/
+.idea/
+coverage/
+
+build/
+design-extract-output/
