@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "../Styles/Navbar.css";
+import "../styles/Navbar.css";
 
 interface Props {
   login: () => void;
@@ -9,31 +8,32 @@ interface Props {
 
 export default function Navbar({ login, logout }: Props) {
   const token = sessionStorage.getItem("token");
+  const logoSrc = `${import.meta.env.BASE_URL}sync_icon.svg`;
 
   return (
-    <nav className="nav-container d-flex align-items-center justify-content-between px-4 py-2">
+    <nav className="nav-container">
       {/* LEFT */}
-      <div className="d-flex align-items-center">
+      <div className="nav-left">
         <Link to="//" className="nav-logo">
-          <img src="Images/TabIcon.png" width="35" height="35" alt="Logo" />
-        </Link>
-      </div>
-
-      {/* CENTER */}
-      <div className="nav-center d-flex justify-content-center gap-5">
-        <Link to="/Stats" className="nav-item">
-          Stats
-        </Link>
-        <Link to="/MusicMap" className="nav-item">
-          Music Map
-        </Link>
-        <Link to="/About" className="nav-item">
-          About
+          <img src={logoSrc} width="40" height="40" alt="Sync logo" />
+          <span className="nav-brand-text">Sync</span>
         </Link>
       </div>
 
       {/* RIGHT */}
-      <div className="d-flex align-items-center">
+      <div className="nav-actions">
+        <div className="nav-links">
+          <Link to="/Stats" className="nav-item">
+            Stats
+          </Link>
+          <Link to="/MusicMap" className="nav-item">
+            Music Map
+          </Link>
+          <Link to="/About" className="nav-item">
+            About
+          </Link>
+        </div>
+
         {!token ? (
           <button className="nav-button" onClick={login}>
             Login
