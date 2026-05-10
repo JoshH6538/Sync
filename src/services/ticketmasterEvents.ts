@@ -1,9 +1,16 @@
 import axios from "axios";
 import Constants from "../Constants";
-import { TicketmasterAttractionSearchPlan, TicketmasterEventSearchPlan } from "../types/ticketmaster";
+import {
+  TicketmasterAttractionSearchPlan,
+  TicketmasterEventSearchPlan,
+  TicketmasterRecommendationMetadata,
+} from "../types/ticketmaster";
+import { CACHE_TTLS, getCachedValue, setCachedValue } from "./cache";
 import { resolveTicketmasterAttractions } from "./ticketmasterAttractions";
 
 export const TICKETMASTER_MUSIC_SEGMENT_ID = "KZFzniwnSyZfZ7v7nJ";
+const TICKETMASTER_EVENTS_CACHE_VERSION = "v1";
+const inFlightEventRequests = new Map<string, Promise<any[]>>();
 
 export type TicketmasterEventSearchSettings = {
   latitude: number;
@@ -17,6 +24,8 @@ export type TicketmasterEventSearchSettings = {
 export type TicketmasterRawEventWithSource = {
   event: any;
   source: TicketmasterEventSearchPlan["kind"];
+  eventSearchPlan: TicketmasterEventSearchPlan;
+  recommendationMetadata?: TicketmasterRecommendationMetadata[];
 };
 
 export type TicketmasterEventSearchDebugInfo = {
@@ -32,6 +41,65 @@ export const searchTicketmasterEvents = async (
   apiKey: string,
   settings: TicketmasterEventSearchSettings,
 ) => {
+  const cacheKey = getTicketmasterEventsCacheKey(eventSearchPlan, settings);
+  const cachedEvents = getCachedValue<any[]>(cacheKey);
+
+  if (cachedEvents) {
+    logTicketmasterEventsCache(`${eventSearchPlan.kind}_hit`, eventSearchPlan);
+    return cachedEvents.map((event) => ({
+      event,
+      source: eventSearchPlan.kind,
+      eventSearchPlan,
+    }));
+  }
+
+  logTicketmasterEventsCache(`${eventSearchPlan.kind}_miss`, eventSearchPlan);
+
+  const events = await getOrCreateEventRequest(
+    cacheKey,
+    eventSearchPlan,
+    apiKey,
+    settings,
+  );
+
+  return events.map((event) => ({
+    event,
+    source: eventSearchPlan.kind,
+    eventSearchPlan,
+  }));
+};
+
+const getOrCreateEventRequest = (
+  cacheKey: string,
+  eventSearchPlan: TicketmasterEventSearchPlan,
+  apiKey: string,
+  settings: TicketmasterEventSearchSettings,
+) => {
+  const inFlightRequest = inFlightEventRequests.get(cacheKey);
+  if (inFlightRequest) return inFlightRequest;
+
+  const request = fetchTicketmasterEventResults(
+    eventSearchPlan,
+    apiKey,
+    settings,
+  )
+    .then((events) => {
+      setCachedValue(cacheKey, events, CACHE_TTLS.ticketmasterEvents);
+      return events;
+    })
+    .finally(() => {
+      inFlightEventRequests.delete(cacheKey);
+    });
+
+  inFlightEventRequests.set(cacheKey, request);
+  return request;
+};
+
+const fetchTicketmasterEventResults = async (
+  eventSearchPlan: TicketmasterEventSearchPlan,
+  apiKey: string,
+  settings: TicketmasterEventSearchSettings,
+) => {
   const params = buildTicketmasterEventSearchParams(
     eventSearchPlan,
     apiKey,
@@ -40,10 +108,7 @@ export const searchTicketmasterEvents = async (
   const url = `${Constants.EVENTS_BASE_URL.split("?")[0]}?${params.toString()}`;
   const { data } = await axios.get(url);
 
-  return ((data?._embedded?.events ?? []) as any[]).map((event) => ({
-    event,
-    source: eventSearchPlan.kind,
-  }));
+  return (data?._embedded?.events ?? []) as any[];
 };
 
 export const getTicketmasterEventSearchDebugInfo = (
@@ -114,4 +179,51 @@ const buildTicketmasterEventSearchParams = (
   }
 
   return params;
+};
+
+const getTicketmasterEventsCacheKey = (
+  eventSearchPlan: TicketmasterEventSearchPlan,
+  settings: TicketmasterEventSearchSettings,
+) =>
+  [
+    "sync:ticketmaster:events",
+    TICKETMASTER_EVENTS_CACHE_VERSION,
+    eventSearchPlan.kind,
+    settings.latitude.toFixed(4),
+    settings.longitude.toFixed(4),
+    settings.radius,
+    settings.unit,
+    settings.size,
+    settings.sort,
+    TICKETMASTER_MUSIC_SEGMENT_ID,
+    `attractions:${stableIdList(eventSearchPlan.attractionIds)}`,
+    `subgenres:${stableIdList(eventSearchPlan.subGenreIds)}`,
+    `genres:${stableIdList(eventSearchPlan.genreIds)}`,
+    `keyword:${normalizeCacheText(eventSearchPlan.keyword ?? "")}`,
+  ].join("|");
+
+const stableIdList = (ids: string[]) => ids.slice().sort().join(",");
+
+const normalizeCacheText = (value: string) => value.trim().toLowerCase();
+
+const logTicketmasterEventsCache = (
+  result:
+    | "artist_hit"
+    | "artist_miss"
+    | "suggested_hit"
+    | "suggested_miss",
+  eventSearchPlan: TicketmasterEventSearchPlan,
+) => {
+  if (!import.meta.env.DEV) return;
+
+  const eventName =
+    result === "artist_hit"
+      ? "ticketmaster_artist_events_cache_hit"
+      : result === "artist_miss"
+        ? "ticketmaster_artist_events_cache_miss"
+        : result === "suggested_hit"
+          ? "ticketmaster_suggested_events_cache_hit"
+          : "ticketmaster_suggested_events_cache_miss";
+
+  console.debug(eventName, getTicketmasterEventSearchDebugInfo(eventSearchPlan));
 };

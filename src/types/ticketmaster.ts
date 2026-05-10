@@ -21,6 +21,17 @@ export type TicketmasterEventSearchPlan = {
   matchedReasons: string[];
 };
 
+export type TicketmasterRecommendationMetadata = {
+  recommendationLane: TicketmasterEventSearchPlanKind;
+  matchedArtistName?: string;
+  matchedSpotifyArtistId?: string;
+  attractionId?: string;
+  sourceSpotifyGenreNames: string[];
+  matchedTicketmasterSubGenreIds: string[];
+  matchedTicketmasterSubGenreNames: string[];
+  recommendationReasons: string[];
+};
+
 export type TicketmasterAttractionResolution = {
   spotifyArtistId: string;
   artistName: string;

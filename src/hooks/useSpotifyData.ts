@@ -8,6 +8,7 @@ import { SpotifyTimeRange, TasteProfile } from "../types/taste";
 import { TicketmasterQueryPlan } from "../types/ticketmaster";
 
 type User = { name: string; id: string; image: string; url: string };
+const SPOTIFY_TOP_ITEMS_FETCH_LIMIT = 50;
 
 const SPOTIFY_USER_CACHE_KEY = "sync:spotify:user:v1";
 const getSpotifyTopArtistsCacheKey = (timeRange: string, limit: number) =>
@@ -21,6 +22,13 @@ const getTasteProfileCacheKey = (
   trackLimit: number,
 ) =>
   `sync:taste-profile:${artistRange}:${trackRange}:${artistLimit}:${trackLimit}:v1`;
+
+const logSpotifyCache = (
+  result: "spotify_cache_hit" | "spotify_cache_miss",
+  type: "user" | "top_artists" | "top_tracks" | "taste_profile",
+) => {
+  if (import.meta.env.DEV) console.debug(result, { type });
+};
 
 export const useSpotifyData = (token: string | null) => {
   const [artists, setArtists] = useState<any[]>([]);
@@ -52,8 +60,8 @@ export const useSpotifyData = (token: string | null) => {
 
   const [artistCount, setArtistCount] = useState(20);
   const [trackCount, setTrackCount] = useState(20);
-  const [artistTime, setArtistTime] = useState("short_term");
-  const [trackTime, setTrackTime] = useState("short_term");
+  const [artistTime, setArtistTime] = useState("medium_term");
+  const [trackTime, setTrackTime] = useState("medium_term");
 
   /**
    * Fetches user profile data from Spotify API when token changes.
@@ -63,15 +71,21 @@ export const useSpotifyData = (token: string | null) => {
 
     const fetchUser = async () => {
       try {
-        if (!token || user.id) return;
+        if (!token) return;
+        if (user.id) {
+          logSpotifyCache("spotify_cache_hit", "user");
+          return;
+        }
 
         const cachedUser = getCachedValue<User>(SPOTIFY_USER_CACHE_KEY);
         if (cachedUser) {
+          logSpotifyCache("spotify_cache_hit", "user");
           setUser(cachedUser);
           sessionStorage.setItem("spotify_user", JSON.stringify(cachedUser));
           return;
         }
 
+        logSpotifyCache("spotify_cache_miss", "user");
         const { data } = await axios.get("https://api.spotify.com/v1/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -102,16 +116,21 @@ export const useSpotifyData = (token: string | null) => {
 
     const fetchArtists = async () => {
       try {
-        const cacheKey = getSpotifyTopArtistsCacheKey(artistTime, artistCount);
+        const cacheKey = getSpotifyTopArtistsCacheKey(
+          artistTime,
+          SPOTIFY_TOP_ITEMS_FETCH_LIMIT,
+        );
         const cachedArtists = getCachedValue<any[]>(cacheKey);
         if (cachedArtists) {
+          logSpotifyCache("spotify_cache_hit", "top_artists");
           setArtists(cachedArtists);
           setGenres(getGenresFromArtists(cachedArtists));
           return;
         }
 
+          logSpotifyCache("spotify_cache_miss", "top_artists");
         const { data } = await axios.get(
-          `https://api.spotify.com/v1/me/top/artists?limit=${artistCount}&time_range=${artistTime}`,
+          `https://api.spotify.com/v1/me/top/artists?limit=${SPOTIFY_TOP_ITEMS_FETCH_LIMIT}&time_range=${artistTime}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
@@ -124,7 +143,7 @@ export const useSpotifyData = (token: string | null) => {
     };
 
     fetchArtists();
-  }, [token, artistCount, artistTime]);
+  }, [token, artistTime]);
 
   /**
    * Fetches top tracks data from Spotify API when token, count, or time range changes.
@@ -134,15 +153,20 @@ export const useSpotifyData = (token: string | null) => {
 
     const fetchTracks = async () => {
       try {
-        const cacheKey = getSpotifyTopTracksCacheKey(trackTime, trackCount);
+        const cacheKey = getSpotifyTopTracksCacheKey(
+          trackTime,
+          SPOTIFY_TOP_ITEMS_FETCH_LIMIT,
+        );
         const cachedTracks = getCachedValue<any[]>(cacheKey);
         if (cachedTracks) {
+          logSpotifyCache("spotify_cache_hit", "top_tracks");
           setTracks(cachedTracks);
           return;
         }
 
+        logSpotifyCache("spotify_cache_miss", "top_tracks");
         const { data } = await axios.get(
-          `https://api.spotify.com/v1/me/top/tracks?limit=${trackCount}&time_range=${trackTime}`,
+          `https://api.spotify.com/v1/me/top/tracks?limit=${SPOTIFY_TOP_ITEMS_FETCH_LIMIT}&time_range=${trackTime}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
@@ -154,7 +178,7 @@ export const useSpotifyData = (token: string | null) => {
     };
 
     fetchTracks();
-  }, [token, trackCount, trackTime]);
+  }, [token, trackTime]);
 
   /**
    * Builds a graph-compatible taste profile from the Spotify data already
@@ -169,15 +193,17 @@ export const useSpotifyData = (token: string | null) => {
     const cacheKey = getTasteProfileCacheKey(
       artistTime,
       trackTime,
-      artistCount,
-      trackCount,
+      SPOTIFY_TOP_ITEMS_FETCH_LIMIT,
+      SPOTIFY_TOP_ITEMS_FETCH_LIMIT,
     );
     const cachedProfile = getCachedValue<TasteProfile>(cacheKey);
     if (cachedProfile?.user.id === user.id) {
+      logSpotifyCache("spotify_cache_hit", "taste_profile");
       setTasteProfile(cachedProfile);
       return;
     }
 
+    logSpotifyCache("spotify_cache_miss", "taste_profile");
     const profile = buildTasteProfile({
       user,
       artists,
@@ -186,8 +212,8 @@ export const useSpotifyData = (token: string | null) => {
         scopes: Constants.SCOPES,
         artistTimeRange: artistTime as SpotifyTimeRange,
         trackTimeRange: trackTime as SpotifyTimeRange,
-        artistLimit: artistCount,
-        trackLimit: trackCount,
+        artistLimit: SPOTIFY_TOP_ITEMS_FETCH_LIMIT,
+        trackLimit: SPOTIFY_TOP_ITEMS_FETCH_LIMIT,
       },
     });
 
@@ -247,8 +273,6 @@ export const useSpotifyData = (token: string | null) => {
     user,
     artists,
     tracks,
-    artistCount,
-    trackCount,
     artistTime,
     trackTime,
   ]);

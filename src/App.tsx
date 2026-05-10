@@ -18,11 +18,11 @@ function App() {
     user,
     artists,
     tracks,
-    genres,
     artistCount,
     trackCount,
     artistTime,
     trackTime,
+    tasteProfile,
     ticketmasterQueryPlan,
     setArtistCount,
     setTrackCount,
@@ -49,16 +49,14 @@ function App() {
             updateTrackTime={setTrackTime}
             artistTime={artistTime}
             trackTime={trackTime}
+            tasteProfile={tasteProfile}
           />
         }
       />
       <Route
         path="/MusicMap"
         element={
-          <MusicMap
-            genres={genres}
-            ticketmasterQueryPlan={ticketmasterQueryPlan}
-          />
+          <MusicMap ticketmasterQueryPlan={ticketmasterQueryPlan} />
         }
       />
       <Route path="/About" element={<About />} />

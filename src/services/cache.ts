@@ -3,6 +3,7 @@ export const CACHE_TTLS = {
   spotifyTopItems: 60 * 60 * 1000,
   tasteProfile: 60 * 60 * 1000,
   ticketmasterAttraction: 7 * 24 * 60 * 60 * 1000,
+  ticketmasterEvents: 60 * 60 * 1000,
 };
 
 type CacheEntry<T> = {
@@ -36,4 +37,3 @@ export const setCachedValue = <T>(key: string, value: T, ttlMs: number) => {
 
   localStorage.setItem(key, JSON.stringify(entry));
 };
-

@@ -5,11 +5,19 @@ import StatTimeButton from "./StatTimeButton";
 
 interface Props {
   tracks: any;
+  displayLimit: number;
+  totalAvailable: number;
   changeCount: any;
   changeTime: any;
 }
 
-export default function TopTracks({ tracks, changeCount, changeTime }: Props) {
+export default function TopTracks({
+  tracks,
+  displayLimit,
+  totalAvailable,
+  changeCount,
+  changeTime,
+}: Props) {
   let num = 0;
 
   return (
@@ -19,6 +27,10 @@ export default function TopTracks({ tracks, changeCount, changeTime }: Props) {
           <h1 className="mb-2 mt-1 top-stats-title">
             <i className="bi bi-cassette"></i> Top Tracks
           </h1>
+          <p className="top-stats-context">
+            Showing {tracks.length} of {totalAvailable} available tracks
+            {totalAvailable < displayLimit ? ` (Spotify returned ${totalAvailable})` : ""}
+          </p>
 
           {/* Button Section */}
           <div className="row mb-3">

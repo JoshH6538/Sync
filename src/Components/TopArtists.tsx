@@ -6,12 +6,16 @@ import StatTimeButton from "./StatTimeButton";
 
 interface Props {
   artists: any;
+  displayLimit: number;
+  totalAvailable: number;
   changeCount: any;
   changeTime: any;
 }
 
 export default function TopArtists({
   artists,
+  displayLimit,
+  totalAvailable,
   changeCount,
   changeTime,
 }: Props) {
@@ -25,6 +29,10 @@ export default function TopArtists({
             <h1 className="mb-2 mt-1 top-stats-title">
               <i className="bi bi-music-note-list"></i> Top Artists
             </h1>
+            <p className="top-stats-context">
+              Showing {artists.length} of {totalAvailable} available artists
+              {totalAvailable < displayLimit ? ` (Spotify returned ${totalAvailable})` : ""}
+            </p>
 
             {/* Button Section */}
             <div className="row mb-3">
@@ -61,6 +69,8 @@ export default function TopArtists({
                     : "src/Images/placeholder.jpg"
                 }
                 altnum={num++}
+                actionLabel="Explore event matches"
+                actionTo="/MusicMap"
               />
             </div>
           ))}

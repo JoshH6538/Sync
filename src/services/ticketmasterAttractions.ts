@@ -37,10 +37,12 @@ export const resolveTicketmasterAttractions = async (
   for (const search of attractionSearches) {
     const cached = getCachedAttractionResolution(search);
     if (cached) {
+      logTicketmasterAttractionCache("ticketmaster_attraction_cache_hit", search);
       resolutions.push(cached);
       continue;
     }
 
+    logTicketmasterAttractionCache("ticketmaster_attraction_cache_miss", search);
     const resolution = await getOrCreateAttractionRequest(search, apiKey);
     cacheAttractionResolution(search, resolution);
     resolutions.push(resolution);
@@ -208,3 +210,14 @@ const getArtistNameCacheKey = (artistName: string) =>
   `sync:ticketmaster:attraction-name:${normalizeAttractionName(
     artistName,
   )}:${ATTRACTION_CACHE_VERSION}`;
+
+const logTicketmasterAttractionCache = (
+  result: "ticketmaster_attraction_cache_hit" | "ticketmaster_attraction_cache_miss",
+  search: TicketmasterAttractionSearchPlan,
+) => {
+  if (!import.meta.env.DEV) return;
+  console.debug(result, {
+    spotifyArtistId: search.artistId,
+    artistName: search.artistName,
+  });
+};
