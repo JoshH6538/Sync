@@ -1,11 +1,15 @@
 import { TasteArtist, TasteProfile, WeightedBroadGenre, WeightedSubgenre } from "../types/taste";
+import { getTicketmasterGenreMapping } from "./ticketmasterGenreMapping";
 import {
   TicketmasterAttractionSearchPlan,
+  TicketmasterAttractionResolution,
   TicketmasterClassificationSearchPlan,
+  TicketmasterEventSearchPlan,
   TicketmasterKeywordSearchPlan,
   TicketmasterQueryPlan,
   TicketmasterQueryPlanDebug,
   TicketmasterSkippedPlanItem,
+  TicketmasterSuggestedSubgenreSearchPlan,
 } from "../types/ticketmaster";
 
 export type TicketmasterQueryPlanOptions = {
@@ -16,6 +20,7 @@ export type TicketmasterQueryPlanOptions = {
   maxClassificationSearches: number;
   maxGenreIdsPerClassificationSearch: number;
   maxSubGenreIdsPerClassificationSearch: number;
+  maxSuggestedSubGenres: number;
   minClassificationWeight: number;
   maxKeywordSearches: number;
   minKeywordGenreWeight: number;
@@ -24,11 +29,12 @@ export type TicketmasterQueryPlanOptions = {
 export const DEFAULT_TICKETMASTER_QUERY_PLAN_OPTIONS: TicketmasterQueryPlanOptions = {
   defaultEventSearchRequestBudget: 2,
   maxEventSearchRequestBudget: 3,
-  maxAttractionSearches: 5,
+  maxAttractionSearches: 3,
   minAttractionArtistWeight: 0.4,
   maxClassificationSearches: 2,
-  maxGenreIdsPerClassificationSearch: 8,
+  maxGenreIdsPerClassificationSearch: 3,
   maxSubGenreIdsPerClassificationSearch: 12,
+  maxSuggestedSubGenres: 12,
   minClassificationWeight: 0.25,
   maxKeywordSearches: 5,
   minKeywordGenreWeight: 0.35,
@@ -78,6 +84,10 @@ export const buildTicketmasterQueryPlan = (
     mergedOptions,
     debug,
   );
+  const suggestedSubgenreSearches = buildSuggestedSubgenreSearches(
+    tasteProfile,
+    mergedOptions,
+  );
   const keywordSearches = buildKeywordSearches(
     tasteProfile.subgenres,
     tasteProfile.broadGenres,
@@ -97,10 +107,163 @@ export const buildTicketmasterQueryPlan = (
     },
     attractionSearches,
     classificationSearches,
+    suggestedSubgenreSearches,
     keywordSearches,
     debug,
   };
 };
+
+export const buildTicketmasterArtistEventSearchPlan = (
+  queryPlan: TicketmasterQueryPlan,
+  attractionResolutions: TicketmasterAttractionResolution[],
+): TicketmasterEventSearchPlan | null => {
+  const attractionIds = unique(
+    attractionResolutions
+      .filter((resolution) => resolution.status === "matched")
+      .map((resolution) => resolution.attractionId)
+      .filter((id): id is string => !!id),
+  );
+
+  if (attractionIds.length < 1) return null;
+
+  return {
+    kind: "artist",
+    attractionIds,
+    genreIds: [],
+    subGenreIds: [],
+    sourceSearchIds: queryPlan.attractionSearches
+      .filter((search) =>
+        attractionResolutions.some(
+          (resolution) =>
+            resolution.spotifyArtistId === search.artistId &&
+            resolution.status === "matched",
+        ),
+      )
+      .map((search) => search.id),
+    matchedReasons: ["matched_attraction"],
+  };
+};
+
+export const buildTicketmasterSuggestedEventSearchPlan = (
+  queryPlan: TicketmasterQueryPlan,
+  options: Partial<TicketmasterQueryPlanOptions> = {},
+): TicketmasterEventSearchPlan | null => {
+  const mergedOptions = {
+    ...DEFAULT_TICKETMASTER_QUERY_PLAN_OPTIONS,
+    ...options,
+  };
+  const classificationSearches = queryPlan.classificationSearches;
+  const suggestedSubgenreSearches = queryPlan.suggestedSubgenreSearches.slice(
+    0,
+    mergedOptions.maxSuggestedSubGenres,
+  );
+  const subGenreIds = suggestedSubgenreSearches.map((search) => search.subGenreId);
+  const genreIds =
+    subGenreIds.length > 0
+      ? []
+      : unique(classificationSearches.flatMap((search) => search.genreIds));
+  const keyword =
+    subGenreIds.length < 1 &&
+    genreIds.length < 1
+      ? queryPlan.keywordSearches[0]?.keyword
+      : undefined;
+
+  if (subGenreIds.length < 1 && genreIds.length < 1 && !keyword) return null;
+
+  return {
+    kind: "suggested",
+    attractionIds: [],
+    genreIds,
+    subGenreIds,
+    keyword,
+    sourceSearchIds: [
+      ...suggestedSubgenreSearches.map((search) => search.id),
+      ...classificationSearches.map((search) => search.id),
+      ...(keyword ? [queryPlan.keywordSearches[0].id] : []),
+    ],
+    matchedReasons: [
+      ...(subGenreIds.length > 0 ? ["specific_subgenre"] : []),
+      ...(subGenreIds.length < 1 && genreIds.length > 0 ? ["broad_genre_fallback"] : []),
+      ...(keyword ? ["keyword_fallback"] : []),
+    ],
+  };
+};
+
+const buildSuggestedSubgenreSearches = (
+  tasteProfile: TasteProfile,
+  options: TicketmasterQueryPlanOptions,
+) => {
+  const searchesBySubGenreId = new Map<
+    string,
+    TicketmasterSuggestedSubgenreSearchPlan
+  >();
+  const candidates = [
+    ...getSuggestedCandidatesFromWeightedSubgenres(tasteProfile.subgenres),
+    ...getSuggestedCandidatesFromArtists(tasteProfile.artists),
+  ].sort(sortByWeightDesc);
+
+  candidates.forEach((candidate) => {
+    const existing = searchesBySubGenreId.get(candidate.subGenreId);
+    if (existing && existing.weight >= candidate.weight) return;
+
+    searchesBySubGenreId.set(candidate.subGenreId, {
+      id: `ticketmaster:suggested-subgenre:${candidate.subGenreId}`,
+      subGenreId: candidate.subGenreId,
+      sourceGenreName: candidate.sourceGenreName,
+      sourceNodeId: candidate.sourceNodeId,
+      weight: candidate.weight,
+    });
+  });
+
+  return Array.from(searchesBySubGenreId.values()).slice(
+    0,
+    options.maxSuggestedSubGenres,
+  );
+};
+
+type SuggestedSubgenreCandidate = {
+  subGenreId: string;
+  sourceGenreName: string;
+  sourceNodeId: string;
+  weight: number;
+};
+
+const getSuggestedCandidatesFromWeightedSubgenres = (
+  subgenres: WeightedSubgenre[],
+): SuggestedSubgenreCandidate[] =>
+  subgenres.flatMap((subgenre) => {
+    if (!subgenre.ticketmasterSubGenreId) return [];
+
+    return [
+      {
+        subGenreId: subgenre.ticketmasterSubGenreId,
+        sourceGenreName: subgenre.name,
+        sourceNodeId: subgenre.nodeId,
+        weight: subgenre.trackIds.length > 0 ? subgenre.weight * 1.2 : subgenre.weight,
+      },
+    ];
+  });
+
+const getSuggestedCandidatesFromArtists = (
+  artists: TasteArtist[],
+): SuggestedSubgenreCandidate[] =>
+  artists.flatMap((artist) =>
+    artist.genres.flatMap((genre) => {
+      const mapping = getTicketmasterGenreMapping(genre);
+      if (!mapping.ticketmasterSubGenreId) return [];
+
+      return [
+        {
+          subGenreId: mapping.ticketmasterSubGenreId,
+          sourceGenreName: genre,
+          sourceNodeId: artist.nodeId,
+          weight:
+            artist.weight *
+            (artist.weightParts.trackSupport > 0 ? 1.15 : 1),
+        },
+      ];
+    }),
+  );
 
 const buildAttractionSearches = (
   artists: TasteArtist[],
@@ -119,11 +282,6 @@ const buildAttractionSearches = (
 
       if (!keyword) {
         skippedArtists.push(toSkippedArtist(artist, "missing_or_unusable_name"));
-        return;
-      }
-
-      if (artist.weight < options.minAttractionArtistWeight) {
-        skippedArtists.push(toSkippedArtist(artist, "below_attraction_weight_threshold"));
         return;
       }
 
@@ -161,10 +319,22 @@ const buildClassificationSearches = (
   options: TicketmasterQueryPlanOptions,
   debug: TicketmasterQueryPlanDebug,
 ) => {
-  const candidates = [
-    ...getSubgenreClassificationCandidates(subgenres, options, debug),
+  const subgenreCandidates = getSubgenreClassificationCandidates(
+    subgenres,
+    options,
+    debug,
+  );
+  const specificSubgenreCandidates = subgenreCandidates
+    .filter((candidate) => candidate.subGenreId)
+    .sort(sortByWeightDesc);
+  const broadFallbackCandidates = [
+    ...subgenreCandidates.filter((candidate) => !candidate.subGenreId && candidate.genreId),
     ...getBroadGenreClassificationCandidates(broadGenres, options, debug),
   ].sort(sortByWeightDesc);
+  const candidates =
+    specificSubgenreCandidates.length > 0
+      ? specificSubgenreCandidates
+      : broadFallbackCandidates;
 
   const searches: TicketmasterClassificationSearchPlan[] = [];
   const usedGenreIds = new Set<string>();
@@ -473,6 +643,8 @@ const cleanKeyword = (keyword: string) => keyword.trim().replace(/\s+/g, " ");
 
 const normalizeSearchText = (value: string) => cleanKeyword(value).toLowerCase();
 
+const unique = <T>(items: T[]) => Array.from(new Set(items));
+
 const sortByWeightDesc = <T extends { weight: number }>(a: T, b: T) =>
   b.weight - a.weight;
 
@@ -505,4 +677,3 @@ const toSkippedBroadGenre = (
   sourceName: genre.name,
   reason,
 });
-
