@@ -1,4 +1,4 @@
-const Subgenres: { [key: string]: string } = {
+const TicketmasterMusicSubgenres: { [key: string]: string } = {
     //Alternative
     'adult alternative pop/rock': 'KZazBEonSMnZfZ7vAvE',
     'alternative dance': 'KZazBEonSMnZfZ7vAvI',
@@ -399,4 +399,4 @@ const Subgenres: { [key: string]: string } = {
     'New Age': 'KZazBEonSMnZfZ7vkAn'
 }
 
-export default Subgenres;
+export default TicketmasterMusicSubgenres;

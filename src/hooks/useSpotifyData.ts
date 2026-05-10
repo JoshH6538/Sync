@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Constants from "../Constants";
+import { buildTasteProfile } from "../services/spotifyTasteProfile";
+import { buildTicketmasterQueryPlan } from "../services/ticketmasterQueryPlan";
+import { SpotifyTimeRange, TasteProfile } from "../types/taste";
+import { TicketmasterQueryPlan } from "../types/ticketmaster";
 
 export const useSpotifyData = (token: string | null) => {
   const [artists, setArtists] = useState<any[]>([]);
   const [tracks, setTracks] = useState<any[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
+  const [tasteProfile, setTasteProfile] = useState<TasteProfile | null>(null);
+  const [ticketmasterQueryPlan, setTicketmasterQueryPlan] =
+    useState<TicketmasterQueryPlan | null>(null);
 
   type User = { name: string; id: string; image: string; url: string };
 
@@ -21,6 +29,8 @@ export const useSpotifyData = (token: string | null) => {
   useEffect(() => {
     if (!token) {
       setUser({ name: "", id: "", image: "", url: "" });
+      setTasteProfile(null);
+      setTicketmasterQueryPlan(null);
       sessionStorage.removeItem("spotify_user");
     }
   }, [token]);
@@ -112,11 +122,151 @@ export const useSpotifyData = (token: string | null) => {
     fetchTracks();
   }, [token, trackCount, trackTime]);
 
+  /**
+   * Builds a graph-compatible taste profile from the Spotify data already
+   * fetched for the existing UI.
+   */
+  useEffect(() => {
+    if (!token || !user.id || artists.length < 1 || tracks.length < 1) {
+      setTasteProfile(null);
+      return;
+    }
+
+    const profile = buildTasteProfile({
+      user,
+      artists,
+      tracks,
+      source: {
+        scopes: Constants.SCOPES,
+        artistTimeRange: artistTime as SpotifyTimeRange,
+        trackTimeRange: trackTime as SpotifyTimeRange,
+        artistLimit: artistCount,
+        trackLimit: trackCount,
+      },
+    });
+
+    // console.group("TasteProfile Debug");
+
+    // console.log("Full profile:", tasteProfile);
+
+    // console.table(
+    //   tasteProfile?.artists?.slice(0, 10).map((artist) => ({
+    //     rank: artist.rank,
+    //     name: artist.name,
+    //     weight: artist.weight,
+    //     rankWeight: artist.weightParts.rank,
+    //     popularityBoost: artist.weightParts.popularity,
+    //     trackSupport: artist.weightParts.trackSupport,
+    //     genres: artist.genres.join(", "),
+    //   })),
+    // );
+
+    // console.table(
+    //   tasteProfile?.tracks?.slice(0, 10).map((track) => ({
+    //     rank: track.rank,
+    //     name: track.name,
+    //     weight: track.weight,
+    //     artists: track.artists.map((artist) => artist.name).join(", "),
+    //     popularity: track.popularity,
+    //   })),
+    // );
+
+    // console.table(
+    //   tasteProfile?.subgenres?.slice(0, 20).map((genre) => ({
+    //     name: genre.name,
+    //     weight: genre.weight,
+    //     ticketmasterGenreId: genre.ticketmasterGenreId,
+    //     ticketmasterSubGenreId: genre.ticketmasterSubGenreId,
+    //     broadGenreName: genre.broadGenreName,
+    //     artistCount: genre.artistIds.length,
+    //     trackCount: genre.trackIds.length,
+    //   })),
+    // );
+
+    // console.table(
+    //   tasteProfile?.broadGenres?.map((genre) => ({
+    //     name: genre.name,
+    //     weight: genre.weight,
+    //     ticketmasterGenreId: genre.ticketmasterGenreId,
+    //     sourceGenreCount: genre.spotifyGenreNames.length,
+    //   })),
+    // );
+
+    // console.groupEnd();
+
+    setTasteProfile(profile);
+  }, [
+    token,
+    user,
+    artists,
+    tracks,
+    artistCount,
+    trackCount,
+    artistTime,
+    trackTime,
+  ]);
+
+  /**
+   * Builds an inspectable, low-request Ticketmaster query plan. This does not
+   * call Ticketmaster or affect the current event search UI.
+   */
+  useEffect(() => {
+    if (!tasteProfile) {
+      setTicketmasterQueryPlan(null);
+      return;
+    }
+
+    const plan = buildTicketmasterQueryPlan(tasteProfile);
+    // if (import.meta.env.DEV) {
+    //   console.group("Ticketmaster QueryPlan Debug");
+
+    //   console.log("Full plan:", plan);
+
+    //   console.log("Request budget:", plan.requestBudget);
+
+    //   console.table(
+    //     plan.attractionSearches.map((search) => ({
+    //       artist: search.artistName,
+    //       keyword: search.keyword,
+    //       weight: search.weight,
+    //       reason: search.reason,
+    //     })),
+    //   );
+
+    //   console.table(
+    //     plan.classificationSearches.map((search) => ({
+    //       genreIds: search.genreIds.join(", "),
+    //       subGenreIds: search.subGenreIds.join(", "),
+    //       sourceGenres: search.sourceGenreNames.join(", "),
+    //       weight: search.weight,
+    //       reason: search.reason,
+    //     })),
+    //   );
+
+    //   console.table(
+    //     plan.keywordSearches.map((search) => ({
+    //       keyword: search.keyword,
+    //       source: search.sourceName,
+    //       weight: search.weight,
+    //       reason: search.reason,
+    //     })),
+    //   );
+
+    //   console.table(plan.debug.unmappedGenres);
+
+    //   console.groupEnd();
+    // }
+
+    setTicketmasterQueryPlan(plan);
+  }, [tasteProfile]);
+
   return {
     user,
     artists,
     tracks,
     genres,
+    tasteProfile,
+    ticketmasterQueryPlan,
     artistCount,
     trackCount,
     artistTime,

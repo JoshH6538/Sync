@@ -1,4 +1,4 @@
-const Genres: { [key: string]: string } = {
+const TicketmasterMusicGenres: { [key: string]: string } = {
     'alternative': 'KnvZfZ7vAvv',
     'ballads/romantic': 'KnvZfZ7vAve',
     'blues': 'KnvZfZ7vAvd',
@@ -25,4 +25,4 @@ const Genres: { [key: string]: string } = {
     'world': 'KnvZfZ7vAeF'
 }
 
-export default Genres;
+export default TicketmasterMusicGenres;

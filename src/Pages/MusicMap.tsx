@@ -2,7 +2,7 @@ import MapWindow from "../components/MapWindow";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Constants from "../Constants";
-import Subgenres from "../Subgenres";
+import Subgenres from "../data/ticketmaster/subgenres";
 import LocalEvent from "../LocalEventClass";
 import LocalVenue from "../LocalVenueClass";
 import EventList from "../components/EventList";
