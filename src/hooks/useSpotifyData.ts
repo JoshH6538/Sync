@@ -3,8 +3,24 @@ import axios from "axios";
 import Constants from "../Constants";
 import { buildTasteProfile } from "../services/spotifyTasteProfile";
 import { buildTicketmasterQueryPlan } from "../services/ticketmasterQueryPlan";
+import { CACHE_TTLS, getCachedValue, setCachedValue } from "../services/cache";
 import { SpotifyTimeRange, TasteProfile } from "../types/taste";
 import { TicketmasterQueryPlan } from "../types/ticketmaster";
+
+type User = { name: string; id: string; image: string; url: string };
+
+const SPOTIFY_USER_CACHE_KEY = "sync:spotify:user:v1";
+const getSpotifyTopArtistsCacheKey = (timeRange: string, limit: number) =>
+  `sync:spotify:top-artists:${timeRange}:${limit}:v1`;
+const getSpotifyTopTracksCacheKey = (timeRange: string, limit: number) =>
+  `sync:spotify:top-tracks:${timeRange}:${limit}:v1`;
+const getTasteProfileCacheKey = (
+  artistRange: string,
+  trackRange: string,
+  artistLimit: number,
+  trackLimit: number,
+) =>
+  `sync:taste-profile:${artistRange}:${trackRange}:${artistLimit}:${trackLimit}:v1`;
 
 export const useSpotifyData = (token: string | null) => {
   const [artists, setArtists] = useState<any[]>([]);
@@ -14,13 +30,12 @@ export const useSpotifyData = (token: string | null) => {
   const [ticketmasterQueryPlan, setTicketmasterQueryPlan] =
     useState<TicketmasterQueryPlan | null>(null);
 
-  type User = { name: string; id: string; image: string; url: string };
-
   const [user, setUser] = useState<User>(() => {
     const cached = sessionStorage.getItem("spotify_user");
+    const cachedUser = getCachedValue<User>(SPOTIFY_USER_CACHE_KEY);
     return cached
       ? JSON.parse(cached)
-      : { name: "", id: "", image: "", url: "" };
+      : (cachedUser ?? { name: "", id: "", image: "", url: "" });
   });
 
   /**
@@ -50,6 +65,13 @@ export const useSpotifyData = (token: string | null) => {
       try {
         if (!token || user.id) return;
 
+        const cachedUser = getCachedValue<User>(SPOTIFY_USER_CACHE_KEY);
+        if (cachedUser) {
+          setUser(cachedUser);
+          sessionStorage.setItem("spotify_user", JSON.stringify(cachedUser));
+          return;
+        }
+
         const { data } = await axios.get("https://api.spotify.com/v1/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -63,6 +85,7 @@ export const useSpotifyData = (token: string | null) => {
 
         setUser(newUser);
         sessionStorage.setItem("spotify_user", JSON.stringify(newUser));
+        setCachedValue(SPOTIFY_USER_CACHE_KEY, newUser, CACHE_TTLS.spotifyUser);
       } catch (err) {
         console.error("[SpotifyData] User fetch error:", err);
       }
@@ -79,19 +102,22 @@ export const useSpotifyData = (token: string | null) => {
 
     const fetchArtists = async () => {
       try {
+        const cacheKey = getSpotifyTopArtistsCacheKey(artistTime, artistCount);
+        const cachedArtists = getCachedValue<any[]>(cacheKey);
+        if (cachedArtists) {
+          setArtists(cachedArtists);
+          setGenres(getGenresFromArtists(cachedArtists));
+          return;
+        }
+
         const { data } = await axios.get(
           `https://api.spotify.com/v1/me/top/artists?limit=${artistCount}&time_range=${artistTime}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
         setArtists(data.items);
-
-        const genreList: string[] = [];
-        data.items.forEach((a: any) =>
-          a.genres.forEach((g: string) => genreList.push(g)),
-        );
-
-        setGenres(genreList);
+        setCachedValue(cacheKey, data.items, CACHE_TTLS.spotifyTopItems);
+        setGenres(getGenresFromArtists(data.items));
       } catch (err) {
         console.error("[SpotifyData] Artist fetch error:", err);
       }
@@ -108,12 +134,20 @@ export const useSpotifyData = (token: string | null) => {
 
     const fetchTracks = async () => {
       try {
+        const cacheKey = getSpotifyTopTracksCacheKey(trackTime, trackCount);
+        const cachedTracks = getCachedValue<any[]>(cacheKey);
+        if (cachedTracks) {
+          setTracks(cachedTracks);
+          return;
+        }
+
         const { data } = await axios.get(
           `https://api.spotify.com/v1/me/top/tracks?limit=${trackCount}&time_range=${trackTime}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
         setTracks(data.items);
+        setCachedValue(cacheKey, data.items, CACHE_TTLS.spotifyTopItems);
       } catch (err) {
         console.error("[SpotifyData] Track fetch error:", err);
       }
@@ -129,6 +163,18 @@ export const useSpotifyData = (token: string | null) => {
   useEffect(() => {
     if (!token || !user.id || artists.length < 1 || tracks.length < 1) {
       setTasteProfile(null);
+      return;
+    }
+
+    const cacheKey = getTasteProfileCacheKey(
+      artistTime,
+      trackTime,
+      artistCount,
+      trackCount,
+    );
+    const cachedProfile = getCachedValue<TasteProfile>(cacheKey);
+    if (cachedProfile?.user.id === user.id) {
+      setTasteProfile(cachedProfile);
       return;
     }
 
@@ -195,6 +241,7 @@ export const useSpotifyData = (token: string | null) => {
     // console.groupEnd();
 
     setTasteProfile(profile);
+    setCachedValue(cacheKey, profile, CACHE_TTLS.tasteProfile);
   }, [
     token,
     user,
@@ -217,45 +264,45 @@ export const useSpotifyData = (token: string | null) => {
     }
 
     const plan = buildTicketmasterQueryPlan(tasteProfile);
-    // if (import.meta.env.DEV) {
-    //   console.group("Ticketmaster QueryPlan Debug");
+    if (import.meta.env.DEV) {
+      console.group("Ticketmaster QueryPlan Debug");
 
-    //   console.log("Full plan:", plan);
+      console.log("Full plan:", plan);
 
-    //   console.log("Request budget:", plan.requestBudget);
+      console.log("Request budget:", plan.requestBudget);
 
-    //   console.table(
-    //     plan.attractionSearches.map((search) => ({
-    //       artist: search.artistName,
-    //       keyword: search.keyword,
-    //       weight: search.weight,
-    //       reason: search.reason,
-    //     })),
-    //   );
+      console.table(
+        plan.attractionSearches.map((search) => ({
+          artist: search.artistName,
+          keyword: search.keyword,
+          weight: search.weight,
+          reason: search.reason,
+        })),
+      );
 
-    //   console.table(
-    //     plan.classificationSearches.map((search) => ({
-    //       genreIds: search.genreIds.join(", "),
-    //       subGenreIds: search.subGenreIds.join(", "),
-    //       sourceGenres: search.sourceGenreNames.join(", "),
-    //       weight: search.weight,
-    //       reason: search.reason,
-    //     })),
-    //   );
+      console.table(
+        plan.classificationSearches.map((search) => ({
+          genreIds: search.genreIds.join(", "),
+          subGenreIds: search.subGenreIds.join(", "),
+          sourceGenres: search.sourceGenreNames.join(", "),
+          weight: search.weight,
+          reason: search.reason,
+        })),
+      );
 
-    //   console.table(
-    //     plan.keywordSearches.map((search) => ({
-    //       keyword: search.keyword,
-    //       source: search.sourceName,
-    //       weight: search.weight,
-    //       reason: search.reason,
-    //     })),
-    //   );
+      console.table(
+        plan.keywordSearches.map((search) => ({
+          keyword: search.keyword,
+          source: search.sourceName,
+          weight: search.weight,
+          reason: search.reason,
+        })),
+      );
 
-    //   console.table(plan.debug.unmappedGenres);
+      console.table(plan.debug.unmappedGenres);
 
-    //   console.groupEnd();
-    // }
+      console.groupEnd();
+    }
 
     setTicketmasterQueryPlan(plan);
   }, [tasteProfile]);
@@ -276,4 +323,12 @@ export const useSpotifyData = (token: string | null) => {
     setArtistTime,
     setTrackTime,
   };
+};
+
+const getGenresFromArtists = (artists: any[]) => {
+  const genreList: string[] = [];
+  artists.forEach((artist: any) =>
+    artist.genres?.forEach((genre: string) => genreList.push(genre)),
+  );
+  return genreList;
 };

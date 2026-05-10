@@ -14,7 +14,7 @@ export default function Navbar({ login, logout }: Props) {
     <nav className="nav-container">
       {/* LEFT */}
       <div className="nav-left">
-        <Link to="/" className="nav-logo">
+        <Link to="//" className="nav-logo">
           <img src={logoSrc} width="40" height="40" alt="Sync logo" />
           <span className="nav-brand-text">Sync</span>
         </Link>

@@ -4,8 +4,31 @@ export type TicketmasterQueryPlan = {
   requestBudget: TicketmasterRequestBudget;
   attractionSearches: TicketmasterAttractionSearchPlan[];
   classificationSearches: TicketmasterClassificationSearchPlan[];
+  suggestedSubgenreSearches: TicketmasterSuggestedSubgenreSearchPlan[];
   keywordSearches: TicketmasterKeywordSearchPlan[];
   debug: TicketmasterQueryPlanDebug;
+};
+
+export type TicketmasterEventSearchPlanKind = "artist" | "suggested";
+
+export type TicketmasterEventSearchPlan = {
+  kind: TicketmasterEventSearchPlanKind;
+  attractionIds: string[];
+  genreIds: string[];
+  subGenreIds: string[];
+  keyword?: string;
+  sourceSearchIds: string[];
+  matchedReasons: string[];
+};
+
+export type TicketmasterAttractionResolution = {
+  spotifyArtistId: string;
+  artistName: string;
+  normalizedArtistName: string;
+  status: "matched" | "no_match";
+  attractionId?: string;
+  attractionName?: string;
+  matchType?: "spotify_external_link" | "exact" | "safe_near_exact";
 };
 
 export type TicketmasterRequestBudget = {
@@ -32,6 +55,14 @@ export type TicketmasterClassificationSearchPlan = {
   sourceNodeIds: string[];
   weight: number;
   reason: "mapped_genre" | "mapped_subgenre" | "broad_genre";
+};
+
+export type TicketmasterSuggestedSubgenreSearchPlan = {
+  id: string;
+  subGenreId: string;
+  sourceGenreName: string;
+  sourceNodeId: string;
+  weight: number;
 };
 
 export type TicketmasterKeywordSearchPlan = {
@@ -62,4 +93,3 @@ export type TicketmasterUnmappedGenreDebugItem = {
   sourceName: string;
   weight: number;
 };
-

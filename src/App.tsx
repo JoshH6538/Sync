@@ -23,6 +23,7 @@ function App() {
     trackCount,
     artistTime,
     trackTime,
+    ticketmasterQueryPlan,
     setArtistCount,
     setTrackCount,
     setArtistTime,
@@ -51,7 +52,15 @@ function App() {
           />
         }
       />
-      <Route path="/MusicMap" element={<MusicMap genres={genres} />} />
+      <Route
+        path="/MusicMap"
+        element={
+          <MusicMap
+            genres={genres}
+            ticketmasterQueryPlan={ticketmasterQueryPlan}
+          />
+        }
+      />
       <Route path="/About" element={<About />} />
       <Route path="/Privacy" element={<Privacy />} />
       <Route path="/" element={<Home />} />

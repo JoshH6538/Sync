@@ -9,6 +9,8 @@ const Constants = {
   SPACE_DELIM: "%20",
   EVENTS_BASE_URL:
     "https://app.ticketmaster.com/discovery/v2/events.json?apikey=",
+  ATTRACTIONS_BASE_URL:
+    "https://app.ticketmaster.com/discovery/v2/attractions.json",
 };
 
 export default Constants;
