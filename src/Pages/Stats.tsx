@@ -364,6 +364,18 @@ export default function Stats({
                     ? getSelectedTasteDescription(activeGraphNode)
                     : "See how each artist, genre, or track contributes."}
                 </span>
+                {activeGraphNode?.kind === "artist" ? (
+                  <Link
+                    to="/MusicMap"
+                    state={{
+                      artistEventSearch:
+                        getArtistEventSearchStateFromNode(activeGraphNode),
+                    }}
+                    className="secondary-btn"
+                  >
+                    See event matches
+                  </Link>
+                ) : null}
               </div>
             </div>
           </div>
@@ -856,3 +868,11 @@ const getSelectedTasteDescription = (node: NodeObject<TasteMapNode>) => {
 
   return "This item contributes to your taste profile.";
 };
+
+const getArtistEventSearchStateFromNode = (node: NodeObject<TasteMapNode>) => ({
+  artistId: String(node.id ?? "").replace(/^spotify:artist:/, ""),
+  artistName: String(node.label ?? ""),
+  artistNodeId: String(node.id ?? ""),
+  keyword: String(node.label ?? ""),
+  weight: node.weight ?? 1,
+});

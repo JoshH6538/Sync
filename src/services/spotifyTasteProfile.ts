@@ -141,19 +141,35 @@ export const buildTasteProfile = ({
     ),
   );
 
+  // lookup map to find weighted artist data from id
   const artistById = new Map(tasteArtists.map((artist) => [artist.id, artist]));
+
+  // relationship edges between artists, tracks, and genres
   const edges: TasteEdge[] = [];
+
   const genreMap = new Map<string, GenreAccumulator>();
 
+  /**
+   * For each top artist, take their Spotify genres.
+   * Split the artist’s importance across those genres.
+   * Add those genre scores up.
+   * Create artist-to-genre links for the Taste Map.
+   */
   tasteArtists.forEach((artist) => {
-    const genresForArtist = artist.genres.map(normalizeGenreName).filter(Boolean);
+    // normalize genre names
+    const genresForArtist = artist.genres
+      .map(normalizeGenreName)
+      .filter(Boolean);
+    // split artist weight evenly across genres (if any) for genre weighting and edge creation
     const genreShare =
       genresForArtist.length > 0 ? artist.weight / genresForArtist.length : 0;
 
     genresForArtist.forEach((genreName) => {
+      // add the genre contribution from this artist to the genre accumulator, creating if it doesn't exist yet
       const genre = getGenreAccumulator(genreMap, genreName);
       genre.weight += genreShare;
       genre.artistIds.add(artist.id);
+      // create edge from artist to genre with weight equal to the artist's weight divided by their number of genres
       edges.push({
         id: edgeId(artist.nodeId, genre.nodeId, "artist_has_genre"),
         from: artist.nodeId,
@@ -164,6 +180,20 @@ export const buildTasteProfile = ({
     });
   });
 
+  /**
+   * For each top track, connect it to the artists credited on the track.
+   * Give the main artist more support than featured artists.
+   *
+   * If a track artist is also in the user's top artists list,
+   * use that artist's Spotify genres to reinforce the genre profile.
+   *
+   * Split part of the track's importance across that artist's genres.
+   * Add those genre scores up.
+   * Create track-to-genre links for the Taste Map.
+   *
+   * Current limitation:
+   * Tracks only support genres when the track artist is also in the top artists list.
+   */
   tasteTracks.forEach((track) => {
     track.artists.forEach((trackArtist, index) => {
       edges.push({
@@ -173,7 +203,9 @@ export const buildTasteProfile = ({
         type: "track_by_artist",
         weight:
           track.weight *
-          (index === 0 ? PRIMARY_ARTIST_TRACK_SUPPORT : SECONDARY_ARTIST_TRACK_SUPPORT),
+          (index === 0
+            ? PRIMARY_ARTIST_TRACK_SUPPORT
+            : SECONDARY_ARTIST_TRACK_SUPPORT),
       });
 
       const matchedArtist = artistById.get(trackArtist.id);
@@ -202,6 +234,12 @@ export const buildTasteProfile = ({
     });
   });
 
+  /**
+   * Convert the accumulated genre map into a normal array.
+   * Keep each genre's total weight.
+   * Keep which artists and tracks contributed to that genre.
+   * Normalize the weights so the strongest genre is 1.
+   */
   const genres = normalizeWeights(
     Array.from(genreMap.values()).map((genre) => ({
       id: genre.id,
@@ -214,6 +252,13 @@ export const buildTasteProfile = ({
     })),
   );
 
+  /**
+   * For each Spotify genre, find the closest Ticketmaster genre/subgenre mapping.
+   * Preserve the Spotify genre data.
+   * Add Ticketmaster IDs when a mapping exists.
+   * Add the broad genre group this Spotify genre belongs to.
+   * Normalize mapped subgenre weights.
+   */
   const subgenres = normalizeWeights(
     genres.map((genre) => {
       const mapping = getGenreMapping(genre.name);
@@ -248,7 +293,9 @@ export const calculateRankWeight = (rank: number, limit: number) => {
   return 1 - (zeroBasedRank / limit) * (1 - MIN_RANK_WEIGHT);
 };
 
-export const calculatePopularityBoost = (popularity: number | null | undefined) => {
+export const calculatePopularityBoost = (
+  popularity: number | null | undefined,
+) => {
   const popularityWeight =
     typeof popularity === "number" ? clamp(popularity / 100, 0, 1) : 0.5;
 
@@ -340,8 +387,13 @@ const getTrackSupportByArtist = (tracks: TasteTrack[]) => {
   tracks.forEach((track) => {
     track.artists.forEach((artist, index) => {
       const multiplier =
-        index === 0 ? PRIMARY_ARTIST_TRACK_SUPPORT : SECONDARY_ARTIST_TRACK_SUPPORT;
-      support.set(artist.id, (support.get(artist.id) ?? 0) + track.weight * multiplier);
+        index === 0
+          ? PRIMARY_ARTIST_TRACK_SUPPORT
+          : SECONDARY_ARTIST_TRACK_SUPPORT;
+      support.set(
+        artist.id,
+        (support.get(artist.id) ?? 0) + track.weight * multiplier,
+      );
     });
   });
 
@@ -379,6 +431,30 @@ const getGenreMapping = (genreName: string) => {
   };
 };
 
+/**
+ * Builds broad genre groups from the weighted Spotify subgenres.
+ *
+ * Each subgenre has already been mapped, when possible, to a broader
+ * Ticketmaster genre family. This function rolls those detailed subgenres
+ * up into broader genre buckets so the TasteProfile can describe both:
+ * - specific Spotify genre/subgenre signals
+ * - higher-level genre families used for summary and discovery
+ *
+ * While grouping, this also:
+ * - sums subgenre weights into each broad genre
+ * - preserves which Spotify genre names contributed to the broad genre
+ * - preserves contributing artist and track IDs
+ * - adds Taste Map edges from Spotify genres to broad genres
+ * - adds Taste Map edges from Spotify genres to Ticketmaster subgenre IDs
+ *   when a Ticketmaster subgenre mapping exists
+ *
+ * The returned broad genres are normalized so the strongest broad genre
+ * has a weight of 1.
+ *
+ * @param subgenres Weighted Spotify genres enriched with Ticketmaster mapping data.
+ * @param edges Mutable TasteProfile edge list. This function appends genre mapping edges.
+ * @returns Normalized broad genre groups for the TasteProfile.
+ */
 const buildBroadGenres = (
   subgenres: WeightedSubgenre[],
   edges: TasteEdge[],
@@ -396,11 +472,17 @@ const buildBroadGenres = (
 
     broadGenre.weight += subgenre.weight;
     broadGenre.spotifyGenreNames.add(subgenre.name);
-    subgenre.artistIds.forEach((artistId) => broadGenre.artistIds.add(artistId));
+    subgenre.artistIds.forEach((artistId) =>
+      broadGenre.artistIds.add(artistId),
+    );
     subgenre.trackIds.forEach((trackId) => broadGenre.trackIds.add(trackId));
 
     edges.push({
-      id: edgeId(subgenre.nodeId, broadGenre.nodeId, "spotify_genre_maps_to_broad_genre"),
+      id: edgeId(
+        subgenre.nodeId,
+        broadGenre.nodeId,
+        "spotify_genre_maps_to_broad_genre",
+      ),
       from: subgenre.nodeId,
       to: broadGenre.nodeId,
       type: "spotify_genre_maps_to_broad_genre",

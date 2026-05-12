@@ -8,9 +8,17 @@ interface Props {
   altnum: number;
   actionLabel?: string;
   actionTo?: string;
+  actionState?: unknown;
 }
 
-export default function Card({ text, img, altnum, actionLabel, actionTo }: Props) {
+export default function Card({
+  text,
+  img,
+  altnum,
+  actionLabel,
+  actionTo,
+  actionState,
+}: Props) {
   const alt = `card-${altnum}`;
   return (
     <div className="text-center text-truncate hover-grow">
@@ -28,7 +36,7 @@ export default function Card({ text, img, altnum, actionLabel, actionTo }: Props
         {text}
       </p>
       {actionLabel && actionTo ? (
-        <Link to={actionTo} className="card-action-link">
+        <Link to={actionTo} state={actionState} className="card-action-link">
           {actionLabel}
         </Link>
       ) : null}

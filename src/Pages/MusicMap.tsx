@@ -1,9 +1,16 @@
 import MapWindow from "../components/MapWindow";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import EventList from "../components/EventList";
 import EventSettings from "../components/EventSettings";
-import { TicketmasterQueryPlan } from "../types/ticketmaster";
-import { useTicketmasterEvents } from "../hooks/useTicketmasterEvents";
+import {
+  TicketmasterAttractionSearchPlan,
+  TicketmasterQueryPlan,
+} from "../types/ticketmaster";
+import {
+  type ArtistEventSearchStatus,
+  useTicketmasterEvents,
+} from "../hooks/useTicketmasterEvents";
 
 import "../Styles/MusicMap.css";
 
@@ -18,7 +25,20 @@ interface FormDataValues {
   sortOrder: string;
 }
 
+type MusicMapLocationState = {
+  artistEventSearch?: {
+    artistId: string;
+    artistName: string;
+    artistNodeId: string;
+    keyword: string;
+    weight: number;
+  };
+};
+
 export default function MusicMap({ ticketmasterQueryPlan }: Props) {
+  const location = useLocation();
+  const artistEventSearch = (location.state as MusicMapLocationState | null)
+    ?.artistEventSearch;
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [selectedCoordinates, setSelectedCoordinates] = useState<
@@ -32,10 +52,18 @@ export default function MusicMap({ ticketmasterQueryPlan }: Props) {
     sortObject: "NONE",
     sortOrder: "NONE",
   });
-  const { events } = useTicketmasterEvents({
+  const selectedArtistSearch = useMemo(
+    () =>
+      artistEventSearch
+        ? toAttractionSearchPlan(artistEventSearch)
+        : null,
+    [artistEventSearch],
+  );
+  const { events, artistSearchStatus } = useTicketmasterEvents({
     latitude,
     longitude,
     ticketmasterQueryPlan,
+    selectedArtistSearch,
   });
 
   const handleEventSelect = (lat: number, lng: number, id: string) => {
@@ -138,6 +166,14 @@ export default function MusicMap({ ticketmasterQueryPlan }: Props) {
       <h1 className="mb-2 mt-1 top-events-title text-center">
         <i className="bi bi-calendar4-event"></i> Top Events Near You
       </h1>
+      {artistEventSearch ? (
+        <p className="text-center">
+          {getArtistSearchStatusText(
+            artistEventSearch.artistName,
+            artistSearchStatus,
+          )}
+        </p>
+      ) : null}
       <div className="row event-list-map-container py-3">
         {/* MAP */}
         <div className="col-12 col-lg-6 map-container mb-5">
@@ -158,3 +194,34 @@ export default function MusicMap({ ticketmasterQueryPlan }: Props) {
     </div>
   );
 }
+
+const toAttractionSearchPlan = (
+  artist: NonNullable<MusicMapLocationState["artistEventSearch"]>,
+): TicketmasterAttractionSearchPlan => ({
+  id: `ticketmaster:attraction-search:${normalizeSearchText(artist.artistName)}`,
+  artistId: artist.artistId,
+  artistName: artist.artistName,
+  artistNodeId: artist.artistNodeId,
+  keyword: artist.keyword,
+  weight: artist.weight,
+  reason: "top_artist",
+});
+
+const getArtistSearchStatusText = (
+  artistName: string,
+  status: ArtistEventSearchStatus,
+) => {
+  if (status === "resolving") return `Checking Ticketmaster for ${artistName}.`;
+  if (status === "events_found") return `Showing event matches for ${artistName}.`;
+  if (status === "no_match") {
+    return `No Ticketmaster artist match found for ${artistName}. Showing genre-based matches too.`;
+  }
+  if (status === "no_events") {
+    return `No nearby events found for ${artistName}. Showing genre-based matches too.`;
+  }
+  if (status === "paused") return `Ticketmaster API paused for ${artistName}.`;
+  return `Looking for event matches for ${artistName}.`;
+};
+
+const normalizeSearchText = (value: string) =>
+  value.trim().replace(/\s+/g, " ").toLowerCase();

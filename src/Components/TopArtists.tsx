@@ -56,7 +56,7 @@ export default function TopArtists({
       </div> */}
 
         <div className="row px-2 py-2">
-          {artists.map((artist: any) => (
+          {artists.map((artist: any, index: number) => (
             <div
               key={artist.id}
               className="col-6 col-sm-4 col-md-3 col-lg-2 mb-4 d-flex"
@@ -71,6 +71,15 @@ export default function TopArtists({
                 altnum={num++}
                 actionLabel="Explore event matches"
                 actionTo="/MusicMap"
+                actionState={{
+                  artistEventSearch: {
+                    artistId: artist.id,
+                    artistName: artist.name,
+                    artistNodeId: `spotify:artist:${artist.id}`,
+                    keyword: artist.name,
+                    weight: Math.max(0.25, 1 - index * 0.05),
+                  },
+                }}
               />
             </div>
           ))}

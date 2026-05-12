@@ -16,12 +16,15 @@ import {
   enrichTicketmasterEvents,
   mapTicketmasterEventsToLocalEvents,
 } from "../services/ticketmasterEventEnrichment";
-import { TicketmasterQueryPlan } from "../types/ticketmaster";
+import {
+  TicketmasterAttractionResolution,
+  TicketmasterAttractionSearchPlan,
+  TicketmasterQueryPlan,
+} from "../types/ticketmaster";
 
 const DEBUG_TICKETMASTER_SEARCH = import.meta.env.DEV;
 const PAUSE_TICKETMASTER_API =
-  import.meta.env.DEV &&
-  import.meta.env.VITE_PAUSE_TICKETMASTER_API === "true";
+  import.meta.env.DEV && import.meta.env.VITE_PAUSE_TICKETMASTER_API === "true";
 
 const DEFAULT_EVENT_SEARCH_SETTINGS = {
   radius: 100,
@@ -34,21 +37,28 @@ type UseTicketmasterEventsInput = {
   latitude: number;
   longitude: number;
   ticketmasterQueryPlan: TicketmasterQueryPlan | null;
+  selectedArtistSearch?: TicketmasterAttractionSearchPlan | null;
 };
 
 export const useTicketmasterEvents = ({
   latitude,
   longitude,
   ticketmasterQueryPlan,
+  selectedArtistSearch,
 }: UseTicketmasterEventsInput) => {
   const [events, setEvents] = useState<LocalEvent[]>([]);
   const [fetched, setFetched] = useState(false);
+  const [artistSearchStatus, setArtistSearchStatus] =
+    useState<ArtistEventSearchStatus>("idle");
+
+  // duplicate request prevention - keep track of completed and in-flight search keys
   const completedSearchKeys = useRef(new Set<string>());
   const inFlightSearchKeys = useRef(new Set<string>());
 
   useEffect(() => {
     setFetched(false);
-  }, [latitude, longitude, ticketmasterQueryPlan]);
+    setArtistSearchStatus("idle");
+  }, [latitude, longitude, ticketmasterQueryPlan, selectedArtistSearch]);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -62,13 +72,14 @@ export const useTicketmasterEvents = ({
         sourceTasteProfileGeneratedAt:
           ticketmasterQueryPlan?.sourceTasteProfileGeneratedAt ?? "",
         classificationSearchIds:
-          ticketmasterQueryPlan?.classificationSearches.map((search) => search.id) ??
-          [],
+          ticketmasterQueryPlan?.classificationSearches.map(
+            (search) => search.id,
+          ) ?? [],
         suggestedSubgenreSearchIds:
-          ticketmasterQueryPlan?.suggestedSubgenreSearches.map((search) => search.id) ??
-          [],
-        attractionSearchIds:
-          ticketmasterQueryPlan?.attractionSearches.map((search) => search.id) ?? [],
+          ticketmasterQueryPlan?.suggestedSubgenreSearches.map(
+            (search) => search.id,
+          ) ?? [],
+        selectedArtistSearchId: selectedArtistSearch?.id ?? "",
       });
 
       if (
@@ -84,16 +95,7 @@ export const useTicketmasterEvents = ({
       inFlightSearchKeys.current.add(requestKey);
 
       try {
-        const attractionResolutions = PAUSE_TICKETMASTER_API
-          ? []
-          : await resolveTicketmasterAttractions(
-              ticketmasterQueryPlan.attractionSearches,
-              import.meta.env.VITE_TICKETMASTER_KEY,
-            );
-        const artistEventSearchPlan = buildTicketmasterArtistEventSearchPlan(
-          ticketmasterQueryPlan,
-          attractionResolutions,
-        );
+        let attractionResolutions: TicketmasterAttractionResolution[] = [];
         const suggestedEventSearchPlan =
           buildTicketmasterSuggestedEventSearchPlan(ticketmasterQueryPlan);
         const eventSearchSettings: TicketmasterEventSearchSettings = {
@@ -105,30 +107,52 @@ export const useTicketmasterEvents = ({
 
         if (PAUSE_TICKETMASTER_API) {
           console.debug("ticketmaster_api_paused", {
-            attractionSearchesCount: ticketmasterQueryPlan.attractionSearches.length,
+            selectedArtistSearch: selectedArtistSearch?.artistName,
             suggestedSubgenreSearchesCount:
               ticketmasterQueryPlan.suggestedSubgenreSearches.length,
             plannedSuggestedSubGenreIds:
               suggestedEventSearchPlan?.subGenreIds ?? [],
-            artistEventSearchPlan,
             suggestedEventSearchPlan,
           });
+          setArtistSearchStatus(selectedArtistSearch ? "paused" : "idle");
           setFetched(true);
           completedSearchKeys.current.add(requestKey);
           return;
         }
 
-        if (artistEventSearchPlan) {
-          if (DEBUG_TICKETMASTER_SEARCH) console.debug("artist_event_search");
-          eventResults.push(
-            ...(await searchTicketmasterEvents(
-              artistEventSearchPlan,
-              import.meta.env.VITE_TICKETMASTER_KEY,
-              eventSearchSettings,
-            )),
+        if (selectedArtistSearch) {
+          setArtistSearchStatus("resolving");
+          attractionResolutions = await resolveTicketmasterAttractions(
+            [selectedArtistSearch],
+            import.meta.env.VITE_TICKETMASTER_KEY,
           );
-        } else if (DEBUG_TICKETMASTER_SEARCH) {
-          console.debug("skipped_artist_event_search_no_attractions");
+          const [artistResolution] = attractionResolutions;
+
+          if (artistResolution?.status === "matched") {
+            const artistQueryPlan = {
+              ...ticketmasterQueryPlan,
+              attractionSearches: [selectedArtistSearch],
+            };
+            const artistEventSearchPlan = buildTicketmasterArtistEventSearchPlan(
+              artistQueryPlan,
+              attractionResolutions,
+            );
+
+            if (artistEventSearchPlan) {
+              if (DEBUG_TICKETMASTER_SEARCH) console.debug("artist_event_search");
+              const artistResults = await searchTicketmasterEvents(
+                artistEventSearchPlan,
+                import.meta.env.VITE_TICKETMASTER_KEY,
+                eventSearchSettings,
+              );
+              eventResults.push(...artistResults);
+              setArtistSearchStatus(
+                artistResults.length > 0 ? "events_found" : "no_events",
+              );
+            }
+          } else {
+            setArtistSearchStatus("no_match");
+          }
         }
 
         if (suggestedEventSearchPlan) {
@@ -162,9 +186,9 @@ export const useTicketmasterEvents = ({
           ),
         );
 
-        if (eventList.length > 0) {
-          setEvents(eventList);
-        } else {
+        setEvents(eventList);
+
+        if (eventList.length < 1) {
           alert("No results found. Please adjust your search settings.");
         }
 
@@ -178,11 +202,25 @@ export const useTicketmasterEvents = ({
     };
 
     loadEvents();
-  }, [fetched, latitude, longitude, ticketmasterQueryPlan]);
+  }, [fetched, latitude, longitude, selectedArtistSearch, ticketmasterQueryPlan]);
 
-  return { events };
+  return { events, artistSearchStatus };
 };
 
+export type ArtistEventSearchStatus =
+  | "idle"
+  | "resolving"
+  | "events_found"
+  | "no_match"
+  | "no_events"
+  | "paused";
+
+/**
+ * Inputs that define one unique Music Map event search.
+ *
+ * These values are used only to prevent duplicate local searches.
+ * They are not the Ticketmaster request cache key itself.
+ */
 type MusicMapRequestKeyInput = {
   latitude: number;
   longitude: number;
@@ -193,9 +231,18 @@ type MusicMapRequestKeyInput = {
   sourceTasteProfileGeneratedAt: string;
   classificationSearchIds: string[];
   suggestedSubgenreSearchIds: string[];
-  attractionSearchIds: string[];
+  selectedArtistSearchId: string;
 };
 
+/**
+ * Builds a stable key for the current Music Map search.
+ *
+ * If the same key is already in-flight or completed, the hook skips it
+ * to avoid duplicate Ticketmaster API calls from re-renders or StrictMode.
+ *
+ * The key changes when location, search settings, TasteProfile version,
+ * or planned Ticketmaster search IDs change.
+ */
 const getMusicMapRequestKey = ({
   latitude,
   longitude,
@@ -206,7 +253,7 @@ const getMusicMapRequestKey = ({
   sourceTasteProfileGeneratedAt,
   classificationSearchIds,
   suggestedSubgenreSearchIds,
-  attractionSearchIds,
+  selectedArtistSearchId,
 }: MusicMapRequestKeyInput) =>
   [
     latitude.toFixed(4),
@@ -218,7 +265,7 @@ const getMusicMapRequestKey = ({
     sourceTasteProfileGeneratedAt,
     stableIdList(classificationSearchIds),
     stableIdList(suggestedSubgenreSearchIds),
-    stableIdList(attractionSearchIds),
+    selectedArtistSearchId,
   ].join("|");
 
 const getSuggestedSourceGenreNames = (
