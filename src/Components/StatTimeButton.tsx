@@ -2,20 +2,29 @@
 interface Props {
   color?: "primary" | "secondary" | "dark" | "danger";
   onClick: any;
+  value?: string;
+  label?: string;
 }
 
-const StatTimeButton = ({ color = "danger", onClick }: Props) => {
+const StatTimeButton = ({
+  color = "danger",
+  onClick,
+  value,
+  label = "Range",
+}: Props) => {
   return (
     <div className="count-container d-flex align-items-center">
-      <h3 className="mb-0 me-3">Range</h3>
+      <h3 className="mb-0 me-3">{label}</h3>
       <div
         className="btn-group tri-button"
         role="group"
-        aria-label="Basic example"
+        aria-label={label}
       >
         <button
           type="button"
-          className={"btn time-btn btn-" + color}
+          className={`btn time-btn btn-${color} ${
+            value === "short_term" ? "is-active" : ""
+          }`}
           onClick={() => {
             onClick("short_term");
           }}
@@ -24,7 +33,9 @@ const StatTimeButton = ({ color = "danger", onClick }: Props) => {
         </button>
         <button
           type="button"
-          className={"btn time-btn btn-" + color}
+          className={`btn time-btn btn-${color} ${
+            value === "medium_term" ? "is-active" : ""
+          }`}
           onClick={() => {
             onClick("medium_term");
           }}
@@ -33,7 +44,9 @@ const StatTimeButton = ({ color = "danger", onClick }: Props) => {
         </button>
         <button
           type="button"
-          className={"btn time-btn btn-" + color}
+          className={`btn time-btn btn-${color} ${
+            value === "long_term" ? "is-active" : ""
+          }`}
           onClick={() => {
             onClick("long_term");
           }}

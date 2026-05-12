@@ -40,7 +40,6 @@ export type TasteArtist = {
   weight: number;
   weightParts: {
     rank: number;
-    popularity: number;
     trackSupport: number;
   };
 };
@@ -68,7 +67,6 @@ export type TasteTrack = {
   weight: number;
   weightParts: {
     rank: number;
-    popularity: number;
   };
 };
 
@@ -120,4 +118,3 @@ export type TasteEdge = {
   type: TasteEdgeType;
   weight: number;
 };
-

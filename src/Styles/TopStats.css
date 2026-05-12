@@ -64,7 +64,8 @@
 
 .tri-button .btn:hover,
 .tri-button .btn:focus,
-.tri-button .btn:active {
+.tri-button .btn:active,
+.tri-button .btn.is-active {
   background: rgba(14, 165, 233, 0.18) !important;
   color: var(--color-accent-contrast) !important;
   border-color: transparent !important;

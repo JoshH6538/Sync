@@ -2,6 +2,8 @@ import "../Styles/Stats.css";
 import TopArtists from "../components/TopArtists";
 import TopTracks from "../components/TopTracks";
 import Spinner from "../components/Spinner";
+import StatTimeButton from "../components/StatTimeButton";
+import StatCountButton from "../components/StatCountButton";
 import {
   lazy,
   MutableRefObject,
@@ -162,9 +164,13 @@ export default function Stats({
   const topGenre = topGenres[0]?.name ?? "your favorite genres";
   const displayTopGenre = toTitleCase(topGenre);
   const tasteRangeText = getTasteRangeText(tasteProfile, artistTime, trackTime);
-  const tasteSummary = `Your top genre is ${displayTopGenre}. Your top artist is ${topArtist}, and your top track is ${topTrack}. Sync uses these patterns to find event matches that fit your taste.`;
   const profileReady = artists.length > 0 && tracks.length > 0;
   const activeGraphNode = selectedNode ?? hoveredNode;
+  const profileRange = tasteProfile?.source.artistTimeRange ?? artistTime;
+  const updateProfileRange = (range: string) => {
+    updateArtistTime(range);
+    updateTrackTime(range);
+  };
   const graphActions = {
     zoomIn: () => {
       const currentZoom = forceGraphRef.current?.zoom?.() ?? 1;
@@ -197,7 +203,7 @@ export default function Stats({
             <h1>Your Taste</h1>
             <p className="taste-hero-summary">
               {profileReady
-                ? tasteSummary
+                ? "Understand the artists, tracks, and genres shaping your taste."
                 : "Building your taste profile from Spotify listening data."}
             </p>
             <div className="taste-actions">
@@ -239,14 +245,14 @@ export default function Stats({
               <TasteSignal
                 icon="bi-compass"
                 label="Event Matches"
-                value={`${displayTopGenre} + your top artists`}
+                value={`${displayTopGenre} based events`}
               />
             </div>
 
             <div className="taste-profile-note">
               <i className="bi bi-stars"></i>
               <p>
-                These taste factors shape artist matches and genre-based event discovery.
+                TasteProfile drives this page and Music Map recommendations.
               </p>
             </div>
           </aside>
@@ -257,12 +263,11 @@ export default function Stats({
             <div>
               <p className="taste-section-label">Taste Map</p>
               <h2>How your music connects</h2>
+              <p>
+                Artists, tracks, and genres come from Spotify listening data.
+                Bigger circles have more weight in your TasteProfile.
+              </p>
             </div>
-            <p>
-              Artists, tracks, and genres come from Spotify listening data. Bigger
-              circles matter more in your taste profile. Connections show how those
-              patterns relate. Sync uses this profile to help find Music Map matches.
-            </p>
           </div>
           <p className="taste-map-range">{tasteRangeText}</p>
           <p className="taste-map-note">
@@ -392,34 +397,60 @@ export default function Stats({
           </div>
         </section>
 
+        <section className="taste-range-bar" aria-label="Taste range">
+          <div>
+            <p className="taste-section-label">Taste range</p>
+            <h2>{tasteRangeText}</h2>
+            <span>Updates the whole TasteProfile: hero, map, and library.</span>
+          </div>
+          <StatTimeButton
+            color="primary"
+            label="Choose range"
+            value={profileRange}
+            onClick={updateProfileRange}
+          />
+        </section>
+
         <section className="taste-library">
           <div className="taste-library-header">
             <div>
               <p className="taste-section-label">Taste library</p>
               <h2>Explore your taste</h2>
+              {view === "artists" || view === "tracks" ? (
+                <span className="taste-library-note">
+                  Display count changes this list only.
+                </span>
+              ) : null}
             </div>
-            <div className="taste-tabs" role="tablist" aria-label="Taste views">
-              <TasteTabButton
-                currentView={view}
-                icon="bi-music-note-list"
-                label="Artists"
-                value="artists"
-                onSelect={setView}
-              />
-              <TasteTabButton
-                currentView={view}
-                icon="bi-cassette"
-                label="Tracks"
-                value="tracks"
-                onSelect={setView}
-              />
-              <TasteTabButton
-                currentView={view}
-                icon="bi-vinyl"
-                label="Genres"
-                value="genres"
-                onSelect={setView}
-              />
+            <div className="taste-library-tools">
+              {view === "artists" ? (
+                <StatCountButton onClick={updateArtistCount} />
+              ) : view === "tracks" ? (
+                <StatCountButton onClick={updateTrackCount} />
+              ) : null}
+              <div className="taste-tabs" role="tablist" aria-label="Taste views">
+                <TasteTabButton
+                  currentView={view}
+                  icon="bi-music-note-list"
+                  label="Artists"
+                  value="artists"
+                  onSelect={setView}
+                />
+                <TasteTabButton
+                  currentView={view}
+                  icon="bi-cassette"
+                  label="Tracks"
+                  value="tracks"
+                  onSelect={setView}
+                />
+                <TasteTabButton
+                  currentView={view}
+                  icon="bi-vinyl"
+                  label="Genres"
+                  value="genres"
+                  onSelect={setView}
+                />
+              </div>
             </div>
           </div>
 
@@ -427,10 +458,7 @@ export default function Stats({
             artists.length > 0 ? (
               <TopArtists
                 artists={displayedArtists}
-                displayLimit={artistCount}
                 totalAvailable={artists.length}
-                changeCount={updateArtistCount}
-                changeTime={updateArtistTime}
               />
             ) : (
               <Spinner />
@@ -439,10 +467,7 @@ export default function Stats({
             tracks.length > 0 ? (
               <TopTracks
                 tracks={displayedTracks}
-                displayLimit={trackCount}
                 totalAvailable={tracks.length}
-                changeCount={updateTrackCount}
-                changeTime={updateTrackTime}
               />
             ) : (
               <Spinner />

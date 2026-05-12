@@ -20,7 +20,7 @@ const getTasteProfileCacheKey = (
   artistLimit: number,
   trackLimit: number,
 ) =>
-  `sync:taste-profile:${artistRange}:${trackRange}:${artistLimit}:${trackLimit}:v1`;
+  `sync:taste-profile:${artistRange}:${trackRange}:${artistLimit}:${trackLimit}:v2`;
 
 export const useSpotifyData = (token: string | null) => {
   // define states for spotify stats-centric data
@@ -57,8 +57,8 @@ export const useSpotifyData = (token: string | null) => {
   // query parameters for spotify API calls
   const [artistCount, setArtistCount] = useState(20);
   const [trackCount, setTrackCount] = useState(20);
-  const [artistTime, setArtistTime] = useState("short_term");
-  const [trackTime, setTrackTime] = useState("short_term");
+  const [artistTime, setArtistTime] = useState("medium_term");
+  const [trackTime, setTrackTime] = useState("medium_term");
 
   /**
    * Fetches user profile data from Spotify API when token changes.
@@ -206,7 +206,6 @@ export const useSpotifyData = (token: string | null) => {
     //     name: artist.name,
     //     weight: artist.weight,
     //     rankWeight: artist.weightParts.rank,
-    //     popularityBoost: artist.weightParts.popularity,
     //     trackSupport: artist.weightParts.trackSupport,
     //     genres: artist.genres.join(", "),
     //   })),

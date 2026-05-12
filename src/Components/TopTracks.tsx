@@ -1,22 +1,14 @@
 import "../Styles/TopStats.css";
 import Card from "./Card";
-import StatCountButton from "./StatCountButton";
-import StatTimeButton from "./StatTimeButton";
 
 interface Props {
   tracks: any;
-  displayLimit: number;
   totalAvailable: number;
-  changeCount: any;
-  changeTime: any;
 }
 
 export default function TopTracks({
   tracks,
-  displayLimit,
   totalAvailable,
-  changeCount,
-  changeTime,
 }: Props) {
   let num = 0;
 
@@ -28,21 +20,8 @@ export default function TopTracks({
             <i className="bi bi-cassette"></i> Top Tracks
           </h1>
           <p className="top-stats-context">
-            Showing {tracks.length} of {totalAvailable} available tracks
-            {totalAvailable < displayLimit ? ` (Spotify returned ${totalAvailable})` : ""}
+            {getResultsLabel(tracks.length, totalAvailable, "tracks")}
           </p>
-
-          {/* Button Section */}
-          <div className="row mb-3">
-              <div className="col-12 d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-2">
-                <div className="d-flex justify-content-center justify-content-md-start w-sm-100 w-auto">
-                  <StatCountButton onClick={changeCount} />
-                </div>
-                <div className="d-flex justify-content-center justify-content-md-end w-sm-100 w-auto">
-                  <StatTimeButton onClick={changeTime} />
-                </div>
-              </div>
-            </div>
         </div>
       </div>
 
@@ -68,3 +47,12 @@ export default function TopTracks({
     </div>
   );
 }
+
+const getResultsLabel = (
+  visibleCount: number,
+  totalAvailable: number,
+  label: string,
+) =>
+  visibleCount >= totalAvailable
+    ? `Showing all ${totalAvailable} available ${label} for this range.`
+    : `Showing ${visibleCount} of ${totalAvailable} ${label}.`;

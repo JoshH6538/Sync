@@ -15,8 +15,6 @@ import {
 } from "../types/taste";
 
 const MIN_RANK_WEIGHT = 0.25;
-const POPULARITY_BOOST_MIN = 0.9;
-const POPULARITY_BOOST_RANGE = 0.2;
 const PRIMARY_ARTIST_TRACK_SUPPORT = 0.35;
 const SECONDARY_ARTIST_TRACK_SUPPORT = 0.2;
 const TRACK_GENRE_SUPPORT = 0.25;
@@ -293,15 +291,6 @@ export const calculateRankWeight = (rank: number, limit: number) => {
   return 1 - (zeroBasedRank / limit) * (1 - MIN_RANK_WEIGHT);
 };
 
-export const calculatePopularityBoost = (
-  popularity: number | null | undefined,
-) => {
-  const popularityWeight =
-    typeof popularity === "number" ? clamp(popularity / 100, 0, 1) : 0.5;
-
-  return POPULARITY_BOOST_MIN + popularityWeight * POPULARITY_BOOST_RANGE;
-};
-
 export const normalizeWeights = <T extends WeightedEntity>(items: T[]): T[] => {
   const maxWeight = Math.max(...items.map((item) => item.weight), 0);
   if (maxWeight <= 0) return items;
@@ -323,7 +312,6 @@ const buildTasteArtist = (
 ): TasteArtist => {
   const rank = index + 1;
   const rankWeight = calculateRankWeight(rank, limit);
-  const popularityBoost = calculatePopularityBoost(artist.popularity);
 
   return {
     id: artist.id,
@@ -334,10 +322,9 @@ const buildTasteArtist = (
     rank,
     popularity: artist.popularity ?? null,
     genres: artist.genres ?? [],
-    weight: rankWeight * popularityBoost + trackSupport,
+    weight: rankWeight + trackSupport,
     weightParts: {
       rank: rankWeight,
-      popularity: popularityBoost,
       trackSupport,
     },
   };
@@ -350,7 +337,6 @@ const buildTasteTrack = (
 ): TasteTrack => {
   const rank = index + 1;
   const rankWeight = calculateRankWeight(rank, limit);
-  const popularityBoost = calculatePopularityBoost(track.popularity);
 
   return {
     id: track.id,
@@ -373,10 +359,9 @@ const buildTasteTrack = (
         nodeId: spotifyArtistNodeId(artist.id),
         name: artist.name,
       })) ?? [],
-    weight: rankWeight * popularityBoost,
+    weight: rankWeight,
     weightParts: {
       rank: rankWeight,
-      popularity: popularityBoost,
     },
   };
 };
@@ -547,6 +532,3 @@ const edgeId = (from: string, to: string, type: TasteEdge["type"]) =>
 const spotifyArtistNodeId = (id: string) => `spotify:artist:${id}`;
 
 const spotifyTrackNodeId = (id: string) => `spotify:track:${id}`;
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(Math.max(value, min), max);
