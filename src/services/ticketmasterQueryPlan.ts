@@ -40,6 +40,8 @@ export const DEFAULT_TICKETMASTER_QUERY_PLAN_OPTIONS: TicketmasterQueryPlanOptio
   minKeywordGenreWeight: 0.35,
 };
 
+const MIN_SUGGESTED_BROAD_GENRE_WEIGHT = 0.12;
+
 type ClassificationCandidate = {
   sourceId: string;
   sourceNodeId: string;
@@ -193,38 +195,193 @@ const buildSuggestedSubgenreSearches = (
   tasteProfile: TasteProfile,
   options: TicketmasterQueryPlanOptions,
 ) => {
-  const searchesBySubGenreId = new Map<
-    string,
-    TicketmasterSuggestedSubgenreSearchPlan
-  >();
-  const candidates = [
-    ...getSuggestedCandidatesFromWeightedSubgenres(tasteProfile.subgenres),
-    ...getSuggestedCandidatesFromArtists(tasteProfile.artists),
-  ].sort(sortByWeightDesc);
-
-  candidates.forEach((candidate) => {
-    const existing = searchesBySubGenreId.get(candidate.subGenreId);
-    if (existing && existing.weight >= candidate.weight) return;
-
-    searchesBySubGenreId.set(candidate.subGenreId, {
-      id: `ticketmaster:suggested-subgenre:${candidate.subGenreId}`,
-      subGenreId: candidate.subGenreId,
-      sourceGenreName: candidate.sourceGenreName,
-      sourceNodeId: candidate.sourceNodeId,
-      weight: candidate.weight,
-    });
-  });
-
-  return Array.from(searchesBySubGenreId.values()).slice(
-    0,
+  const weightedSubgenreCandidates = dedupeSuggestedSubgenreCandidates(
+    getSuggestedCandidatesFromWeightedSubgenres(tasteProfile.subgenres),
+  );
+  const diversifiedCandidates = getBroadGenreDiversifiedSuggestedCandidates(
+    weightedSubgenreCandidates,
+    tasteProfile.broadGenres,
     options.maxSuggestedSubGenres,
   );
+  const fallbackCandidates = dedupeSuggestedSubgenreCandidates([
+    ...weightedSubgenreCandidates,
+    ...getSuggestedCandidatesFromArtists(tasteProfile.artists),
+  ]);
+
+  return fillSuggestedSubgenreFallbacks(
+    diversifiedCandidates,
+    fallbackCandidates,
+    options.maxSuggestedSubGenres,
+  ).map(toSuggestedSubgenreSearch);
 };
+
+const dedupeSuggestedSubgenreCandidates = (
+  candidates: SuggestedSubgenreCandidate[],
+) => {
+  const candidatesBySubGenreId = new Map<string, SuggestedSubgenreCandidate>();
+
+  candidates.forEach((candidate) => {
+    const existing = candidatesBySubGenreId.get(candidate.subGenreId);
+    if (existing && existing.weight >= candidate.weight) return;
+    candidatesBySubGenreId.set(candidate.subGenreId, candidate);
+  });
+
+  return Array.from(candidatesBySubGenreId.values()).sort(sortByWeightDesc);
+};
+
+const getBroadGenreDiversifiedSuggestedCandidates = (
+  candidates: SuggestedSubgenreCandidate[],
+  broadGenres: WeightedBroadGenre[],
+  maxSuggestedSubGenres: number,
+) => {
+  const candidatesByBroadGenre = groupSuggestedCandidatesByBroadGenre(candidates);
+  const broadGenreAllocations = allocateBroadGenreSuggestedSlots(
+    broadGenres,
+    candidatesByBroadGenre,
+    maxSuggestedSubGenres,
+  );
+
+  return broadGenreAllocations.flatMap((allocation) =>
+    (candidatesByBroadGenre.get(allocation.broadGenreName) ?? [])
+      .slice()
+      .sort(sortByWeightDesc)
+      .slice(0, allocation.slots),
+  );
+};
+
+const groupSuggestedCandidatesByBroadGenre = (
+  candidates: SuggestedSubgenreCandidate[],
+) => {
+  const candidatesByBroadGenre = new Map<string, SuggestedSubgenreCandidate[]>();
+
+  candidates.forEach((candidate) => {
+    if (!candidate.broadGenreName || candidate.broadGenreName === "unmapped") {
+      return;
+    }
+
+    const group = candidatesByBroadGenre.get(candidate.broadGenreName) ?? [];
+    group.push(candidate);
+    candidatesByBroadGenre.set(candidate.broadGenreName, group);
+  });
+
+  return candidatesByBroadGenre;
+};
+
+type BroadGenreSuggestedSlotAllocation = {
+  broadGenreName: string;
+  slots: number;
+};
+
+const allocateBroadGenreSuggestedSlots = (
+  broadGenres: WeightedBroadGenre[],
+  candidatesByBroadGenre: Map<string, SuggestedSubgenreCandidate[]>,
+  maxSuggestedSubGenres: number,
+): BroadGenreSuggestedSlotAllocation[] => {
+  const eligibleBroadGenres = broadGenres
+    .filter((broadGenre) => broadGenre.name !== "unmapped")
+    .filter((broadGenre) => broadGenre.weight >= MIN_SUGGESTED_BROAD_GENRE_WEIGHT)
+    .filter((broadGenre) => (candidatesByBroadGenre.get(broadGenre.name)?.length ?? 0) > 0)
+    .sort(sortByWeightDesc)
+    .slice(0, maxSuggestedSubGenres);
+
+  if (eligibleBroadGenres.length < 1) return [];
+
+  const totalWeight = eligibleBroadGenres.reduce(
+    (total, broadGenre) => total + broadGenre.weight,
+    0,
+  );
+  if (totalWeight <= 0) return [];
+
+  const allocations = eligibleBroadGenres.map((broadGenre) => {
+    const candidateCount = candidatesByBroadGenre.get(broadGenre.name)?.length ?? 0;
+    const rawSlots = (broadGenre.weight / totalWeight) * maxSuggestedSubGenres;
+    const floorSlots = Math.floor(rawSlots);
+
+    return {
+      broadGenreName: broadGenre.name,
+      weight: broadGenre.weight,
+      remainder: rawSlots - floorSlots,
+      slots: Math.min(candidateCount, Math.max(1, floorSlots)),
+      candidateCount,
+    };
+  });
+
+  let allocatedSlots = allocations.reduce(
+    (total, allocation) => total + allocation.slots,
+    0,
+  );
+
+  while (allocatedSlots < maxSuggestedSubGenres) {
+    const nextAllocation = allocations
+      .filter((allocation) => allocation.slots < allocation.candidateCount)
+      .sort(
+        (a, b) =>
+          b.remainder - a.remainder ||
+          b.weight - a.weight ||
+          b.candidateCount - a.candidateCount,
+      )[0];
+
+    if (!nextAllocation) break;
+
+    nextAllocation.slots += 1;
+    allocatedSlots += 1;
+  }
+
+  while (allocatedSlots > maxSuggestedSubGenres) {
+    const nextAllocation = allocations
+      .filter((allocation) => allocation.slots > 1)
+      .sort((a, b) => a.weight - b.weight || a.remainder - b.remainder)[0];
+
+    if (!nextAllocation) break;
+
+    nextAllocation.slots -= 1;
+    allocatedSlots -= 1;
+  }
+
+  return allocations
+    .filter((allocation) => allocation.slots > 0)
+    .map((allocation) => ({
+      broadGenreName: allocation.broadGenreName,
+      slots: allocation.slots,
+    }));
+};
+
+const fillSuggestedSubgenreFallbacks = (
+  selectedCandidates: SuggestedSubgenreCandidate[],
+  fallbackCandidates: SuggestedSubgenreCandidate[],
+  maxSuggestedSubGenres: number,
+) => {
+  const selectedSubGenreIds = new Set(
+    selectedCandidates.map((candidate) => candidate.subGenreId),
+  );
+  const candidates = [...selectedCandidates];
+
+  for (const candidate of fallbackCandidates) {
+    if (candidates.length >= maxSuggestedSubGenres) break;
+    if (selectedSubGenreIds.has(candidate.subGenreId)) continue;
+
+    selectedSubGenreIds.add(candidate.subGenreId);
+    candidates.push(candidate);
+  }
+
+  return candidates.slice(0, maxSuggestedSubGenres);
+};
+
+const toSuggestedSubgenreSearch = (
+  candidate: SuggestedSubgenreCandidate,
+): TicketmasterSuggestedSubgenreSearchPlan => ({
+  id: `ticketmaster:suggested-subgenre:${candidate.subGenreId}`,
+  subGenreId: candidate.subGenreId,
+  sourceGenreName: candidate.sourceGenreName,
+  sourceNodeId: candidate.sourceNodeId,
+  weight: candidate.weight,
+});
 
 type SuggestedSubgenreCandidate = {
   subGenreId: string;
   sourceGenreName: string;
   sourceNodeId: string;
+  broadGenreName?: string;
   weight: number;
 };
 
@@ -239,6 +396,7 @@ const getSuggestedCandidatesFromWeightedSubgenres = (
         subGenreId: subgenre.ticketmasterSubGenreId,
         sourceGenreName: subgenre.name,
         sourceNodeId: subgenre.nodeId,
+        broadGenreName: subgenre.broadGenreName,
         weight: subgenre.trackIds.length > 0 ? subgenre.weight * 1.2 : subgenre.weight,
       },
     ];
@@ -257,6 +415,7 @@ const getSuggestedCandidatesFromArtists = (
           subGenreId: mapping.ticketmasterSubGenreId,
           sourceGenreName: genre,
           sourceNodeId: artist.nodeId,
+          broadGenreName: mapping.broadGenreName,
           weight:
             artist.weight *
             (artist.weightParts.trackSupport > 0 ? 1.15 : 1),
