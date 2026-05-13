@@ -227,17 +227,6 @@ export default function MusicMap({ tasteProfile, ticketmasterQueryPlan }: Props)
     setFilter("all");
   };
 
-  if (!sessionStorage.getItem("token")) {
-    return (
-      <div className="music-map-page">
-        <section className="music-map-empty">
-          <h1>Please log in.</h1>
-          <p>Sync needs your listening data before event discovery can start.</p>
-        </section>
-      </div>
-    );
-  }
-
   return (
     <main className="music-map-page">
       <section className="music-map-hero">

@@ -1,6 +1,33 @@
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/Home.css";
 
-export default function Home() {
+interface Props {
+  isAuthenticated: boolean;
+  onLoginClick: () => void;
+  onViewTaste: () => void;
+}
+
+type HomeLocationState = {
+  openAuthModal?: boolean;
+};
+
+export default function Home({
+  isAuthenticated,
+  onLoginClick,
+  onViewTaste,
+}: Props) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const state = location.state as HomeLocationState | null;
+
+  useEffect(() => {
+    if (!state?.openAuthModal) return;
+
+    onLoginClick();
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, navigate, onLoginClick, state?.openAuthModal]);
+
   return (
     <>
       <div className="hero-container">
@@ -13,8 +40,13 @@ export default function Home() {
           </p>
 
           <div className="hero-actions">
-            <button className="primary-btn">Try Demo</button>
-            <button className="secondary-btn">Login with Spotify</button>
+            <button
+              type="button"
+              className="primary-btn"
+              onClick={isAuthenticated ? onViewTaste : onLoginClick}
+            >
+              {isAuthenticated ? "View your taste" : "Start exploring"}
+            </button>
           </div>
         </div>
       </div>

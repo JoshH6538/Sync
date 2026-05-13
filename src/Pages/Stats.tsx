@@ -186,14 +186,6 @@ export default function Stats({
     },
   };
 
-  if (!sessionStorage.getItem("token")) {
-    return (
-      <div className="stats-page-container">
-        <div className="Filler" />
-      </div>
-    );
-  }
-
   return (
     <main className="stats-page-container">
       <section className="taste-shell">
@@ -210,9 +202,16 @@ export default function Stats({
               <Link to="/MusicMap" className="primary-btn">
                 Explore events based on your taste
               </Link>
-              <a href={user.url} target="_blank" className="secondary-btn">
-                Open Spotify profile
-              </a>
+              {user.url ? (
+                <a
+                  href={user.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="secondary-btn"
+                >
+                  Open Spotify profile
+                </a>
+              ) : null}
             </div>
           </div>
 

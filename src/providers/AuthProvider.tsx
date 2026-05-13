@@ -9,12 +9,17 @@ import {
 import Constants from "../Constants";
 import axios from "axios";
 
+export type AuthMode = "spotify" | "demo" | "logged-out";
+
 interface AuthContextType {
   token: string | null;
+  authMode: AuthMode;
   login: () => void;
+  startDemo: () => void;
   logout: () => void;
 }
 
+const DEMO_AUTH_MODE_KEY = "sync_demo_mode";
 const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
 const isDev =
   window.location.hostname === "localhost" ||
@@ -33,6 +38,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(
     sessionStorage.getItem("token"),
   );
+  const [authMode, setAuthMode] = useState<AuthMode>(() => {
+    if (sessionStorage.getItem("token")) return "spotify";
+    if (sessionStorage.getItem(DEMO_AUTH_MODE_KEY) === "true") return "demo";
+    return "logged-out";
+  });
   const hasFetchedToken = useRef(false);
 
   /**
@@ -40,6 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    * and redirecting the user to the authorization endpoint.
    */
   const login = async () => {
+    sessionStorage.removeItem(DEMO_AUTH_MODE_KEY);
     sessionStorage.removeItem("code_verifier");
 
     const codeVerifier = generateRandomString(64);
@@ -65,8 +76,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    if (authMode === "demo") {
+      sessionStorage.removeItem(DEMO_AUTH_MODE_KEY);
+      setAuthMode("logged-out");
+      return;
+    }
+
     setToken(null);
+    setAuthMode("logged-out");
     sessionStorage.clear();
+  };
+
+  const startDemo = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("code_verifier");
+    sessionStorage.setItem(DEMO_AUTH_MODE_KEY, "true");
+    setToken(null);
+    setAuthMode("demo");
   };
 
   /**
@@ -113,8 +139,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         const access_token = response.data.access_token;
 
+        sessionStorage.removeItem(DEMO_AUTH_MODE_KEY);
         sessionStorage.setItem("token", access_token);
         setToken(access_token);
+        setAuthMode("spotify");
 
         // set the URL back to the base path without query params
         window.history.replaceState(
@@ -131,7 +159,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, authMode, login, startDemo, logout }}>
       {children}
     </AuthContext.Provider>
   );

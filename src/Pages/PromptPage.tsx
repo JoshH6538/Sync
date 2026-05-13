@@ -1,15 +1,18 @@
 import LoginPrompt from "../components/LoginPrompt";
 
 interface Props {
-  login: () => void;
-  logout: () => void;
+  onLoginClick: () => void;
+  onDemoClick: () => void;
 }
 
-export default function PromptPage({ login, logout }: Props) {
+export default function PromptPage({ onLoginClick, onDemoClick }: Props) {
   return (
     <div className="about-page-container">
       <div className="about-container">
-        <LoginPrompt login={login} logout={logout}></LoginPrompt>
+        <LoginPrompt
+          onLoginClick={onLoginClick}
+          onDemoClick={onDemoClick}
+        ></LoginPrompt>
       </div>
     </div>
   );

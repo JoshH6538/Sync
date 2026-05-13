@@ -1,35 +1,27 @@
-import '../Styles/LoginPrompt.css'
+import "../styles/LoginPrompt.css";
 
 interface Props {
-  login: ()=>void
-  logout: ()=>void
+  onLoginClick: () => void;
+  onDemoClick: () => void;
 }
 
-const LoginPrompt = ({ login, logout}: Props) => {
-  const token = sessionStorage.getItem("token");
-
-    const displayButton = () => {
-        if(!token)
-            return(
-                <>
-                    <button className='lg-button' onClick={login}>Login</button>
-                </>
-            );
-        else
-        return(
-            <>
-                <button className='lg-button' onClick={logout}>Logout</button>
-            </>
-           
-            
-        );
-    }
-
+const LoginPrompt = ({ onLoginClick, onDemoClick }: Props) => {
   return (
-    <div className='lg-container'>
-      <h2 className='lg-message'>You need to log in to access this page.</h2>
-      {/* <button className='lg-button'>Login</button> */}
-      {displayButton()}
+    <div className="lg-container">
+      <p className="lg-kicker">Sync locked</p>
+      <h2 className="lg-message">Log in or try demo mode.</h2>
+      <p className="lg-copy">
+        Spotify builds from your listening data. Demo mode uses approved local
+        fixture data.
+      </p>
+      <div className="lg-actions">
+        <button className="lg-button primary" onClick={onLoginClick}>
+          Login
+        </button>
+        <button className="lg-button secondary" onClick={onDemoClick}>
+          Try demo
+        </button>
+      </div>
     </div>
   );
 };
