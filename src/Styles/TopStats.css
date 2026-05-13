@@ -1,14 +1,73 @@
+.stats-container {
+  max-width: none;
+  padding: 0;
+}
+
+.stats-header-container {
+  margin: 0 0 var(--space-5);
+  padding: 0 !important;
+  background: transparent;
+}
+
 .top-stats-title {
-    font-size: 3rem;
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0px 6px 6px rgb(0, 0, 0);
-    background-clip: text;
-    padding: 10px 0;
-  }
-  
-  .bi {
-    margin-right: 8px; /* Adds space between icon and text */
-    color: #ce3535; /* A matching color for the icon */
-  }
+  margin: 0 0 var(--space-4) !important;
+  padding: 0;
+  color: var(--color-text);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-transform: none;
+  text-shadow: none;
+}
+
+.top-stats-title .bi {
+  color: #38bdf8 !important;
+}
+
+.top-stats-context {
+  margin: 0 0 var(--space-4);
+  color: #94a3b8;
+  font-size: var(--text-sm);
+}
+
+.count-container {
+  color: var(--color-text-muted);
+  gap: var(--space-3);
+}
+
+.count-container h3 {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.tri-button {
+  padding: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+}
+
+.tri-button .btn {
+  border: 0;
+  border-radius: var(--radius-pill) !important;
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.tri-button .btn:hover,
+.tri-button .btn:focus,
+.tri-button .btn:active,
+.tri-button .btn.is-active {
+  background: rgba(14, 165, 233, 0.18) !important;
+  color: var(--color-accent-contrast) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}

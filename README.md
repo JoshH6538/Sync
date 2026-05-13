@@ -1,55 +1,92 @@
-Sync
+# Sync
 
-Music Analytics & Event Suggestion App
-Built with React, Spotify API, and Ticketmaster API
+Sync is a React/Vite web app that connects Spotify listening taste to live event discovery through Ticketmaster.
 
-⸻
+Connect Spotify, explore your listening patterns, and find nearby shows that match the artists and genres shaping your taste. Sync also includes a guest demo mode for trying the experience without a Spotify login.
 
-Overview
+## What Sync Does
 
-Sync is a personal web application that connects to your Spotify account to analyze your top artists and listening habits, then recommends upcoming concerts and events near you using the Ticketmaster API. The app is designed to create a seamless experience for music lovers looking to explore local events based on their actual tastes.
+Sync turns music taste into event recommendations:
 
-⸻
+1. Reads top artists and tracks from Spotify.
+2. Builds a structured `TasteProfile`.
+3. Plans Ticketmaster genre, subgenre, and artist searches.
+4. Shows recommended live events on the Music Map.
 
-Features
-	•	Spotify OAuth Authentication
-Securely authenticate users and access their top artists and tracks.
-	•	Personalized Music Analytics
-View your top 10–50 Spotify artists and songs pulled directly from your listening history.
-	•	Local Event Suggestions
-Discover relevant upcoming concerts or events near your location using the Ticketmaster API.
-	•	Interactive UI with Filters
-Filter events based on artist relevance, date, or distance for a customized experience.
+## Core Features
 
-⸻
+- Spotify login using OAuth PKCE.
+- Guest/demo mode with local fixture data.
+- Your Taste page for top artists, tracks, and genre patterns.
+- Taste Map visualization for exploring taste relationships.
+- Music Map event discovery with location-based search.
+- Ticketmaster-powered live event search.
+- Artist-triggered event matching from selected artists.
 
-Tech Stack
-	•	Frontend: React.js, HTML5, CSS3, JavaScript
-	•	APIs: Spotify Web API, Ticketmaster Discovery API
-	•	Authentication: OAuth 2.0
-	•	Version Control: Git, GitHub
+## How It Works
 
-⸻
+Spotify listening data is normalized into a `TasteProfile` that captures artists, tracks, genres, and graph relationships. Sync then builds a Ticketmaster query plan from that profile, using mapped music genres/subgenres for broad discovery and artist attraction searches when the user selects a specific artist. Music Map combines those results into live event recommendations.
 
-How It Works
-	1.	Login via Spotify – Users authenticate via OAuth to allow the app to read their listening data.
-	2.	Fetch Top Artists – The app pulls data from Spotify to generate a personalized list of top artists.
-	3.	Query Ticketmaster – Based on location and top artists, it fetches relevant nearby events.
-	4.	Display & Filter – Events are displayed on-screen with filtering options to explore what’s most relevant.
+Demo mode uses the same app flow with approved local Spotify/TasteProfile fixture data from `src/data/demo/`.
 
-⸻
+## Tech Stack
 
-Why I Built It
+- React
+- Vite
+- TypeScript
+- Spotify Web API
+- Ticketmaster Discovery API
+- Leaflet / React Leaflet
 
-I wanted to build something that combined user data, live APIs, and a strong front-end experience — something that felt useful, personal, and fun. Sync challenged me to work with authentication, multiple APIs, and real-time filtering, and helped me sharpen my skills in React and user experience design.
+## Getting Started
 
-⸻
-Try It Out
+Install dependencies:
 
-Live Demo Deployed!
+```powershell
+npm install
+```
 
-⸻
+Create a local `.env` file:
 
-License
+```text
+VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id
+VITE_TICKETMASTER_KEY=your_ticketmaster_api_key
+```
 
-MIT License
+Run the dev server:
+
+```powershell
+npm.cmd run dev
+```
+
+Build for production:
+
+```powershell
+npm.cmd run build
+```
+
+## Environment Variables
+
+| Variable                      | Required | Purpose                                                    |
+| ----------------------------- | -------- | ---------------------------------------------------------- |
+| `VITE_SPOTIFY_CLIENT_ID`      | Yes      | Spotify app client ID for OAuth login.                     |
+| `VITE_TICKETMASTER_KEY`       | Yes      | Ticketmaster Discovery API key for event search.           |
+| `VITE_PAUSE_TICKETMASTER_API` | No       | Set to `true` in local dev to pause Ticketmaster requests. |
+
+Spotify redirect URIs must match the app configuration:
+
+- Local: `http://127.0.0.1:5173/Sync/`
+- Deployed: `https://joshh6538.github.io/Sync/`
+
+## Demo Mode
+
+Guest mode uses an approved local fixture committed under `src/data/demo/`. It provides Spotify-style user, top artist, top track, TasteProfile, and Ticketmaster query-plan data so the app can run without a Spotify login.
+
+Demo mode still performs live Ticketmaster searches, so `VITE_TICKETMASTER_KEY` is required for Music Map results.
+
+## Important Notes
+
+- `VITE_TICKETMASTER_KEY` is currently frontend-visible. Move Ticketmaster requests behind a backend/proxy before production.
+- Demo fixture data is intentionally committed and may increase bundle size.
+- Builds may show a Vite chunk-size warning because the fixture is bundled.
+- Sync is under active development and should not be treated as production-ready yet.

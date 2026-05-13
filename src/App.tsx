@@ -1,250 +1,207 @@
-// Style Imports
-import "./Styles/App.css";
+import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "./providers/AuthProvider";
+import { useSpotifyData } from "./hooks/useSpotifyData";
+import {
+  demoSpotifyUser,
+  getDemoSpotifyRangeData,
+  getDemoTasteProfile,
+  getDemoTicketmasterQueryPlan,
+  getDemoTopArtists,
+  getDemoTopTracks,
+} from "./data/demo/demoSpotifyData";
+import { SpotifyTimeRange } from "./types/taste";
 
-import { useEffect, useState, useRef } from "react";
-import Navbar from "./Components/Navbar";
-import About from "./Pages/About";
-import Stats from "./Pages/Stats";
-import MusicMap from "./Pages/MusicMap";
-import PromptPage from "./Pages/PromptPage";
-import Privacy from "./Pages/Privacy";
-import Constants from "./Information/Constants";
-import SpotifyCredentials from "./Information/Credentials/SpotifyCredentials";
-import axios from "axios";
+import Navbar from "./components/Navbar";
+import LoginModal from "./components/LoginModal";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Stats from "./pages/Stats";
+import MusicMap from "./pages/MusicMap";
+import Privacy from "./pages/Privacy";
 
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
+
+const POST_AUTH_REDIRECT_KEY = "sync_post_auth_redirect";
 
 function App() {
-  const SCOPES_URL_PARAM = Constants.SCOPES.join(Constants.SPACE_DELIM);
+  return (
+    <Router basename="/Sync">
+      <AppContent />
+    </Router>
+  );
+}
 
-  // ---------------- STATE ----------------
-  const [token, setToken] = useState(sessionStorage.getItem("token") || "");
+function AppContent() {
+  const { token, authMode, login, startDemo, logout } = useAuth();
+  const navigate = useNavigate();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [demoArtistCount, setDemoArtistCount] = useState(20);
+  const [demoTrackCount, setDemoTrackCount] = useState(20);
+  const [demoRange, setDemoRange] = useState<SpotifyTimeRange>("medium_term");
 
-  const [artists, setArtists] = useState<any[]>([]);
-  const [tracks, setTracks] = useState<any[]>([]);
-  const [genres, setGenres] = useState<string[]>([]);
+  const spotifyData = useSpotifyData(token);
+  const {
+    user,
+    artists,
+    tracks,
+    artistCount,
+    trackCount,
+    artistTime,
+    trackTime,
+    tasteProfile,
+    ticketmasterQueryPlan,
+    setArtistCount,
+    setTrackCount,
+    setArtistTime,
+    setTrackTime,
+  } = spotifyData;
 
-  const [displayName, setDisplayName] = useState("");
-  const [ID, setID] = useState("");
-  const [displayPicture, setDisplayPicture] = useState("");
-  const [userUrl, setUserUrl] = useState("");
+  const isDemo = authMode === "demo";
+  const canUseApp = authMode !== "logged-out";
+  const demoRangeData = useMemo(
+    () => getDemoSpotifyRangeData(demoRange),
+    [demoRange],
+  );
+  const activeUser = isDemo ? demoSpotifyUser : user;
+  const activeArtists = isDemo
+    ? getDemoTopArtists(demoRange, demoArtistCount)
+    : artists;
+  const activeTracks = isDemo
+    ? getDemoTopTracks(demoRange, demoTrackCount)
+    : tracks;
+  const activeArtistCount = isDemo
+    ? Math.min(demoArtistCount, demoRangeData.topArtists.length)
+    : artistCount;
+  const activeTrackCount = isDemo
+    ? Math.min(demoTrackCount, demoRangeData.topTracks.length)
+    : trackCount;
+  const activeArtistTime = isDemo ? demoRangeData.source.artistTimeRange : artistTime;
+  const activeTrackTime = isDemo ? demoRangeData.source.trackTimeRange : trackTime;
+  const activeTasteProfile = isDemo ? getDemoTasteProfile(demoRange) : tasteProfile;
+  const activeTicketmasterQueryPlan = isDemo
+    ? getDemoTicketmasterQueryPlan(demoRange)
+    : ticketmasterQueryPlan;
 
-  const [artistCount, setArtistCount] = useState(20);
-  const [trackCount, setTrackCount] = useState(20);
-  const [artistTime, setArtistTime] = useState("short_term");
-  const [trackTime, setTrackTime] = useState("short_term");
-
-  const hasFetched = useRef(false);
-
-  const userInfo = {
-    name: displayName,
-    id: ID,
-    image: displayPicture,
-    url: userUrl,
+  const openLoginModal = () => {
+    sessionStorage.setItem(POST_AUTH_REDIRECT_KEY, "/Stats");
+    setIsLoginModalOpen(true);
+  };
+  const closeLoginModal = () => setIsLoginModalOpen(false);
+  const handleSpotifyLogin = () => {
+    sessionStorage.setItem(POST_AUTH_REDIRECT_KEY, "/Stats");
+    closeLoginModal();
+    login();
+  };
+  const handleDemoLogin = () => {
+    startDemo();
+    closeLoginModal();
+    navigate("/Stats");
+  };
+  const setDemoTimeRange = (range: string) => {
+    setDemoRange(range as SpotifyTimeRange);
   };
 
-  // ---------------- PKCE HELPERS ----------------
-  const generateRandomString = (length: number) => {
-    const possible =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    return Array.from(crypto.getRandomValues(new Uint8Array(length)))
-      .map((x) => possible[x % possible.length])
-      .join("");
-  };
-
-  const sha256 = async (plain: string) => {
-    const encoder = new TextEncoder();
-    return await crypto.subtle.digest("SHA-256", encoder.encode(plain));
-  };
-
-  const base64encode = (input: ArrayBuffer) => {
-    return btoa(String.fromCharCode(...new Uint8Array(input)))
-      .replace(/=/g, "")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_");
-  };
-
-  // ---------------- LOGIN ----------------
-  const handleLogin = async () => {
-    sessionStorage.removeItem("code_verifier");
-
-    const codeVerifier = generateRandomString(64);
-    const hashed = await sha256(codeVerifier);
-    const codeChallenge = base64encode(hashed);
-
-    sessionStorage.setItem("code_verifier", codeVerifier);
-
-    const redirect = "http://127.0.0.1:5173/Sync/";
-
-    const location =
-      Constants.SPOTIFY_AUTHORIZE_ENDPOINT +
-      "?client_id=" +
-      SpotifyCredentials.CLIENT_ID +
-      "&response_type=code" +
-      "&redirect_uri=" +
-      encodeURIComponent(redirect) +
-      "&scope=" +
-      SCOPES_URL_PARAM +
-      "&code_challenge_method=S256" +
-      "&code_challenge=" +
-      codeChallenge;
-
-    window.location.href = location;
-  };
-
-  const handleLogout = () => {
-    setToken("");
-    setArtists([]);
-    setTracks([]);
-    setDisplayName("");
-    setID("");
-    sessionStorage.clear();
-  };
-
-  // ---------------- TOKEN EXCHANGE ----------------
   useEffect(() => {
-    if (hasFetched.current) return;
+    if (authMode !== "spotify" || !token || !user.id) return;
 
-    const code = new URLSearchParams(window.location.search).get("code");
-    if (!code) return;
+    const redirectTo = sessionStorage.getItem(POST_AUTH_REDIRECT_KEY);
+    if (!redirectTo) return;
 
-    hasFetched.current = true;
+    sessionStorage.removeItem(POST_AUTH_REDIRECT_KEY);
+    navigate(redirectTo, { replace: true });
+  }, [authMode, navigate, token, user.id]);
 
-    const fetchToken = async () => {
-      try {
-        const codeVerifier = sessionStorage.getItem("code_verifier");
-
-        const body = new URLSearchParams({
-          client_id: SpotifyCredentials.CLIENT_ID,
-          grant_type: "authorization_code",
-          code: code,
-          redirect_uri: "http://127.0.0.1:5173/Sync/",
-          code_verifier: codeVerifier!,
-        });
-
-        const response = await axios.post(
-          "https://accounts.spotify.com/api/token",
-          body,
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          },
-        );
-
-        const access_token = response.data.access_token;
-
-        sessionStorage.setItem("token", access_token);
-        setToken(access_token);
-
-        window.history.replaceState({}, document.title, "/Sync/");
-      } catch (err: any) {
-        console.error("Token exchange failed:", err.response?.data || err);
-      }
-    };
-
-    fetchToken();
-  }, []);
-
-  // ---------------- DATA FETCH ----------------
-  useEffect(() => {
-    if (!token) return;
-
-    const fetchData = async () => {
-      try {
-        const headers = { Authorization: `Bearer ${token}` };
-
-        const userRes = await axios.get("https://api.spotify.com/v1/me", {
-          headers,
-        });
-        setDisplayName(userRes.data.display_name);
-        setID(userRes.data.id);
-        setDisplayPicture(
-          userRes.data.images?.[0]?.url || "Images/placeholder.jpg",
-        );
-        setUserUrl(userRes.data.external_urls.spotify);
-
-        const artistRes = await axios.get(
-          `https://api.spotify.com/v1/me/top/artists?limit=${artistCount}&time_range=${artistTime}`,
-          { headers },
-        );
-        setArtists(artistRes.data.items);
-
-        const genreList: string[] = [];
-        artistRes.data.items.forEach((a: any) =>
-          a.genres.forEach((g: string) => genreList.push(g)),
-        );
-
-        setGenres(genreList);
-
-        const trackRes = await axios.get(
-          `https://api.spotify.com/v1/me/top/tracks?limit=${trackCount}&time_range=${trackTime}`,
-          { headers },
-        );
-        setTracks(trackRes.data.items);
-      } catch (err) {
-        console.error("Fetch error:", err);
-      }
-    };
-
-    fetchData();
-  }, [token, artistCount, trackCount, artistTime, trackTime]);
-
-  // ---------------- HANDLERS ----------------
-  const updateArtistCount = (count: number) => setArtistCount(count);
-  const updateTrackCount = (count: number) => setTrackCount(count);
-  const updateArtistTime = (time: string) => setArtistTime(time);
-  const updateTrackTime = (time: string) => setTrackTime(time);
-
-  // ---------------- ROUTING ----------------
-  const isLoggedIn = !!token;
-
-  const page = isLoggedIn ? (
+  const page = canUseApp ? (
     <Routes>
       <Route
         path="/Stats"
         element={
           <Stats
-            user={userInfo}
-            artists={artists}
-            tracks={tracks}
-            artistCount={artistCount}
-            trackCount={trackCount}
-            updateArtistCount={updateArtistCount}
-            updateTrackCount={updateTrackCount}
-            updateArtistTime={updateArtistTime}
-            updateTrackTime={updateTrackTime}
-            artistTime={artistTime}
-            trackTime={trackTime}
+            user={activeUser}
+            artists={activeArtists as any[]}
+            tracks={activeTracks as any[]}
+            artistCount={activeArtistCount}
+            trackCount={activeTrackCount}
+            updateArtistCount={isDemo ? setDemoArtistCount : setArtistCount}
+            updateTrackCount={isDemo ? setDemoTrackCount : setTrackCount}
+            updateArtistTime={isDemo ? setDemoTimeRange : setArtistTime}
+            updateTrackTime={isDemo ? setDemoTimeRange : setTrackTime}
+            artistTime={activeArtistTime}
+            trackTime={activeTrackTime}
+            tasteProfile={activeTasteProfile}
           />
         }
       />
-      <Route path="/MusicMap" element={<MusicMap genres={genres} />} />
+      <Route
+        path="/MusicMap"
+        element={
+          <MusicMap
+            tasteProfile={activeTasteProfile}
+            ticketmasterQueryPlan={activeTicketmasterQueryPlan}
+          />
+        }
+      />
       <Route path="/About" element={<About />} />
       <Route path="/Privacy" element={<Privacy />} />
-      <Route path="/" element={<About />} />
+      <Route
+        path="/"
+        element={
+          <Home
+            isAuthenticated={canUseApp}
+            onLoginClick={openLoginModal}
+            onViewTaste={() => navigate("/Stats")}
+          />
+        }
+      />
     </Routes>
   ) : (
     <Routes>
       <Route
         path="/Stats"
-        element={<PromptPage login={handleLogin} logout={handleLogout} />}
+        element={<Navigate to="/" replace state={{ openAuthModal: true }} />}
       />
       <Route
         path="/MusicMap"
-        element={<PromptPage login={handleLogin} logout={handleLogout} />}
+        element={<Navigate to="/" replace state={{ openAuthModal: true }} />}
       />
       <Route path="/About" element={<About />} />
       <Route path="/Privacy" element={<Privacy />} />
-      <Route path="/" element={<About />} />
+      <Route
+        path="/"
+        element={
+          <Home
+            isAuthenticated={canUseApp}
+            onLoginClick={openLoginModal}
+            onViewTaste={() => navigate("/Stats")}
+          />
+        }
+      />
     </Routes>
   );
 
   return (
-    <Router basename="/Sync">
-      <Navbar login={handleLogin} logout={handleLogout} />
+    <>
+      <Navbar
+        authMode={authMode}
+        user={activeUser}
+        onSpotifyLogin={handleSpotifyLogin}
+        onDemoLogin={handleDemoLogin}
+        logout={logout}
+      />
       {page}
-    </Router>
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={closeLoginModal}
+        onSpotifyLogin={handleSpotifyLogin}
+        onDemoLogin={handleDemoLogin}
+      />
+    </>
   );
 }
 

@@ -1,19 +1,15 @@
 import "../Styles/TopStats.css";
 
 import Card from "./Card";
-import StatCountButton from "./StatCountButton";
-import StatTimeButton from "./StatTimeButton";
 
 interface Props {
   artists: any;
-  changeCount: any;
-  changeTime: any;
+  totalAvailable: number;
 }
 
 export default function TopArtists({
   artists,
-  changeCount,
-  changeTime,
+  totalAvailable,
 }: Props) {
   let num = 0;
 
@@ -25,19 +21,9 @@ export default function TopArtists({
             <h1 className="mb-2 mt-1 top-stats-title">
               <i className="bi bi-music-note-list"></i> Top Artists
             </h1>
-
-            {/* Button Section */}
-            <div className="row mb-3">
-              <div className="col-12 d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-2">
-                <div className="d-flex justify-content-center justify-content-md-start w-sm-100 w-auto">
-                  <StatCountButton onClick={changeCount} />
-                </div>
-                <div className="d-flex justify-content-center justify-content-md-end w-sm-100 w-auto">
-                  <StatTimeButton onClick={changeTime} />
-                </div>
-              </div>
-            </div>
-
+            <p className="top-stats-context">
+              {getResultsLabel(artists.length, totalAvailable, "artists")}
+            </p>
           </div>
         </div>
 
@@ -48,7 +34,7 @@ export default function TopArtists({
       </div> */}
 
         <div className="row px-2 py-2">
-          {artists.map((artist: any) => (
+          {artists.map((artist: any, index: number) => (
             <div
               key={artist.id}
               className="col-6 col-sm-4 col-md-3 col-lg-2 mb-4 d-flex"
@@ -61,6 +47,17 @@ export default function TopArtists({
                     : "src/Images/placeholder.jpg"
                 }
                 altnum={num++}
+                actionLabel="Explore event matches"
+                actionTo="/MusicMap"
+                actionState={{
+                  artistEventSearch: {
+                    artistId: artist.id,
+                    artistName: artist.name,
+                    artistNodeId: `spotify:artist:${artist.id}`,
+                    keyword: artist.name,
+                    weight: Math.max(0.25, 1 - index * 0.05),
+                  },
+                }}
               />
             </div>
           ))}
@@ -87,3 +84,12 @@ export default function TopArtists({
     // </div>
   );
 }
+
+const getResultsLabel = (
+  visibleCount: number,
+  totalAvailable: number,
+  label: string,
+) =>
+  visibleCount >= totalAvailable
+    ? `Showing all ${totalAvailable} available ${label} for this range.`
+    : `Showing ${visibleCount} of ${totalAvailable} ${label}.`;
