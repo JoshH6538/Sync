@@ -17,6 +17,13 @@ type TicketmasterEventAttraction = {
   name?: string;
 };
 
+type TicketmasterEventImage = {
+  ratio?: string;
+  url?: string;
+  width?: number;
+  height?: number;
+};
+
 export const enrichTicketmasterEvents = (
   events: TicketmasterRawEventWithSource[],
   queryPlan: TicketmasterQueryPlan,
@@ -61,19 +68,24 @@ export const mapTicketmasterEventsToLocalEvents = (
   events: TicketmasterRawEventWithSource[],
 ) =>
   events.map(({ event, recommendationMetadata }) => {
+    const rawVenue = event._embedded.venues[0];
     const venue = new LocalVenue(
-      event._embedded.venues[0].name,
-      Number(event._embedded.venues[0].location.latitude),
-      Number(event._embedded.venues[0].location.longitude),
+      rawVenue.name,
+      Number(rawVenue.location.latitude),
+      Number(rawVenue.location.longitude),
     );
     return new LocalEvent(
       event.name,
       event.id,
-      event.images[0].url,
+      getBestTicketmasterImageUrl(event.images ?? []),
       venue,
       event.distance,
       event.url,
       recommendationMetadata,
+      event.dates?.start?.localDate,
+      event.dates?.start?.localTime,
+      rawVenue.city?.name,
+      rawVenue.state?.stateCode ?? rawVenue.state?.name,
     );
   });
 
@@ -217,3 +229,20 @@ const unique = <T>(items: T[]) => Array.from(new Set(items));
 
 const uniqueById = <T extends { id: string }>(items: T[]) =>
   Array.from(new Map(items.map((item) => [item.id, item])).values());
+
+const getBestTicketmasterImageUrl = (images: TicketmasterEventImage[]) =>
+  images
+    .filter((image) => image.url)
+    .slice()
+    .sort((a, b) => getImageScore(b) - getImageScore(a))[0]?.url ?? "";
+
+const getImageScore = (image: TicketmasterEventImage) => {
+  const width = image.width ?? 0;
+  const height = image.height ?? 0;
+  const area = width * height;
+  const ratioBonus =
+    image.ratio === "16_9" ? 240000 : image.ratio === "4_3" ? 120000 : 0;
+  const thumbnailPenalty = width < 300 || height < 180 ? 500000 : 0;
+
+  return area + ratioBonus - thumbnailPenalty;
+};

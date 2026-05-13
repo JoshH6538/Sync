@@ -56,7 +56,10 @@ function App() {
       <Route
         path="/MusicMap"
         element={
-          <MusicMap ticketmasterQueryPlan={ticketmasterQueryPlan} />
+          <MusicMap
+            tasteProfile={tasteProfile}
+            ticketmasterQueryPlan={ticketmasterQueryPlan}
+          />
         }
       />
       <Route path="/About" element={<About />} />
